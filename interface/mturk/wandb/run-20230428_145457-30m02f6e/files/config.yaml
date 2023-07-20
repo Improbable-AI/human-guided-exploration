@@ -1,0 +1,251 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.13.1
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.6.12
+    start_time: 1682708097.4122
+    t:
+      1:
+      - 55
+      2:
+      - 55
+      3:
+      - 13
+      - 16
+      - 23
+      4: 3.6.12
+      5: 0.13.1
+      8:
+      - 5
+batch_size:
+  desc: null
+  value: 100
+buffer_size:
+  desc: null
+  value: 1000
+check_if_stopped:
+  desc: null
+  value: true
+command_goal_if_too_close:
+  desc: null
+  value: false
+continuous_action_space:
+  desc: null
+  value: false
+contrastive:
+  desc: null
+  value: false
+data_folder:
+  desc: null
+  value: kitchenSeqhuman
+demo_epochs:
+  desc: null
+  value: 20000
+demo_goal_selector_epochs:
+  desc: null
+  value: 10000
+desired_goal_sampling_freq:
+  desc: null
+  value: 0
+deterministic_rollout:
+  desc: null
+  value: false
+display_plots:
+  desc: null
+  value: true
+display_trajectories_freq:
+  desc: null
+  value: 50
+distance_noise_std:
+  desc: null
+  value: 0
+env_name:
+  desc: null
+  value: kitchenSeq
+epsilon_greedy_exploration:
+  desc: null
+  value: 0
+epsilon_greedy_rollout:
+  desc: null
+  value: 0.25
+eval_episodes:
+  desc: null
+  value: 5
+eval_freq:
+  desc: null
+  value: 50
+expl_noise_std:
+  desc: null
+  value: 1
+exploration_when_stopped:
+  desc: null
+  value: true
+explore_episodes:
+  desc: null
+  value: 10
+fourier:
+  desc: null
+  value: true
+fourier_goal_selector:
+  desc: null
+  value: true
+frontier_expansion_freq:
+  desc: null
+  value: 10
+frontier_expansion_rate:
+  desc: null
+  value: 5
+goal_selector_batch_size:
+  desc: null
+  value: 64
+goal_selector_epochs:
+  desc: null
+  value: 400
+goal_selector_name:
+  desc: null
+  value: ''
+goal_selector_num_samples:
+  desc: null
+  value: 20
+goal_threshold:
+  desc: null
+  value: -1
+human_data_file:
+  desc: null
+  value: ''
+human_input:
+  desc: null
+  value: true
+img_shape:
+  desc: null
+  value:
+  - 128
+  - 128
+  - 3
+k_goal:
+  desc: null
+  value: 1
+label_from_last_k_steps:
+  desc: null
+  value: 50
+label_from_last_k_trajectories:
+  desc: null
+  value: 20
+load_buffer:
+  desc: null
+  value: false
+load_goal_selector:
+  desc: null
+  value: false
+lr:
+  desc: null
+  value: 0.0005
+max_path_length:
+  desc: null
+  value: 200
+max_timesteps:
+  desc: null
+  value: 10000000
+maze_type:
+  desc: null
+  value: 3
+network_layers:
+  desc: null
+  value: 400,600,600,300
+normalize:
+  desc: null
+  value: false
+num_blocks:
+  desc: null
+  value: 3
+num_demos:
+  desc: null
+  value: 5
+policy_updates_per_step:
+  desc: null
+  value: 100
+pretrain:
+  desc: null
+  value: false
+pretrain_goal_selector:
+  desc: null
+  value: true
+pretrain_policy:
+  desc: null
+  value: true
+random_goal:
+  desc: null
+  value: false
+remove_last_k_steps:
+  desc: null
+  value: 8
+remove_last_steps_when_stopped:
+  desc: null
+  value: true
+render:
+  desc: null
+  value: false
+repeat_previous_action_prob:
+  desc: null
+  value: 0.2
+reward_layers:
+  desc: null
+  value: 400,600,600,300
+sample_new_goal_freq:
+  desc: null
+  value: 10
+sample_softmax:
+  desc: null
+  value: true
+save_buffer:
+  desc: null
+  value: false
+save_videos:
+  desc: null
+  value: true
+select_best_sample_size:
+  desc: null
+  value: 1000
+select_goal_from_last_k_trajectories:
+  desc: null
+  value: 10
+select_last_k_steps:
+  desc: null
+  value: 21
+start_frontier:
+  desc: null
+  value: 40
+stop_training_goal_selector_after:
+  desc: null
+  value: -1
+stopped_thresh:
+  desc: null
+  value: 0.05
+task_config:
+  desc: null
+  value: slide_cabinet,microwave,hinge_cabinet
+throw_trajectories_not_reaching_goal:
+  desc: null
+  value: false
+train_goal_selector_freq:
+  desc: null
+  value: 10
+train_with_preferences:
+  desc: null
+  value: true
+use_horizon:
+  desc: null
+  value: false
+use_oracle:
+  desc: null
+  value: false
+use_wrong_oracle:
+  desc: null
+  value: false
+weighted_sl:
+  desc: null
+  value: false

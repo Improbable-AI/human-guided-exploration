@@ -1,0 +1,24 @@
+<html>
+<head></head>
+<body>
+    <p>This is the scheduler</p>
+</body>
+<script>
+    startBackend()
+    setInterval(createHits, 30000)
+    setInterval(loadHits, 30000)
+
+    function createHits(){
+        console.log("create hits")
+        fetch("http://improbable008.csail.mit.edu:8000/create_hits")
+    }
+    function loadHits(){
+        console.log("load hits")
+        fetch("http://improbable008.csail.mit.edu:8000/load_hits")
+    }
+    function startBackend(){
+        console.log("start backend")
+        fetch("http://improbable008.csail.mit.edu:8000/start")
+    }
+</script>
+</html>

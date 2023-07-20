@@ -1,0 +1,202 @@
+common: 
+  lr: 0.0005
+  save_buffer: False
+  load_buffer: False
+  load_goal_selector: False
+  batch_size: 100
+  goal_selector_name: ''
+  select_best_sample_size: 1000
+  explore_episodes: 10
+  render: False
+  display_plots: True
+  goal_selector_num_samples: 1000
+  remove_last_steps_when_stopped: True
+  train_goal_selector_freq: 5
+  exploration_when_stopped: True
+  distance_noise_std: 0
+  eval_episodes: 5
+  save_videos: True
+  eval_freq: 50
+  task_config: slide_cabinet,microwave
+  epsilon_greedy_exploration: 0
+  epsilon_greedy_rollout: 1
+  select_last_k_steps: 21
+  remove_last_k_steps: 8
+  network_layers: 400,600,600,300
+  reward_layers: 400,600,600,300
+  weighted_sl: False
+  num_blocks: 3
+  random_goal: False
+  maze_type: 3
+  buffer_size: 1000
+  use_horizon: False
+  sample_new_goal_freq: 10
+  k_goal: 1
+  throw_trajectories_not_reaching_goal: False
+  fourier: True
+  fourier_goal_selector: True
+  command_goal_if_too_close: False
+  display_trajectories_freq: 50
+  contrastive: False
+  deterministic_rollout: False
+  expl_noise_std: 1
+  normalize: False
+  goal_threshold: -1
+  goal_selector_epochs: 400 # TODO
+  goal_selector_batch_size: 64
+  check_if_stopped: True
+  use_wrong_oracle: False
+  human_data_file: ''
+  stop_training_goal_selector_after: -1
+  policy_updates_per_step: 100
+  pretrain: False
+  num_demos: 0
+  desired_goal_sampling_freq: 0
+  img_width: 64
+  img_height: 64
+  human_input: False
+  max_timesteps: 1000000
+  explore_length: 20
+  max_path_length: 150 
+  stopped_thresh: 0.05
+  frontier_expansion_freq: 20
+  frontier_expansion_rate: 5
+  start_frontier: 30
+  repeat_previous_action_prob: 0
+  select_goal_from_last_k_trajectories: 20
+
+
+pointmass_rooms:
+  explore_length: 20
+  max_timesteps: 400000
+  max_path_length: 70
+  stopped_thresh: 0.05
+  start_frontier: 20
+  frontier_expansion_rate: 10
+  frontier_expansion_freq: 100
+  select_goal_from_last_k_trajectories: 20
+  label_from_last_k_steps: 20
+  label_from_last_k_trajectories: 20
+  repeat_previous_action_prob: 0.25
+  continuous_action_space: False
+
+complex_maze:
+  explore_length: 20
+  max_timesteps: 20000000
+  max_path_length: 250
+  stopped_thresh: 0.5
+  start_frontier: 40
+  frontier_expansion_rate: 5
+  frontier_expansion_freq: 100
+  select_goal_from_last_k_trajectories: 10
+  label_from_last_k_steps: 50
+  label_from_last_k_trajectories: 20
+  repeat_previous_action_prob: 0.9
+  continuous_action_space: False
+
+block_stacking:
+  epsilon_greedy_rollout: 1
+  num_blocks: 3
+  max_path_length: 10
+  explore_length: 2
+  buffer_size: 1000
+  sample_new_goal_freq: 1
+  select_best_sample_size: 100
+  stopped_thresh: 0.05
+  remove_last_steps_when_stopped: False
+  select_last_k_steps: 15
+  frontier_expansion_freq: 200
+  frontier_expansion_rate: 2
+  start_frontier: 4
+  select_goal_from_last_k_trajectories: 20
+  desired_goal_sampling_freq: 0.1
+  train_goal_selector_freq: 1
+  continuous_action_space: True
+  max_timesteps: 2500000
+
+bandu:
+  epsilon_greedy_rollout: 1
+  num_blocks: 4
+  max_path_length: 12
+  explore_length: 2
+  buffer_size: 1000
+  sample_new_goal_freq: 1
+  select_best_sample_size: 100
+  stopped_thresh: 0.05
+  remove_last_steps_when_stopped: False
+  select_last_k_steps: 15
+  frontier_expansion_freq: 200
+  frontier_expansion_rate: 2
+  start_frontier: 4
+  select_goal_from_last_k_trajectories: 20
+  desired_goal_sampling_freq: 0.1
+  train_goal_selector_freq: 1
+  continuous_action_space: True
+  max_timesteps: 2500000
+
+kitchenSeq:
+  epsilon_greedy_rollout: 0.25
+  max_timesteps: 10000000 
+  max_path_length: 200 
+  stopped_thresh: 0.05
+  start_frontier: 40
+  frontier_expansion_rate: 5
+  frontier_expansion_freq: 10 
+  select_goal_from_last_k_trajectories: 10 
+  label_from_last_k_steps: 50 
+  label_from_last_k_trajectories: 50 
+  repeat_previous_action_prob: 0.2
+  continuous_action_space: False
+  task_config: "slide_cabinet,microwave,hinge_cabinet"
+
+pusher_hard: 
+  epsilon_greedy_rollout: 0
+  max_timesteps: 1000000
+  policy_updates_per_step: 270
+  explore_length: 20
+  buffer_size: 100
+  max_path_length: 150 
+  sample_new_goal_freq: 1
+  select_best_sample_size: 100
+  stopped_thresh: 0.05
+  select_last_k_steps: 21
+  frontier_expansion_freq: 20
+  frontier_expansion_rate: 5
+  start_frontier: 100
+  repeat_previous_action_prob: 0
+  select_goal_from_last_k_trajectories: 20
+  train_goal_selector_freq: 1
+  remove_last_k_steps: 9
+
+use_images:
+  use_images_in_policy: False
+  use_images_in_reward_model: False
+  use_images_in_stopping_criteria: False
+  classifier_model: None
+  train_classifier_freq: 10
+  classifier_batch_size: 1000
+  
+gcsl:
+  train_with_preferences: False
+  use_oracle: False
+  sample_softmax: False
+  human_input: False
+
+human:
+  train_with_preferences: True
+  use_oracle: False
+  sample_softmax: True
+  human_input: True
+
+huge:
+  train_with_preferences: True
+  use_oracle: False
+  sample_softmax: True
+  human_input: False
+
+oracle:
+  train_with_preferences: True
+  use_oracle: True
+  sample_softmax: False
+  human_input: False
+

@@ -1,0 +1,137 @@
+<!DOCTYPE html><html><head><title>HIT</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><script type='text/javascript' src='https://s3.amazonaws.com/mturk-public/externalHIT_v1.js'></script></head><body><form name="mturk_form" method="post" id="mturk_form" action="https://www.mturk.com/mturk/externalSubmit"><input type="hidden" value="" name="assignmentId" id="assignmentId" /><!-- HIT template: WebsiteDataCollection-v3.0 --><!-- The following snippet enables the 'responsive' behavior on smaller screens -->
+<!-- HIT template: Sentiment-v3.0 --><!-- The following snippet enables the 'responsive' behavior on smaller screens -->
+<meta content="width=device-width,initial-scale=1" name="viewport" />
+<section class="container" id="Sentiment"><!-- Instructions (collapsible) -->
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <div class="panel panel-primary"><!-- WARNING: the ids "collapseTrigger" and "instructionBody" are being used to enable expand/collapse feature --><a class="panel-heading" href="javascript:void(0);" id="collapseTrigger"><strong>Iris Classification Instructions</strong> <span class="collapse-text">(Click to expand)</span> </a>
+                <div class="panel-body" id="instructionBody"><strong>Identify the type of iris based on the photo:</strong>
+                    <table class="table table-condensed table-striped table-responsive">
+                        <tbody>
+                        </tbody>
+                        <colgroup>
+                            <col class="col-xs-5 col-md-5" />
+                            <col class="col-xs-7 col-md-7" />
+                        </colgroup>
+                        <!-- By explaining the sentiment scale, the accuracy of the answers may increase. -->
+                        <tbody>
+                        <tr>
+                            <th>Type</th>
+                            <th>Example image</th>
+                        </tr>
+                        <tr>
+                            <td>Setosa</td>
+                            <td><img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Kosaciec_szczecinkowaty_Iris_setosa.jpg" width="100%"/></td>
+                        </tr>
+                        <tr>
+                            <td>Versicolor</td>
+                            <td><img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Iris_versicolor_3.jpg" width="100%"/></td>
+                        </tr>
+                        <tr>
+                            <td>Virginica</td>
+                            <td><img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Iris_virginica_-_NRCS.jpg" width="100%"/></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <p>These images are used here under the Creative Commons Attribution-ShareAlike 2.0 and 3.0 licenses and have been provided by <a href="https://commons.wikimedia.org/wiki/User:Radomil" target="_blank">Radomil</a> (<a href="https://commons.wikimedia.org/w/index.php?curid=170298" target="_blank">Iris setosa</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.en" target="_blank">CC BY-SA 3.0</a>), <a href="https://commons.wikimedia.org/wiki/User:Dlanglois" target="_blank">Dlanglois</a> (<a href="https://commons.wikimedia.org/w/index.php?curid=248095" target="_blank">Iris versicolor</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.en" target="_blank">CC BY-SA 3.0</a>), and <a href="https://www.flickr.com/photos/33397993@N05" target="_blank">Frank Mayfield</a> (<a href="https://commons.wikimedia.org/wiki/File:Iris_virginica.jpg" target="_blank">Iris virginica</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0/deed.en" target="_blank">CC BY-SA 2.0</a>).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End instructions --><!-- Categorization Layout -->
+
+    <div class="row" id="workContent">
+        <div class="col-xs-12 col-sm-8 content">
+            <p class="well"><img src="${image_url}" width="100%"/></p>
+        </div>
+
+        <div class="col-xs-12 col-sm-4 fields">
+            <div class="form-group"><!-- Question for the Worker --><label class="group-label">Iris type:</label> <!-- Input from the Worker -->
+
+                <div class="btn-group-vertical" data-toggle="buttons" id="Inputs">
+                    <label class="btn btn-default">
+                        <input id="Setosa" name="species" required="" type="radio" value="0" />
+                        Setosa
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Kosaciec_szczecinkowaty_Iris_setosa.jpg" width="80%"/>
+                    </label>
+                    <label class="btn btn-default">
+                        <input id="Versicolor" name="species" required="" type="radio" value="1" />
+                        Versicolor
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Iris_versicolor_3.jpg" width="80%"/>
+                    </label>
+                    <label class="btn btn-default">
+                        <input id="Eight" name="species" required="" type="radio" value="2" />
+                        Virginica
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Iris_virginica_-_NRCS.jpg" width="80%"/>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End Categorization Layout --><!-- Please note that Bootstrap CSS/JS and JQuery are 3rd party libraries that may update their url/code at any time. Amazon Mechanical Turk (MTurk) is including these libraries as a default option for you, but is not responsible for any changes to the external libraries --><!-- External CSS references -->
+<link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" rel="stylesheet" /><!-- Open internal style sheet -->
+<style type="text/css">#collapseTrigger{
+    color:#fff;
+    display: block;
+    text-decoration: none;
+}
+#submitButton{
+    white-space: normal;
+}
+#instructionBody table{
+    font-size: 14px;
+    margin-top: 10px;
+}
+#instructionBody table caption{
+    text-align: left;
+    padding: 0 0 5px 0;
+}
+#Inputs{
+    display: block;
+    margin-top: 10px;
+}
+.content{
+    margin-bottom: 15px;
+}
+.radio:first-of-type{
+    margin-top: -5px;
+}
+</style>
+<!-- Close internal style sheet --><!-- External JS references --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Open internal javascript --><script>
+    $(document).ready(function() {
+        // Instructions expand/collapse
+        var content = $('#instructionBody');
+        var trigger = $('#collapseTrigger');
+        content.hide();
+        $('.collapse-text').text('(Click to expand)');
+        trigger.click(function(){
+            content.toggle();
+            var isVisible = content.is(':visible');
+            if(isVisible){
+                $('.collapse-text').text('(Click to collapse)');
+            }else{
+                $('.collapse-text').text('(Click to expand)');
+            }
+        });
+        // end expand/collapse
+
+        // highlight selected category
+        var inputs = $("#Inputs input:radio");
+        inputs.change(function(){
+            inputs.parent().removeClass("btn-success");
+            inputs.parent().addClass("btn-default");
+            if($(this).is(":checked")){
+                $(this).parent().removeClass("btn-default");
+                $(this).parent().addClass("btn-success");
+            }else{
+                $(this).parent().removeClass("btn-success");
+                $(this).parent().addClass("btn-default");
+            }
+        });
+        // end highlight
+    });
+</script><!-- Close internal javascript -->
+        <p class="text-center"><input type="submit" id="submitButton" class="btn btn-primary" value="Submit" /></p></form>
+    
+    <script language="Javascript">turkSetAssignmentID();</script></body></html>

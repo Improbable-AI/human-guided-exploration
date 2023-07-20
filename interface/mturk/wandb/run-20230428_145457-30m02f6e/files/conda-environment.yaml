@@ -1,0 +1,4 @@
+name: interface2
+channels:
+  - defaults
+prefix: /data/pulkitag/misc/marcel/miniconda3/envs/interface2/envs/interface2

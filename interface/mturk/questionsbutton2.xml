@@ -1,0 +1,35 @@
+<HTMLQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2011-11-11/HTMLQuestion.xsd">
+<HTMLContent><![CDATA[
+<!-- YOUR HTML BEGINS -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+<script type='text/javascript' src='https://assets.crowd.aws/crowd-html-elements.js'></script>
+<script>
+const img_url = "http://improbable008.csail.mit.edu:8000/image?answer=22"
+const res = await fetch(imageUrl);
+console.log("Fetch image", res)
+const imageBlob = await res.blob();
+const imageObjectURL = URL.createObjectURL(imageBlob);
+console.log(imageObjectURL)
+document.getElementById("targetimg").src = imageObjectURL
+</sript>
+</head>
+<body>
+<crowd-form>
+<h3>${imgurl}</h3>
+<img id="targetimg" src="img.png">
+<div>
+  <button type='submit' name='left'>Left</button>
+  <button type='submit' name='dont'>I don't know</button>
+  <button type='submit' name="right">Right</button>
+</div>
+</crowd-form>
+<script language='Javascript'>turkSetAssignmentID();</script>
+</body></html>
+<!-- YOUR HTML ENDS -->
+]]>
+</HTMLContent>
+<FrameHeight>600</FrameHeight>
+</HTMLQuestion>

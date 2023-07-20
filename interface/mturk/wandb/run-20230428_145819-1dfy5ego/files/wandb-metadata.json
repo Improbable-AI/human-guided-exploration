@@ -1,0 +1,27 @@
+{
+    "os": "Linux-5.15.0-70-generic-x86_64-with-debian-bookworm-sid",
+    "python": "3.6.12",
+    "heartbeatAt": "2023-04-28T18:58:19.912759",
+    "startedAt": "2023-04-28T18:58:19.205184",
+    "docker": null,
+    "gpu": "NVIDIA GeForce RTX 2080 Ti",
+    "gpu_count": 1,
+    "cpu_count": 24,
+    "cuda": null,
+    "args": [
+        "backend:app",
+        "--host",
+        "0.0.0.0"
+    ],
+    "state": "running",
+    "program": "/data/pulkitag/misc/marcel/miniconda3/envs/interface2/bin/uvicorn",
+    "git": {
+        "remote": "git@github.com:abhishekunique/goalrelabel_locobot_fullgcsl.git",
+        "commit": "bde52d8f8c6da399d530cfdb86b35443c200cd85"
+    },
+    "email": "marceltovi@gmail.com",
+    "root": "/data/pulkitag/misc/marcel/goalrelabel_locobot_fullgcsl",
+    "host": "improbable008.csail.mit.edu",
+    "username": "marcel",
+    "executable": "/data/pulkitag/misc/marcel/miniconda3/envs/interface2/bin/python"
+}
