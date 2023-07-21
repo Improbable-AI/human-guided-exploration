@@ -1,7 +1,7 @@
 # Human-Guided Exploration (HuGE)
 
 This repository provides the official implementation of the Human Guided Exploration (HuGE) algorithm, as proposed in *Breadcrumbs to the Goal: Goal-Conditioned Exploration from Human-in-the-loop feedback*
-The manuscript is available on [arXiv](TODO). See the [project page](https://human-guided-exploration.github.io/HuGE/)
+The manuscript is available on [arXiv](https://arxiv.org/abs/2307.11049). See the [project page](https://human-guided-exploration.github.io/HuGE/)
 
 If you use this codebase, please cite
 
