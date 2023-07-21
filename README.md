@@ -9,12 +9,13 @@ If you use this codebase, please cite
 
 ## Citation
 ```
-@inproceedings{torne2023huge,
-  title={Breadcrumbs to the goal: Goal-Conditioned Exploration from Human-in-the-loop feedback},
-  author={Torne, Marcel and Balsells, Max and Wang, Zihan and Desai, Samedh and and Chen, Tao and Agrawal, Pulkit and Gupta, Abhishek},
-  booktitle={arxiv},
-  year={2023},
-  organization={PMLR}
+@misc{torne2023breadcrumbs,
+      title={Breadcrumbs to the Goal: Goal-Conditioned Exploration from Human-in-the-Loop Feedback}, 
+      author={Marcel Torne and Max Balsells and Zihan Wang and Samedh Desai and Tao Chen and Pulkit Agrawal and Abhishek Gupta},
+      year={2023},
+      eprint={2307.11049},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
 }
 ```
 
