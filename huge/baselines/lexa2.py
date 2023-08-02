@@ -484,7 +484,7 @@ class LEXA:
             self.delta_y = 1.8/self.grid_size
             self.shift = 0.9
     def get_density(self, state):
-        idx = self.get_grid_cell(np.array([state]))[0]
+        idx = self.get_grid_cell(np.array([state]))
         return self.densities[tuple(idx)] 
 
     def add_visited_states(self, achieved_states):
@@ -506,8 +506,6 @@ class LEXA:
             for i in range(goal.shape[0])
         ] 
         scores = - torch.tensor(np.array([dist])).T
-        import IPython
-        IPython.embed()
         return scores
     
 
