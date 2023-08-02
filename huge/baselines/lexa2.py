@@ -491,6 +491,9 @@ class LEXA:
   
     def get_grid_cell(self, achieved_states):
         if self.env_name == "pointmass_rooms":
+            self.delta_x = 1.8/self.grid_size
+            self.delta_y = 1.8/self.grid_size
+            self.shift = 0.9
             x = np.floor((achieved_states[:,0] + self.shift)/ self.delta_x).astype(np.int)
             y = np.floor((achieved_states[:, 1] + self.shift) / self.delta_y).astype(np.int)
             return x,y
