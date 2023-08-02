@@ -240,6 +240,7 @@ if __name__ == "__main__":
     parser.add_argument("--fill_buffer_first_episodes", type=int, default=None)
     parser.add_argument("--goal_selector_name", type=str, default=None)
     parser.add_argument("--use_images", action="store_true", default=False)
+    parser.add_argument("--grid_size",type=int, default=5)
 
     args = parser.parse_args()
     method = "oracle"

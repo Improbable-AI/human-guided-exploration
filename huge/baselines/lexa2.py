@@ -1091,6 +1091,7 @@ class LEXA:
     def display_goal_selection(self, states, goal, commanded_goal):
         # plot added trajectories to fake replay buffer
         plt.clf()
+        plt.cla()
         self.test_goal_selector(-1, False)
         self.env.display_wall()
         for j in range(states.shape[0]):
