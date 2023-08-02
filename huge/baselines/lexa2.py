@@ -159,6 +159,7 @@ class LEXA:
     ):
 
         self.grid_size = grid_size
+        print("Grid size", self.grid_size)
         self.current_qid = 0
         self.info_per_qid = {}
         self.training_goal_selector_now = False

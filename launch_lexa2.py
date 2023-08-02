@@ -70,6 +70,7 @@ def run(start_frontier = -1,
         policy_name='',
         img_width=64,
         img_height=64,
+        grid_size=5,
         use_images_in_policy=False, use_images_in_reward_model=False, use_images_in_stopping_criteria=False, close_frames=2, far_frames=10,
         max_timesteps=2e-4, goal_selector_name='', **extra_params):
 
@@ -150,6 +151,7 @@ def run(start_frontier = -1,
     huge_kwargs['use_images_in_reward_model'] = use_images_in_reward_model
     huge_kwargs['classifier_model'] = classifier_model
     huge_kwargs['use_images_in_stopping_criteria'] = use_images_in_stopping_criteria
+    huge_kwargs['grid_size'] = grid_size
     print(huge_kwargs)
 
     algo = lexa2.LEXA(
