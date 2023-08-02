@@ -523,7 +523,8 @@ class LEXA:
                 best_idx = torch.distributions.Categorical(logits=torch.tensor(reward_vals.reshape(-1))).sample()
             else:
                 best_idx = reward_vals.reshape(-1).argsort()[-self.k_goal]
-
+            import IPython
+            IPython.embed()
             request_goals.append(achieved_states[best_idx])
             if self.use_images_in_reward_model or self.use_images_in_policy or self.use_images_in_stopping_criteria:
                 requested_goal_images.append(img_obs[best_idx])
