@@ -631,7 +631,7 @@ class GCSL:
             buffer = self.validation_buffer
 
         if buffer is None or buffer.current_buffer_size == 0:
-            return 0
+            return 0,0
 
         avg_loss = 0
         avg_rewardmodel_loss = 0
