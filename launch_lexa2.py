@@ -267,6 +267,7 @@ if __name__ == "__main__":
     data_folder_name = data_folder_name + str(args.seed)
 
     params["data_folder"] = data_folder_name
+    params["grid_size"] = args.grid_size
 
     comment = args.comment
 
