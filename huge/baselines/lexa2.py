@@ -496,6 +496,19 @@ class LEXA:
             x = np.floor((achieved_states[:,0] + self.shift)/ self.delta_x).astype(np.int)
             y = np.floor((achieved_states[:, 1] + self.shift) / self.delta_y).astype(np.int)
             return x,y
+        
+    
+    def oracle_model(self, state, goal):
+        state = state.detach().cpu().numpy()
+
+        dist = [
+            self.get_density(state[i])
+            for i in range(goal.shape[0])
+        ] 
+        scores = - torch.tensor(np.array([dist])).T
+        import IPython
+        IPython.embed()
+        return scores
     
 
     def get_closest_achieved_state(self, goal_candidates, device):
@@ -523,8 +536,6 @@ class LEXA:
                 best_idx = torch.distributions.Categorical(logits=torch.tensor(reward_vals.reshape(-1))).sample()
             else:
                 best_idx = reward_vals.reshape(-1).argsort()[-self.k_goal]
-            import IPython
-            IPython.embed()
             request_goals.append(achieved_states[best_idx])
             if self.use_images_in_reward_model or self.use_images_in_policy or self.use_images_in_stopping_criteria:
                 requested_goal_images.append(img_obs[best_idx])
@@ -547,15 +558,6 @@ class LEXA:
         else:
             return self.env.compute_shaped_distance(obs, goal)
 
-    def oracle_model(self, state, goal):
-        state = state.detach().cpu().numpy()
-
-        dist = [
-            self.get_density(state[i]) + np.random.normal(scale=self.distance_noise_std)
-            for i in range(goal.shape[0])
-        ] 
-        scores = - torch.tensor(np.array([dist])).T
-        return scores
         
     def loss_fn(self, observations, goals, actions, horizons, weights):
         obs_dtype = torch.float32
