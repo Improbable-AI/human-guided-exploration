@@ -137,9 +137,12 @@ class GCSL:
         human_input=False,
         grid_size = 10,
         sample_softmax=False,
-
+        continuous_action_space=False,
+        repeat_previous_action_prob=0,
 
     ):
+        self.repeat_previous_action_prob = repeat_previous_action_prob
+        self.continuous_action_space = continuous_action_space
         self.env_name = env_name
         self.env = env
         self.policy = policy
@@ -480,6 +483,7 @@ class GCSL:
 
         states = []
         actions = []
+        previous_action=None
 
         state = self.env.reset()
         stopped = False
@@ -494,7 +498,26 @@ class GCSL:
 
             horizon = np.arange(self.max_path_length) >= (self.max_path_length - 1 - t) # Temperature encoding of horizon
             if stopped : #exploration_horizon != -1 and exploration_horizon < t : # TODO: get distance here
-                action = self.random_policy.act_vectorized(observation[None], goal[None], horizon=horizon[None], greedy=False, noise=noise)[0]
+                    if self.continuous_action_space:
+                        if "block" in self.env_name or "bandu" in self.env_name:
+                            action_low = np.array([0.25, -0.5])
+                            action_high = np.array([0.75, 0.5])
+
+                        else :
+                            action_low = self.env.action_space.low
+                            action_high = self.env.action_space.high
+
+                        action_space_mean = (action_low + action_high)/2
+                        action_space_range = (action_high - action_low)/2
+                        action = np.random.normal(0, 1, self.env.action_space.shape)
+                        action = action*action_space_range+action_space_mean
+                        previous_action = action
+                    else:
+                        if previous_action is None or np.random.random() > self.repeat_previous_action_prob:
+                            action = np.random.randint(self.env.action_space.n)
+                            previous_action = action
+                        else:
+                            action = previous_action
             else:
                 # TODO: this should only happen on training not on evaluation, add flag
                 # TODO: figure out the exploration
