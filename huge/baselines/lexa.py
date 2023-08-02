@@ -287,91 +287,6 @@ class GCSL:
 
         return mean_loss,accuracy
 
-    # TODO: try train regression on it
-    def train_rewardmodel_regression(self,device, eval_data=None, batch_size=32, num_epochs=400):
-        # Train standard goal conditioned policy
-
-        loss_fn = torch.nn.MSELoss() 
-        losses_eval = []
-
-        self.reward_model.train()
-        running_loss = 0.0
-        
-        # Train the model with regular SGD
-        for epoch in range(num_epochs):  # loop over the dataset multiple times
-            start = time.time()
-            
-            achieved_states, _,  goals ,distance = self.reward_model_buffer.sample_batch(batch_size)
-            
-            self.reward_optimizer.zero_grad()
-
-            t_idx = np.random.randint(len(goals), size=(batch_size,)) # Indices of first trajectory
-            
-            state = torch.Tensor(achieved_states[t_idx]).to(device)
-            goal = torch.Tensor(goals[t_idx]).to(device)
-            dist_t = torch.Tensor(distance[t_idx]).to(device).float()
-            pred = self.reward_model(state, goal)
-            loss = loss_fn(pred, dist_t)
-            loss.backward()
-            torch.nn.utils.clip_grad_norm(self.reward_model.parameters(), 5)
-            self.reward_optimizer.step()
-
-            # print statistics
-            running_loss += float(loss.item())
-            
-            #if epoch % 10 == 0 and epoch > 0:
-                #losses_eval, acc_eval = self.eval_rewardmodel(batch_size)
-        
-                #print("Accuracy eval is ", acc_eval)
-                # print('[%d, %5d] loss: %.8f' %
-                #     (epoch + 1, i + 1, running_loss / 100.))
-        #if eval_data is not None:
-        #    eval_loss, _ = self.eval_rewardmodel(eval_data, batch_size)
-        #    losses_eval.append(eval_loss)
-        return running_loss/batch_size, 0#, (losses_eval, acc_eval)
-
-    def train_rewardmodel(self,device, eval_data=None, batch_size=32, num_epochs=400):
-        # Train standard goal conditioned policy
-
-        loss_fn = torch.nn.CrossEntropyLoss() 
-        losses_eval = []
-
-        self.reward_model.train()
-        running_loss = 0.0
-        
-        # Train the model with regular SGD
-        for epoch in range(num_epochs):  # loop over the dataset multiple times
-            start = time.time()
-            
-            achieved_states_1, achieved_states_2, goals ,labels = self.reward_model_buffer.sample_batch(batch_size)
-            
-            self.reward_optimizer.zero_grad()
-
-            t_idx = np.random.randint(len(goals), size=(batch_size,)) # Indices of first trajectory
-            
-            state1 = torch.Tensor(achieved_states_1[t_idx]).to(device)
-            state2 = torch.Tensor(achieved_states_2[t_idx]).to(device)
-            goal = torch.Tensor(goals[t_idx]).to(device)
-            label_t = torch.Tensor(labels[t_idx]).long().to(device)
-
-            g1g2 = torch.cat([self.reward_model(state1, goal), self.reward_model(state2, goal)], axis=-1)
-            loss = loss_fn(g1g2, label_t)
-            loss.backward()
-            self.reward_optimizer.step()
-
-            # print statistics
-            running_loss += float(loss.item())
-            
-            #if epoch % 10 == 0 and epoch > 0:
-                #losses_eval, acc_eval = self.eval_rewardmodel(batch_size)
-        
-                #print("Accuracy eval is ", acc_eval)
-                # print('[%d, %5d] loss: %.8f' %
-                #     (epoch + 1, i + 1, running_loss / 100.))
-        #if eval_data is not None:
-        #    eval_loss, _ = self.eval_rewardmodel(eval_data, batch_size)
-        #    losses_eval.append(eval_loss)
-        return running_loss, 0#, (losses_eval, acc_eval)
 
     def add_visited_states(self, achieved_states):
         x, y = self.get_grid_cell(achieved_states)
@@ -470,30 +385,7 @@ class GCSL:
         else:
             return 1
 
-    def generate_pref_labels_regression(self, goal_states, extract=False):
-        observations_1, _, _, _, _, _ = self.replay_buffer.sample_batch(self.reward_model_num_samples) # TODO: add
-   
-        goals = []
-        labels = []
-        achieved_state = []
 
-        # TODO: remove
-        #goal_states = np.array([[0.3,0.3]])
-        num_goals = len(goal_states)
-        for state_1 in observations_1:
-            for goal in goal_states:
-                if extract:
-                    goal = self.env.extract_goal(goal)
-                labels.append(self.env_distance(state_1, goal)) # oracle TODO: we will use human labels here
-
-                achieved_state.append(state_1) 
-                goals.append(goal)
-
-        achieved_state = np.array(achieved_state)
-        goals = np.array(goals)
-        labels = np.array(labels)
-        
-        return achieved_state, achieved_state, goals, labels # TODO: check ordering
 
     # TODO: this is not working too well witht the shaped distances
     def generate_pref_labels(self, goal_states):
@@ -712,61 +604,7 @@ class GCSL:
             ex, ey = end
             plt.plot([sx, ex], [sy, ey], marker='',  color = 'black', linewidth=3)
 
-    def ask_human_labels(self, state1, state2, goal):
-        from matplotlib.widgets import Button
-        self.curr_label = 0
-        callback = Index()
-        fig, ax = plt.subplots()
-        self.display_wall_fig(fig, ax)
-        fig.subplots_adjust(bottom=0.2)
-        axfirst = fig.add_axes([0.7,0.05, 0.1, 0.075])
-        axsecond = fig.add_axes([0.81,0.05,0.1,0.075])
-        ax.scatter(state1[0], state1[1], color="blue")
-        ax.scatter(state2[0], state2[1], color="red")
-        ax.scatter(goal[0], goal[1], marker='o', s=100, color='black')
-        bfirst = Button(axfirst, 'Blue')
-        bfirst.on_clicked(callback.first)
-        bsecond = Button(axsecond, 'Red')
-        bsecond.on_clicked(callback.second)
-        plt.show()#block=False)
-        #plt.pause(1)
-        #key = ""
-        #while key != 'r' and key != 'b':
-        #    key =  input("Please give the preference, b if blue is closer to the goal in black and r if red is closer: ")
-        #    print(key)
-        #plt.close()
-        #if key == 'b':
-        #    return 0
-        #else:
-        #    return 1
-        return self.curr_label
 
-    def generate_pref_from_human(self, goal_states, extract=False):
-        observations_1, _, _, _, _, _ = self.replay_buffer.sample_batch(self.reward_model_num_samples) # TODO: add
-        observations_2, _, _, _, _, _ = self.replay_buffer.sample_batch(self.reward_model_num_samples) # TODO: add
-   
-        goals = []
-        labels = []
-        achieved_state_1 = []
-        achieved_state_2 = []
-
-        num_goals = len(goal_states)
-        for state_1, state_2 in zip(observations_1, observations_2):
-            for goal in goal_states:
-                if extract:
-                    goal = self.env.extract_goal(goal)
-                labels.append(self.ask_human_labels(state_1, state_2, goal)) # oracle TODO: we will use human labels here
-
-                achieved_state_1.append(state_1) 
-                achieved_state_2.append(state_2) 
-                goals.append(goal)
-
-        achieved_state_1 = np.array(achieved_state_1)
-        achieved_state_2 = np.array(achieved_state_2)
-        goals = np.array(goals)
-        labels = np.array(labels)
-        
-        return achieved_state_1, achieved_state_2, goals, labels # TODO: check ordering
 
     def take_policy_step(self, buffer=None):
         if buffer is None:
@@ -776,7 +614,7 @@ class GCSL:
         self.policy_optimizer.zero_grad()
         
         for _ in range(self.n_accumulations):
-            observations, actions, goals, _, horizons, weights = buffer.sample_batch(self.batch_size)
+            observations, actions, goals, lengths, horizons, weights, img_states, img_goals = buffer.sample_batch(self.batch_size)
 
             loss = self.loss_fn(observations, goals, actions, horizons, weights)
 
@@ -798,7 +636,7 @@ class GCSL:
         avg_loss = 0
         avg_rewardmodel_loss = 0
         for _ in range(self.n_accumulations):
-            observations, actions, goals, lengths, horizons, weights = buffer.sample_batch(self.batch_size)
+            observations, actions, goals, lengths, horizons, weights, img_states, img_goals = buffer.sample_batch(self.batch_size)
             loss = self.loss_fn(observations, goals, actions, horizons, weights)
             #eval_data = self.generate_pref_labels(observations, actions, [goals], extract=False)
             #print("eval data", eval_data)
@@ -1298,7 +1136,7 @@ class GCSL:
                     # Evaluation Code
                     self.policy.eval()
                     self.evaluate_policy(self.eval_episodes, total_timesteps=total_timesteps, greedy=True, prefix='Eval', plots_folder=plots_folder)
-                    _, _, goals, _, _, _ = self.replay_buffer.sample_batch(self.eval_episodes)
+                    observations, actions, goals, lengths, horizons, weights, img_states, img_goals = self.replay_buffer.sample_batch(self.eval_episodes)
                     self.evaluate_policy_requested(goals, total_timesteps=total_timesteps, greedy=True, prefix='EvalRequested', plots_folder=plots_folder_requested)
 
                     logger.record_tabular('policy loss', running_loss or 0) # Handling None case
