@@ -261,7 +261,6 @@ if __name__ == "__main__":
 
     data_folder_name = f"{args.env_name}_"
 
-    wandb_suffix = args.method
     data_folder_name = data_folder_name+"_use_oracle_"
 
     data_folder_name = data_folder_name + str(args.seed)
@@ -270,7 +269,7 @@ if __name__ == "__main__":
 
     comment = args.comment
 
-    wandb.init(project=args.env_name+"_huge", name=f"{args.env_name}_{method}_{args.seed}_{args.comment}", config=params)
+    wandb.init(project=args.env_name+"_huge", name=f"{args.env_name}_lexa_{args.seed}_{args.comment}", config=params)
 
     print("params before run", params)
 
