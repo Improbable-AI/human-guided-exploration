@@ -32,10 +32,25 @@ def run(output_dir='/tmp', env_name='pointmass_empty',buffer_size=20000, fourier
     env_params = envs.get_env_params(env_name)
     env_params['max_trajectory_length']=max_path_length
     env_params['network_layers']=network_layers
-    env_params['fourier']=fourier
-    env_params['use_horizon']=use_horizon
-    env_params['buffer_size']=buffer_size
-
+    env_params['reward_layers'] = "64,64"
+    env_params['buffer_size'] = buffer_size
+    env_params['use_horizon'] = use_horizon
+    env_params['fourier'] = fourier
+    env_params['fourier_goal_selector'] = False
+    env_params['normalize']=False
+    env_params['env_name'] = env_name
+    env_params['goal_selector_buffer_size'] = 10
+    env_params['input_image_size'] = 64
+    env_params['img_width'] = 64
+    env_params['img_height'] = 64
+    env_params['use_images_in_policy'] = False
+    env_params['use_images_in_reward_model'] = False
+    env_params['use_images_in_stopping_criteria'] = False
+    env_params['close_frames'] = False
+    env_params['far_frames'] = False
+    print(env_params)
+    env_params['goal_selector_name']=""
+    env_params['continuous_action_space'] = False
     print(env_params)
     env_params['reward_model_name']=reward_model_name
 
