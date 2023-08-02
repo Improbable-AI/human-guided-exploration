@@ -5,7 +5,7 @@ import huge.doodad_utils as dd_utils
 import argparse
 import wandb
 
-def run(output_dir='/tmp', env_name='pointmass_empty',buffer_size=20000, fourier=False, use_horizon=False, last_k_timesteps=10, explore_length=10, grid_size=10, network_layers="128,128", human_input=False, train_rewardmodel_freq=10, distance_noise_std=0,  exploration_when_stopped=True, remove_last_steps_when_stopped=True, stop_training_rewardmodel_steps=2e6, reward_model_num_samples=100, data_folder="data", display_plots=False, render=False, explore_timesteps=1e4, gpu=True, sample_softmax=False, seed=0, load_rewardmodel=False, batch_size=100, train_regression=False,load_buffer=False, save_buffer=-1, policy_updates_per_step=1,select_best_sample_size=1000, max_path_length=50, hallucinate_policy_freq=5, lr=5e-4, train_with_hallucination=True, start_policy_timesteps=500, log_tensorboard=False, use_oracle=False, exploration_horizon=30, expanding_horizon=False, comment="", max_timesteps=2e-4, reward_model_name='', **kwargs):
+def run(output_dir='/tmp', env_name='pointmass_empty',buffer_size=20000, fourier=False, use_horizon=False, last_k_timesteps=10, explore_length=10, grid_size=10, network_layers="128,128", human_input=False, train_rewardmodel_freq=10, distance_noise_std=0,  exploration_when_stopped=True, remove_last_steps_when_stopped=True, stop_training_rewardmodel_steps=2e6, reward_model_num_samples=100, data_folder="data", display_plots=False, render=False, explore_timesteps=1e4, gpu=0, sample_softmax=False, seed=0, load_rewardmodel=False, batch_size=100, train_regression=False,load_buffer=False, save_buffer=-1, policy_updates_per_step=1,select_best_sample_size=1000, max_path_length=50, hallucinate_policy_freq=5, lr=5e-4, train_with_hallucination=True, start_policy_timesteps=500, log_tensorboard=False, use_oracle=False, exploration_horizon=30, expanding_horizon=False, comment="", max_timesteps=2e-4, reward_model_name='', **kwargs):
 
     import gym
     import numpy as np
@@ -23,8 +23,7 @@ def run(output_dir='/tmp', env_name='pointmass_empty',buffer_size=20000, fourier
     from huge.algo import buffer, variants, networks
 
     ptu.set_gpu(gpu)
-    if not gpu:
-        print('Not using GPU. Will be slow.')
+
 
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -85,6 +84,7 @@ def run(output_dir='/tmp', env_name='pointmass_empty',buffer_size=20000, fourier
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed",type=int, default=0)
+    parser.add_argument("--gpu",type=int, default=0)
     parser.add_argument("--no_preferences", action="store_true", default=False)
     parser.add_argument("--log_tensorboard", action="store_true", default=False)
     parser.add_argument("--hallucinate_policy_freq",type=int, default=500)
@@ -140,7 +140,7 @@ if __name__ == "__main__":
     params = {
         'seed': args.seed,
         'env_name': args.env_name, #'pointmass_rooms', #['lunar', 'pointmass_empty','pointmass_rooms', 'pusher', 'claw', 'door'],
-        'gpu': True,
+        'gpu': args.gpu,
         'use_preferences': not args.no_preferences,
         'log_tensorboard': True, #args.log_tensorboard,
         'hallucinate_policy_freq':args.hallucinate_policy_freq,
