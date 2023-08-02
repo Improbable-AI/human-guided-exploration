@@ -536,8 +536,8 @@ class HUGE:
             self.collect_and_train_goal_selector_human()
             self.training_goal_selector_now = False
 
-        obs_1, _, _, _, _ , _, img_obs1, _ = self.replay_buffer.sample_batch_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
-        obs_2, _, _, _, _, _,  img_obs2, _ = self.replay_buffer.sample_batch_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
+        obs_1, img_obs1, _ = self.replay_buffer.sample_obs_last_steps(1, self.select_last_k_steps, last_k_trajectories=self.select_goal_from_last_k_trajectories)
+        obs_2, img_obs2, _ = self.replay_buffer.sample_obs_last_steps(1, self.select_last_k_steps, last_k_trajectories=self.select_goal_from_last_k_trajectories)
 
         current_state_1 = obs_1[0]
         current_state_2 = obs_2[0]
@@ -580,8 +580,8 @@ class HUGE:
         if self.replay_buffer.current_buffer_size  == 0:
             return None
 
-        obs_1, _, _, _, _ , _, img_obs1, _ = self.replay_buffer.sample_batch_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
-        obs_2, _, _, _, _, _,  img_obs2, _ = self.replay_buffer.sample_batch_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
+        obs_1, img_obs1, _ = self.replay_buffer.sample_obs_last_steps(1, self.select_last_k_steps, last_k_trajectories=self.select_goal_from_last_k_trajectories)
+        obs_2, img_obs2, _ = self.replay_buffer.sample_obs_last_steps(1, self.select_last_k_steps, last_k_trajectories=self.select_goal_from_last_k_trajectories)
 
         self.current_state_1 = obs_1[0]
         self.current_state_2 = obs_2[0]
@@ -634,7 +634,7 @@ class HUGE:
             else:
                 state1 = torch.Tensor(achieved_states_1).to(self.device)
                 state2 = torch.Tensor(achieved_states_2).to(self.device)
-                goal = torch.Tensor(goals).to(self.device)
+                goal = torch.Tensor(goals).tox(self.device)
                 label_t = torch.Tensor(labels).long().to(self.device)
             
 
@@ -989,7 +989,6 @@ class HUGE:
                     goal_image = reached_goal_image
                     # print("Using preferences")
         else:
-            # TODO: URGENT should fix this
             commanded_goal = goal.copy()
             desired_goal = goal.copy()
             commanded_goal_state = np.concatenate([goal.copy(), goal.copy(), goal.copy()])
@@ -1381,13 +1380,11 @@ class HUGE:
             return 0, 0
 
         # print("Collecting and training goal_selector")
-        # TODO: we are gonna substitute generate pref labels with human labelling
         if self.use_images_in_reward_model or self.use_images_in_policy or self.use_images_in_stopping_criteria:
             achieved_state_1, achieved_state_2, goals, labels, images1, images2, img_goals = self.generate_pref_labels_from_images(desired_goal_states_goal_selector, desired_goal_images_goal_selector)
         else:
             achieved_state_1, achieved_state_2, goals, labels = self.generate_pref_labels(desired_goal_states_goal_selector)
 
-        # TODO: add validation buffer
         if self.full_iters % self.display_trajectories_freq == 0 and ("maze" in self.env_name or "ravens" in self.env_name or "pusher" in self.env_name):
             self.display_collected_labels(achieved_state_1, achieved_state_2, goals)
             self.test_goal_selector(self.total_timesteps)
