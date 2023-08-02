@@ -53,8 +53,8 @@ def run(output_dir='/tmp', env_name='pointmass_empty',buffer_size=20000, fourier
     env_params['continuous_action_space'] = False
     print(env_params)
     env_params['reward_model_name']=reward_model_name
+    env, policy, goal_selector, classifier_model, replay_buffer, goal_selector_buffer, huge_kwargs = variants.get_params(env, env_params)
 
-    env, policy, reward_model, replay_buffer, reward_model_buffer, huge_kwargs = variants.get_params(env, env_params)
     
     print(huge_kwargs)
     huge_kwargs['lr']=lr
