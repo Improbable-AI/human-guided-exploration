@@ -183,6 +183,7 @@ gcsl:
   human_input: False
 
 human:
+  human_data_file: human_dataset_02_08_2023_11:26:51.pickle
   train_with_preferences: True
   use_oracle: False
   sample_softmax: True
