@@ -480,9 +480,11 @@ class LEXA:
     def initialize_grid(self):
         if self.env_name == "pointmass_rooms":
             self.densities = np.zeros((self.grid_size, self.grid_size))
-
+            self.delta_x = 1.8/self.grid_size
+            self.delta_y = 1.8/self.grid_size
+            self.shift = 0.9
     def get_density(self, state):
-        idx = self.get_grid_cell(state)
+        idx = self.get_grid_cell(np.array([state]))[0]
         return self.densities[tuple(idx)] 
 
     def add_visited_states(self, achieved_states):
@@ -491,9 +493,6 @@ class LEXA:
   
     def get_grid_cell(self, achieved_states):
         if self.env_name == "pointmass_rooms":
-            self.delta_x = 1.8/self.grid_size
-            self.delta_y = 1.8/self.grid_size
-            self.shift = 0.9
             x = np.floor((achieved_states[:,0] + self.shift)/ self.delta_x).astype(np.int)
             y = np.floor((achieved_states[:, 1] + self.shift) / self.delta_y).astype(np.int)
             return x,y
