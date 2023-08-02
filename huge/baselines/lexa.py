@@ -308,7 +308,7 @@ class GCSL:
         print("Getting closest states")
         reached_state_idxs = []
         
-        observations, actions, goals, _, horizons, weights = self.replay_buffer.sample_batch_last_steps(self.select_best_sample_size)
+        observations, actions, goals, lengths, horizons, weights, img_states, img_goals = self.replay_buffer.sample_batch_last_steps(self.select_best_sample_size)
 
         #print("observations 0", observations[0])
         achieved_states = self.env.observation(observations)
@@ -389,8 +389,8 @@ class GCSL:
 
     # TODO: this is not working too well witht the shaped distances
     def generate_pref_labels(self, goal_states):
-        observations_1, _, _, _, _, _ = self.replay_buffer.sample_batch_last_steps(self.reward_model_num_samples) # TODO: add
-        observations_2, _, _, _, _, _ = self.replay_buffer.sample_batch_last_steps(self.reward_model_num_samples) # TODO: add
+        observations_1, actions, goals, lengths, horizons, weights, img_states, img_goals = self.replay_buffer.sample_batch_last_steps(self.reward_model_num_samples) # TODO: add
+        observations_2, actions, goals, lengths, horizons, weights, img_states, img_goals = self.replay_buffer.sample_batch_last_steps(self.reward_model_num_samples) # TODO: add
    
         goals = []
         labels = []
