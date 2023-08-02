@@ -634,7 +634,7 @@ class HUGE:
             else:
                 state1 = torch.Tensor(achieved_states_1).to(self.device)
                 state2 = torch.Tensor(achieved_states_2).to(self.device)
-                goal = torch.Tensor(goals).tox(self.device)
+                goal = torch.Tensor(goals).to(self.device)
                 label_t = torch.Tensor(labels).long().to(self.device)
             
 
