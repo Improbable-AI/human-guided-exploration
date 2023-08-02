@@ -57,6 +57,7 @@ def run(output_dir='/tmp', env_name='pointmass_empty',buffer_size=20000, fourier
 
     
     print(huge_kwargs)
+    del huge_kwargs['explore_episodes']
     huge_kwargs['lr']=lr
     huge_kwargs['max_timesteps']=max_timesteps
     huge_kwargs['batch_size']=batch_size
