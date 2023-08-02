@@ -22,6 +22,7 @@ import cv2
 import matplotlib
 
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 
 class LEXA:
@@ -992,10 +993,27 @@ class LEXA:
         plt.plot(val_losses)
         plt.savefig("loss.png")
         
+    def plot_distr(self):
+        print("plot distributino")
+        r_val =[]
+        xs = []
+        ys = []
+
+        print(self.densities)
+
+        for x in range(self.grid_size):
+            for y in range(self.grid_size):
+                xs.append(x)
+                ys.append(y)
+                r_val.append(self.densities[x, y]) 
+        
+        plt.clf()
+        plt.cla()
+        plt.scatter(xs,ys, c=r_val, cmap=cm.jet)
+        wandb.log({"distr": wandb.Image(plt)})
+
     def test_goal_selector(self, itr, save=True, size=50):
-        if "bandu" in self.env_name or "block" in self.env_name or "kitchen" in self.env_name:
-            return
-        self.env.test_goal_selector(self.oracle_model, self.goal_selector, size)
+        self.plot_distr()
     
     def get_distances(self, state, goal):
         obs = self.env.observation(state)
@@ -1352,9 +1370,6 @@ class LEXA:
                                     goal_states_goal_selector[j][-1], marker='x', s=20, color=color)
                         
                     # relabel and add to buffer
-                    if not self.use_oracle and (not self.human_input or self.human_input is not None):
-                        self.collect_and_train_goal_selector(desired_goal_states_goal_selector, total_timesteps)
-                    
                     desired_goal_states_goal_selector = []
                     goal_states_goal_selector = []
 
@@ -1544,7 +1559,6 @@ class LEXA:
         observations, actions, goals, final_states, image_obs, goals_imgs, final_images = self.replay_buffer.sample_batch_with_final_states(self.num_demos_goal_selector)
         self.goal_selector_buffer.add_multiple_data_points(observations, goals, final_states, np.ones(goals.shape[0]))
         self.train_goal_selector(epochs=self.demo_goal_selector_epochs)
-        self.test_goal_selector(0)
 
     def evaluate_policy(self, eval_episodes=200, greedy=True, prefix='Eval'):
         print("Evaluate policy")
