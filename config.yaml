@@ -188,6 +188,10 @@ human:
   use_oracle: False
   sample_softmax: True
   human_input: True
+  goal_selector_num_samples: 20
+  train_goal_selector_freq: 10
+
+
 
 huge:
   train_with_preferences: True
