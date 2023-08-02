@@ -101,6 +101,7 @@ class GCSL:
         validation_buffer=None,
         max_timesteps=1e6,
         max_path_length=50,
+        env_name="",
         # Exploration Strategy
         explore_timesteps=1e4,
         expl_noise=0.1,
@@ -139,6 +140,7 @@ class GCSL:
 
 
     ):
+        self.env_name = env_name
         self.env = env
         self.policy = policy
         self.random_policy = copy.deepcopy(policy)
@@ -148,10 +150,6 @@ class GCSL:
         self.grid_size = grid_size
 
         self.sample_softmax = sample_softmax
-
-        self.densities = np.zeros((self.grid_size, self.grid_size))
-
-       
 
         self.total_timesteps = 0
 
@@ -237,27 +235,20 @@ class GCSL:
         self.eval_loss_arr = []
         self.distance_to_goal_eval_relabelled = []
 
-        if isinstance(self.env.wrapped_env, PointmassGoalEnv):
-            self.env_name = "pointmass"
-            self.delta_x = 1.8/self.grid_size
-            self.delta_y = 1.8/self.grid_size
-            self.shift = 0.9
-        if isinstance(self.env.wrapped_env, SawyerPushGoalEnv):
-            self.env_name ="pusher"
         #if isinstance(self.env.wrapped_env, KitchenGoalEnv):
         #    self.env_name ="kitchen"
+        
+        self.initialize_densities()
 
         os.makedirs(self.data_folder, exist_ok=True)
         os.makedirs(os.path.join(self.data_folder, 'eval_trajectories'), exist_ok=True)
 
 
-    def contrastive_loss(self, pred, label):
-        label = label.float()
-        pos = label@torch.clamp(pred[:,0]-pred[:,1], min=0)
-        neg = (1-label)@torch.clamp(pred[:,1]-pred[:,0], min=0)
-
-        #print("pos shape", pos.shape)
-        return  pos + neg
+    def initialize_densities(self):
+        self.delta_x = 1.8/self.grid_size
+        self.delta_y = 1.8/self.grid_size
+        self.shift = 0.9
+        self.densities = np.zeros((self.grid_size, self.grid_size))
     
     def eval_rewardmodel(self, eval_data, batch_size=32):
         achieved_states_1, achieved_states_2, goals ,labels = eval_data

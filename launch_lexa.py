@@ -58,6 +58,7 @@ def run(output_dir='/tmp', env_name='pointmass_empty',buffer_size=20000, fourier
         policy,
         replay_buffer,
         #fake_replay_buffer,
+        env_name=env_name,
         hallucinate_policy_freq=hallucinate_policy_freq,
         log_tensorboard=log_tensorboard,
         train_with_hallucination=train_with_hallucination,
