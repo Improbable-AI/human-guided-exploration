@@ -676,7 +676,7 @@ class HumanPreferences:
         if not self.display_plots:
             return
         else:
-            self.env.plot_trajectories(np.array(traj_accumulated_states.copy()), np.array(traj_accumulated_goal_states.copy()), extract, f"{self.env_name}/{filename}")
+            self.fake_env.plot_trajectories(np.array(traj_accumulated_states.copy()), np.array(traj_accumulated_goal_states.copy()), extract, f"{self.env_name}/{filename}")
         if "pointmass" in self.env_name:
             return self.plot_trajectories_rooms(traj_accumulated_states.copy(), traj_accumulated_goal_states.copy(), extract, "pointmass/" + filename)
         if self.env_name == "pusher":
