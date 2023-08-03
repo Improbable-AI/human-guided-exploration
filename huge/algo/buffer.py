@@ -210,12 +210,12 @@ class ReplayBuffer:
     def _get_batch_with_final_states(self, traj_idxs, time_state_idxs, time_goal_idxs):
         batch_size = len(traj_idxs)
         observations = self.env.observation(self._states[traj_idxs, time_state_idxs])
-        image_obs = self.env.observation(self._states_img[traj_idxs, time_state_idxs])
+        image_obs = self._states_img[traj_idxs, time_state_idxs]
         actions = self._actions[traj_idxs, time_state_idxs]
         goals = self.env.extract_goal(self._states[traj_idxs, time_goal_idxs])
-        goals_imgs = self.env.extract_goal(self._states_img[traj_idxs, time_goal_idxs])
+        goals_imgs = self._states_img[traj_idxs, time_goal_idxs]
         final_states = self.env.observation(self._states[traj_idxs, -1])
-        final_images = self.env.observation(self._states_img[traj_idxs, -1])
+        final_images = self._states_img[traj_idxs, -1]
         lengths = time_goal_idxs - time_state_idxs
         horizons = np.tile(np.arange(self.max_trajectory_length), (batch_size, 1))
         horizons = horizons >= lengths[..., None]
