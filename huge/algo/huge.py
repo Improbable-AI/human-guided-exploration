@@ -1447,7 +1447,7 @@ class HUGE:
                 actions = np.load(f"demos/{self.env_name}/demo_{i}_actions.npy")
                 states = np.load(f"demos/{self.env_name}/demo_{i}_states.npy")
 
-                self.replay_buffer.add_trajectory(states, actions, states[-1], img_states)
+                self.replay_buffer.add_trajectory(states, actions, states[-1])
 
         if self.pretrain_goal_selector and self.num_demos > 0:
             self.pretrain_goal_selector_func()
