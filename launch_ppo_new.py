@@ -11,7 +11,7 @@ from PIL import Image
 
 # Envs
 
-from gcsl import envs
+from huge import envs
 import wandb
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import SubprocVecEnv
@@ -20,7 +20,7 @@ from stable_baselines3.common.monitor import Monitor
 from wandb.integration.sb3 import WandbCallback
 from stable_baselines3.common.callbacks import BaseCallback
 # Algo
-from gcsl.algo import variants
+from huge.algo import variants
 
 class SubProcVecEnvCustom(SubprocVecEnv):
     def __init__(self, env_fns, start_method=None):
