@@ -122,7 +122,7 @@ def collect_demos(env, policy, num_demos, env_name, max_path_length, noise):
             observation = env.observation(state)
             horizon = np.arange(max_path_length) >= (max_path_length - 1 - t) # Temperature encoding of horizon
             action = policy.act_vectorized(observation[None], goal[None], horizon=horizon[None], greedy=False, noise=noise)[0]
-            if "ravens" in env_name:
+            if "block_stacking" in env_name or "bandu" in env_name:
                 action = action + np.random.normal(0, noise)
             elif np.random.random() < noise:
                 action = np.random.randint(env.action_space.n)
@@ -131,9 +131,9 @@ def collect_demos(env, policy, num_demos, env_name, max_path_length, noise):
             states.append(state)
 
             state, _, done , info = env.step(action)
-            if done and not("ravens" in env_name):
+            if done and not("block_stacking" in env_name or "bandu" in env_name):
                 break
-        if "ravens" in env_name:
+        if "block_stacking" in env_name or "bandu" in env_name:
             success = env.compute_success(env.observation(states[-1]), goal) 
             print("pre success", success)
             success = success == 4
