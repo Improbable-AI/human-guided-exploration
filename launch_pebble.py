@@ -227,7 +227,14 @@ def experiment(variant, env_name, task_config, seed=0, num_blocks=1, random_goal
     env_params['goal_selector_name']=goal_selector_name
     env_params['continuous_action_space']=continuous_action_space
 
-    wrapped_env, policy, reward_model, _, reward_model_buffer_1, huge_kwargs = variants.get_params_ddl(env, env_params)
+    wrapped_env, policy, reward_model, _, _, huge_kwargs = variants.get_params_ddl(env, env_params)
+    buffer_kwargs = dict(
+        env=env,
+        max_trajectory_length=False, 
+        buffer_size=env_params['buffer_size'],
+    )
+
+    reward_model_buffer_1 = buffer.RewardModelBuffer(**buffer_kwargs)
 
     unwrapped_env = UnWrapper(wrapped_env, max_path_length)
 
@@ -236,6 +243,7 @@ def experiment(variant, env_name, task_config, seed=0, num_blocks=1, random_goal
 
     wrapped_env2, eval_policy, reward_model, _, reward_model_buffer, huge_kwargs = variants.get_params_ddl(env2, env_params)
 
+    
     unwrapped_env2 = UnWrapper(wrapped_env2, max_path_length)
 
     expl_env = NormalizedBoxEnv(unwrapped_env)
