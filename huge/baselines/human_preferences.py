@@ -676,7 +676,7 @@ class HumanPreferences:
         if not self.display_plots:
             return
         else:
-            self.fake_env.plot_trajectories(np.array(traj_accumulated_states.copy()), np.array(traj_accumulated_goal_states.copy()), extract, f"{self.env_name}/{filename}")
+            return self.fake_env.plot_trajectories(np.array(traj_accumulated_states.copy()), np.array(traj_accumulated_goal_states.copy()), extract, f"{self.env_name}/{filename}")
         if "pointmass" in self.env_name:
             return self.plot_trajectories_rooms(traj_accumulated_states.copy(), traj_accumulated_goal_states.copy(), extract, "pointmass/" + filename)
         if self.env_name == "pusher":
@@ -824,35 +824,35 @@ class HumanPreferences:
         else:
             wandb.log({"trajectory": wandb.Image(plt)})
 
-    def plot_trajectories_pusher_hard(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):
-        # plot added trajectories to fake replay buffer
-        plt.clf()
-        plt.cla()
-        self.display_wall_pusher_hard()
-        #if extract:
+    # def plot_trajectories_pusher_hard(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):
+    #     # plot added trajectories to fake replay buffer
+    #     plt.clf()
+    #     plt.cla()
+    #     self.display_wall_pusher_hard()
+    #     #if extract:
 
-        states_plot =  traj_accumulated_states
+    #     states_plot =  traj_accumulated_states
 
-        #else:
-        #    states_plot = traj_accumulated_states
-        #shutil.rmtree("train_states_preferences")
-        colors = sns.color_palette('hls', (len(states_plot)))
-        for j in range(len(states_plot)):
-            color = colors[j]
-            plt.plot(self.fake_env.observation(states_plot[j ])[:,0], self.fake_env.observation(states_plot[j])[:, 1], color=color)
+    #     #else:
+    #     #    states_plot = traj_accumulated_states
+    #     #shutil.rmtree("train_states_preferences")
+    #     colors = sns.color_palette('hls', (len(states_plot)))
+    #     for j in range(len(states_plot)):
+    #         color = colors[j]
+    #         plt.plot(self.fake_env.observation(states_plot[j ])[:,0], self.fake_env.observation(states_plot[j])[:, 1], color=color)
 
-            plt.scatter(traj_accumulated_goal_states[j][2],
-                    traj_accumulated_goal_states[j][3], marker='+', s=20, color=color)
-            plt.scatter(traj_accumulated_goal_states[j][0],
-                    traj_accumulated_goal_states[j][1], marker='o', s=20, color=color)
-            plt.scatter(self.fake_env.observation(states_plot[j ])[:,2], self.fake_env.observation(states_plot[j])[:, 3], marker='x', s=20, color=color)
+    #         plt.scatter(traj_accumulated_goal_states[j][2],
+    #                 traj_accumulated_goal_states[j][3], marker='+', s=20, color=color)
+    #         plt.scatter(traj_accumulated_goal_states[j][0],
+    #                 traj_accumulated_goal_states[j][1], marker='o', s=20, color=color)
+    #         plt.scatter(self.fake_env.observation(states_plot[j ])[:,2], self.fake_env.observation(states_plot[j])[:, 3], marker='x', s=20, color=color)
                     
-        plt.savefig(filename)
+    #     plt.savefig(filename)
 
-        if 'eval' in filename:
-            wandb.log({"trajectory_eval": wandb.Image(plt)})
-        else:
-            wandb.log({"trajectory": wandb.Image(plt)})
+    #     if 'eval' in filename:
+    #         wandb.log({"trajectory_eval": wandb.Image(plt)})
+    #     else:
+    #         wandb.log({"trajectory": wandb.Image(plt)})
 
     def display_collected_labels(self, state_1, state_2, goals, is_oracle=False):
         if  "pointmass" in self.env_name :
