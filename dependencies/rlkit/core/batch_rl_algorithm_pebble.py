@@ -260,6 +260,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
         self.reward_model_buffer.add_multiple_data_points(achieved_state_1[train_set_mask], achieved_state_2[train_set_mask], goals[train_set_mask], labels[train_set_mask])
        
         # Train reward model
+        losses_reward_model = 0
         if not self.use_oracle:
             # Generate labels with preferences
             losses_reward_model, eval_loss_reward_model = self.train_reward_model()
