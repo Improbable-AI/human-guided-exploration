@@ -501,9 +501,9 @@ class LEXA:
         if self.env_name == "kitchenSeq":
             # slide cabinet, hinge_cabinet, microwave joint, task succeeded 1, task succeeded 2, task succeeded 3, ee_quat, ee_obs 
             self.densities = np.zeros((self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size,self.grid_size, self.grid_size,self.grid_size, self.grid_size,self.grid_size))
-            self.delta = np.array([0.37,1.45,0.75, 1,1,1,2,2,2,2,2,0.8,1])/self.grid_size
-            self.shift = np.array([0, 0, 0.75,0,0,0,1,1,1,1,1,-0.2,-1.1])
-            # x :[-1, 1], y: [0.2, 1], z: [1:2]
+            self.delta = np.array([0.4,1.55,0.85, 1,1,1,2,2,2,2,2,1,1])/self.grid_size
+            self.shift = np.array([0.1, 0.1, 0.85,0,0,0,1,1,1,1,1,-0.2,0.1])
+            # x :[-1, 1], y: [0, 1], z: [1:2]
         if self.env_name == "bandu" or self.env_name == "block_stacking":
             self.densities = np.zeros((self.grid_size, self.grid_size))
             self.delta_x = 1/self.grid_size
