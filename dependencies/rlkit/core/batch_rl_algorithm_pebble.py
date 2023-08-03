@@ -21,7 +21,7 @@ from PIL import Image
 import copy
 from datetime import datetime
 
-class BatchRLAlgorithmDDL(BaseRLAlgorithm, metaclass=abc.ABCMeta):
+class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
     def __init__(
             self,
             trainer,
