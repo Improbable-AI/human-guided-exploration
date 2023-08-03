@@ -492,6 +492,13 @@ class LEXA:
             self.delta_y = 0.4/self.grid_size
             self.shift_x = 0.3
             self.shift_y = -0.45
+        if self.env_name == "complex_maze":
+            self.densities = np.zeros((self.grid_size, self.grid_size))
+            self.delta_x = 12/self.grid_size
+            self.delta_y = 13/self.grid_size
+            self.shift_x = 0
+            self.shift_y = 0
+
     def get_density(self, state):
         idx = self.get_grid_cell(np.array([state]))
         return self.densities[tuple(idx)] 
@@ -501,7 +508,7 @@ class LEXA:
         self.densities[tuple(idx)] += 1
   
     def get_grid_cell(self, achieved_states):
-        if self.env_name == "pointmass_rooms":
+        if self.env_name == "pointmass_rooms" or self.env_name == "complex_maze":
             x = np.floor((achieved_states[:,0] + self.shift_x)/ self.delta_x).astype(np.int)
             y = np.floor((achieved_states[:, 1] + self.shift_y) / self.delta_y).astype(np.int)
             return x,y
@@ -976,36 +983,7 @@ class LEXA:
             avg_goal_selector_loss += loss_goal_selector.item()
 
         return avg_loss / self.n_accumulations, avg_goal_selector_loss / self.n_accumulations
-    def pretrain_demos(self, demo_replay_buffer=None, demo_validation_replay_buffer=None):
-        if demo_replay_buffer is None:
-            return
 
-        self.policy.train()
-        running_loss = None
-        running_validation_loss = None
-        losses = []
-        val_losses = []
-        with tqdm.trange(self.demo_epochs) as looper:
-            for _ in looper:
-                loss = self.take_policy_step(buffer=demo_replay_buffer)
-                validation_loss, goal_selector_val_loss = self.validation_loss(buffer=demo_validation_replay_buffer)
-
-                if running_loss is None:
-                    running_loss = loss
-                else:
-                    running_loss = 0.99 * running_loss + 0.01 * loss
-                if running_validation_loss is None:
-                    running_validation_loss = validation_loss
-                else:
-                    running_validation_loss = 0.99 * running_validation_loss + 0.01 * validation_loss
-
-                looper.set_description('Loss: %.03f curr Loss: %.03f'%(running_loss, loss))
-                losses.append(loss)
-                val_losses.append(validation_loss)
-
-        plt.plot(losses)
-        plt.plot(val_losses)
-        plt.savefig("loss.png")
         
     def plot_distr(self):
         print("plot distributino")
@@ -1120,80 +1098,6 @@ class LEXA:
         
         wandb.log({"goal_selector_labels_and_state": wandb.Image(plt)})
     
-    def generate_pref_labels_from_images(self, goal_states, goal_images):
-        observations_1, img_obs1, _ = self.replay_buffer.sample_obs_last_steps(self.goal_selector_num_samples, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
-        observations_2, img_obs2, _ = self.replay_buffer.sample_obs_last_steps(self.goal_selector_num_samples, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
-
-        goals = []
-        img_goals = []
-        labels = []
-        achieved_state_1 = []
-        achieved_state_2 = []
-
-        for state_1, state_2 in zip(observations_1, observations_2):
-            goal_idx = np.random.randint(0, len(goal_states)) 
-            goal = self.env.extract_goal(goal_states[goal_idx])
-            labels.append(self.oracle(state_1, state_2, goal)) 
-
-            self.num_labels_queried += 1 
-
-            achieved_state_1.append(state_1) 
-            achieved_state_2.append(state_2) 
-            goals.append(goal)
-            img_goals.append(goal_images[goal_idx])
-
-        achieved_state_1 = np.array(achieved_state_1)
-        achieved_state_2 = np.array(achieved_state_2)
-        goals = np.array(goals)
-        img_goals = np.array(img_goals)
-        labels = np.array(labels)
-        
-        return achieved_state_1, achieved_state_2, goals, labels, img_obs1, img_obs2, img_goals
-    
-    def collect_and_train_goal_selector(self, desired_goal_states_goal_selector, total_timesteps, desired_goal_images_goal_selector = None):
-        if len(desired_goal_states_goal_selector) == 0 or self.total_timesteps > self.stop_training_goal_selector_after:
-            return 0, 0
-
-        # print("Collecting and training goal_selector")
-        if self.use_images_in_reward_model or self.use_images_in_policy or self.use_images_in_stopping_criteria:
-            achieved_state_1, achieved_state_2, goals, labels, images1, images2, img_goals = self.generate_pref_labels_from_images(desired_goal_states_goal_selector, desired_goal_images_goal_selector)
-        else:
-            achieved_state_1, achieved_state_2, goals, labels = self.generate_pref_labels(desired_goal_states_goal_selector)
-
-        if self.full_iters % self.display_trajectories_freq == 0 and ("maze" in self.env_name or "ravens" in self.env_name or "pusher" in self.env_name):
-            self.display_collected_labels(achieved_state_1, achieved_state_2, goals)
-            self.test_goal_selector(self.total_timesteps)
-        if achieved_state_1 is None:
-            return 0.0, 0.0 
-
-        validation_set = random.sample(range(len(achieved_state_1)), floor(len(achieved_state_1)*0.2))
-        
-        train_set_mask = np.ones(len(achieved_state_1), bool)
-        train_set_mask[validation_set] = False
-
-        if self.use_images_in_reward_model:
-            self.goal_selector_buffer.add_multiple_data_points(achieved_state_1[train_set_mask], achieved_state_2[train_set_mask], goals[train_set_mask], labels[train_set_mask], images1[train_set_mask], images2[train_set_mask], img_goals[train_set_mask])
-            self.goal_selector_buffer_validation.add_multiple_data_points(achieved_state_1[validation_set], achieved_state_2[validation_set], goals[validation_set], labels[validation_set], images1[validation_set], images2[validation_set], img_goals[validation_set])
-        else:
-            self.goal_selector_buffer.add_multiple_data_points(achieved_state_1[train_set_mask], achieved_state_2[train_set_mask], goals[train_set_mask], labels[train_set_mask])
-            self.goal_selector_buffer_validation.add_multiple_data_points(achieved_state_1[validation_set], achieved_state_2[validation_set], goals[validation_set], labels[validation_set])
-       
-        # Train reward model
-        if not self.use_oracle:
-            # Generate labels with preferences
-            losses_goal_selector, eval_loss_goal_selector = self.train_goal_selector()
-
-            print("Computing reward model loss ", np.mean(losses_goal_selector), "eval loss is: ", eval_loss_goal_selector)
-            if self.summary_writer:
-                self.summary_writer.add_scalar('Lossesgoal_selector/Train', np.mean(losses_goal_selector), total_timesteps)
-            wandb.log({'Lossesgoal_selector/Train':np.mean(losses_goal_selector), 'timesteps':total_timesteps, 'num_labels_queried':self.num_labels_queried})
-            wandb.log({'Lossesgoal_selector/Eval':eval_loss_goal_selector, 'timesteps':total_timesteps, 'num_labels_queried':self.num_labels_queried})
-
-            self.train_loss_goal_selector_arr.append((np.mean(losses_goal_selector), total_timesteps))
-
-            # torch.save(self.goal_selector.state_dict(), f"checkpoint/goal_selector_model_intermediate_{self.total_timesteps}.h5")
-        
-        return losses_goal_selector, eval_loss_goal_selector
 
     def train(self):
         start_time = time.time()
@@ -1214,25 +1118,6 @@ class LEXA:
         goal_selector_running_val_loss = None
 
         losses_goal_selector_acc = None
-        if self.pretrain_policy or self.pretrain_goal_selector:
-            print("Pretraining")
-            self.empty_replay_buffer = copy.deepcopy(self.replay_buffer)
-
-            for i in range(self.num_demos):
-                actions = np.load(f"demos/{self.env_name}/demo_{i}_actions.npy")
-                states = np.load(f"demos/{self.env_name}/demo_{i}_states.npy")
-
-                self.replay_buffer.add_trajectory(states, actions, states[-1], img_states)
-
-        if self.pretrain_goal_selector and self.num_demos > 0:
-            self.pretrain_goal_selector_func()
-        if self.pretrain_policy and self.num_demos > 0:
-            self.pretrain_demos(self.replay_buffer)
-            self.evaluate_policy(self.eval_episodes, greedy=False, prefix="DemosEval")
-            self.evaluate_policy(self.eval_episodes, greedy=False, prefix="Eval")
-        elif self.pretrain_goal_selector:
-            self.replay_buffer = copy.deepcopy(self.empty_replay_buffer)
-
 
         self.policy.eval()
         self.evaluate_policy(self.eval_episodes, greedy=True, prefix='Eval')
