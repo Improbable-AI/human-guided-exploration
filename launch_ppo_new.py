@@ -174,7 +174,7 @@ class UnWrapper(gym.Env):
         # print()
 
         if self.dense_reward:
-            reward = 2 - distance
+            reward = - distance
         else:
             reward = success
 
