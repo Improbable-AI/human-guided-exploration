@@ -518,10 +518,10 @@ class LEXA:
         return self.densities[tuple(idx)] 
 
     def add_visited_states(self, achieved_states):
-        import IPython
-        IPython.embed()
         idx = self.get_grid_cell(achieved_states)
-
+        if np.any(idx>=self.grid_size):
+            import IPython
+            IPython.embed()
         self.densities[tuple(idx)] += 1
   
     def get_grid_cell(self, achieved_states):
