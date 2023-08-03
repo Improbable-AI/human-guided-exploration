@@ -8,6 +8,7 @@ from rlkit.core.batch_rl_algorithm import BatchRLAlgorithm
 from rlkit.core.batch_rl_algorithmv2 import BatchRLAlgorithm as BatchRLAlgorithmV2
 from rlkit.core.batch_rl_algorithm_ddl import BatchRLAlgorithmDDL
 from rlkit.core.online_rl_algorithm import OnlineRLAlgorithm
+from rlkit.core.batch_rl_algorithm_pebble import BatchRLAlgorithmPEBBLE
 from rlkit.core.trainer import Trainer
 from rlkit.torch.core import np_to_pytorch_batch
 
@@ -42,6 +43,15 @@ class TorchBatchRLAlgorithmV2(BatchRLAlgorithmV2):
 
 
 class TorchBatchRLAlgorithmDDL(BatchRLAlgorithmDDL):
+    def to(self, device):
+        for net in self.trainer.networks:
+            net.to(device)
+
+    def training_mode(self, mode):
+        for net in self.trainer.networks:
+            net.train(mode)
+
+class TorchBatchRLAlgorithmPEBBLE(BatchRLAlgorithmPEBBLE):
     def to(self, device):
         for net in self.trainer.networks:
             net.to(device)
