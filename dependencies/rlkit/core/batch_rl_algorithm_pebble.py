@@ -90,7 +90,6 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
         self.select_best_sample_size = select_best_sample_size
         self.use_final_goal = use_final_goal
 
-        self.goal_to_command = None
 
         if select_last_k_steps == -1:
             self.select_last_k_steps = self.max_path_length
@@ -506,12 +505,12 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
                     edgecolor='black',
                     facecolor='black',
                     lw=0))
-    def plot_reward_model(self, goal):
+    def plot_reward_model(self):
         size=50
         if not ("pointmass" in self.env_name or "maze" in self.env_name):
             return
 
-        goal_pos =  goal
+        goal_pos =  self.goal
         #goal_pos = goal
         #TODO: remove
         #goal_pos = np.array([0.3,0.3])
@@ -614,7 +613,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
         if self.epoch % self.sample_new_goal_freq == 0: 
             print("epoch", self.epoch)
             self.train_reward_model()
-            self.plot_reward_model(self.goal_to_command)
+            self.plot_reward_model()
 
         gt.stamp('evaluation sampling')
         for epoch in range(self.num_train_loops_per_epoch):
