@@ -120,7 +120,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
 
         self.reward_model.to("cuda:0")
 
-        self.ddl_optimizer = torch.optim.Adam(list(self.reward_model.parameters()))
+        self.reward_optimizer = torch.optim.Adam(list(self.reward_model.parameters()))
 
         self.reward_model_num_samples = reward_model_num_samples
 
