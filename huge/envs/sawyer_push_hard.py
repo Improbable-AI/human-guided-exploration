@@ -858,7 +858,12 @@ class SawyerHardPushGoalEnv(GymGoalEnvWrapper):
         achieved_state_puck = achieved_state[2:4]#achieved_state[2:4]
         achieved_state_hand = achieved_state[0:2]
         desired_goal_puck = goal[2:4]
-        return np.linalg.norm(achieved_state_puck - achieved_state_hand) + np.linalg.norm(achieved_state_puck - subgoal[0]) 
+        bonus = 10
+        if achieved_state_puck[0] < subgoal[0,0] :
+            return np.linalg.norm(achieved_state_puck - achieved_state_hand) + np.linalg.norm(achieved_state_puck - subgoal[0]) + bonus
+        
+        return np.linalg.norm(achieved_state_puck - achieved_state_hand) + np.linalg.norm(achieved_state_puck - subgoal[1])
+        
         ## Previously used reward function
         if achieved_state_puck[0] > subgoal[0,0] :
             if achieved_state_puck[0] > subgoal[1,0]:
