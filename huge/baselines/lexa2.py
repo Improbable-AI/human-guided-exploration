@@ -530,6 +530,8 @@ class LEXA:
             y_puck = np.floor((achieved_states[:, 3] + self.shift_y) / self.delta_y).astype(np.int)
             return x,y, x_puck, y_puck
         if self.env_name == "kitchenSeq" or self.env_name == "bandu" or self.env_name == "block_stacking":
+            import IPython
+            IPython.embed()
             x = np.floor((achieved_states[:,:] + self.shift)/ self.delta).astype(np.int)
             return tuple(x.T)
         
