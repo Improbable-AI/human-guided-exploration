@@ -127,12 +127,10 @@ class HumanPreferences:
         normalize_rewards=False,
         no_training=False,
         use_wrong_oracle=False,
-        display_trajectories = False,
         device="cuda",
     ):
         # DDL specific
         # No frontier expansio
-        self.display_trajectories = display_trajectories
         self.no_training = no_training
         self.start_from_scratch_every_epoch = start_from_scratch_every_epoch
         self.wandb_run = wandb_run
@@ -419,7 +417,7 @@ class HumanPreferences:
         return achieved_state_1, achieved_state_2, goals, labels # TODO: check ordering
         
     def test_rewardmodel(self, goal=None):
-        if not self.display_trajectories:
+        if not self.display_plots:
             return
         if goal is None:
             goal = self.goal
@@ -675,7 +673,7 @@ class HumanPreferences:
         return distance_to_slide, distance_to_hinge, distance_to_microwave, distance_joint_slide, distance_joint_hinge, distance_microwave
 
     def plot_trajectories(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):
-        if not self.display_trajectories:
+        if not self.display_plots:
             return
         if "pointmass" in self.env_name:
             return self.plot_trajectories_rooms(traj_accumulated_states.copy(), traj_accumulated_goal_states.copy(), extract, "pointmass/" + filename)
