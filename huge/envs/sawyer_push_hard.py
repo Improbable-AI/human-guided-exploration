@@ -892,11 +892,16 @@ class SawyerHardPushGoalEnv(GymGoalEnvWrapper):
 
     def plot_trajectories(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):
         # plot added trajectories to fake replay buffer
+        subgoals = np.array([(-0.1, 0.7), (0, 0.65),(0.1, 0.5)])
+
         plt.clf()
         plt.cla()
         #if extract:
 
         states_plot =  traj_accumulated_states
+        plt.scatter(subgoals[0][0], subgoals[0][1], marker='o', s=20, color="red", zorder=1)
+        plt.scatter(subgoals[1][0], subgoals[1][1], marker='o', s=20, color="green", zorder=1)
+        plt.scatter(subgoals[2][0], subgoals[2][1], marker='o', s=20, color="blue", zorder=1)
 
         #else:
         #    states_plot = traj_accumulated_states
