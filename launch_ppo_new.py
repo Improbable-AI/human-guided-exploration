@@ -249,7 +249,7 @@ def run(wandb_run, continuous_action_space=False, goal=None,n_steps=2048, output
     env_params['goal_selector_buffer_size'] = 10
     env_params['reward_layers'] = network_layers
     env_params['autoregress'] = False
-    env_params['input_image_size'] = (64,64)
+    env_params['input_image_size'] = 64
     env_params['use_images_in_policy'] = False
     env_params['use_images_in_reward_model'] = False
     env_params['use_images_in_stopping_criteria'] = False
