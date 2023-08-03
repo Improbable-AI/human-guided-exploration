@@ -215,7 +215,7 @@ class UnWrapper(gym.Env):
 
 def make_env(env_name, env_params, goal, dense_reward=False, continuous_action_space=False, task_config="slide_cabinet,microwave,hinge_cabinet", num_blocks=1, max_path_length=50):
     print(task_config)
-    env = envs.create_env(env_name, task_config=task_config, num_blocks=num_blocks, continuous_action_space=continuous_action_space, fix_reset=False)
+    env = envs.create_env(env_name, task_config=task_config, num_blocks=num_blocks, continuous_action_space=continuous_action_space)
 
     wrapped_env, policy, goal_selector, classifier_model, replay_buffer, goal_selector_buffer, gcsl_kwargs = variants.get_params(env, env_params)
     print("env action space", wrapped_env.action_space)
@@ -259,7 +259,7 @@ def run(wandb_run, continuous_action_space=False, goal=None,n_steps=2048, output
 
     print(env_params)
 
-    fake_env = envs.create_env(env_name, task_config=task_config, num_blocks=num_blocks, continuous_action_space=continuous_action_space, fix_reset=False, goal=goal)
+    fake_env = envs.create_env(env_name, task_config=task_config, num_blocks=num_blocks, continuous_action_space=continuous_action_space)
     goal = fake_env.extract_goal(fake_env.sample_goal())
 
     env_kwargs = {
