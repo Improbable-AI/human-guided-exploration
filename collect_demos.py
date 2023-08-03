@@ -80,12 +80,12 @@ def run(model_name, run_path,
     print(env_params)
     env_params['goal_selector_name']=goal_selector_name
     env_params['continuous_action_space'] = continuous_action_space
-    env, policy, goal_selector, replay_buffer, goal_selector_buffer, gcsl_kwargs = variants.get_params(env, env_params)
+    env, policy, goal_selector, classifier_model, replay_buffer, goal_selector_buffer, huge_kwargs = variants.get_params(env, env_params)
 
     expert_policy = wandb.restore(f"checkpoint/{model_name}.h5", run_path=run_path)
     policy.load_state_dict(torch.load(expert_policy.name, map_location=f"cuda:{gpu}"))
     policy = policy.to(f"cuda:{gpu}")
-    gcsl_kwargs['max_path_length']=max_path_length
+    huge_kwargs['max_path_length']=max_path_length
 
     os.makedirs(f"demos/{env_name}", exist_ok=True)
     
