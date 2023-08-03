@@ -853,12 +853,13 @@ class SawyerHardPushGoalEnv(GymGoalEnvWrapper):
         return self.puck_distance(states, goal_states) # + self.endeff_distance(states, goal_states)
     
     def compute_shaped_distance(self, achieved_state, goal):
-        # TODO: GET CORRECT SUBGOAL positions
         subgoal = np.array([(-0.1, 0.7), (0.1, 0.5)])
         achieved_state = self.observation(achieved_state)
         achieved_state_puck = achieved_state[2:4]#achieved_state[2:4]
         achieved_state_hand = achieved_state[0:2]
         desired_goal_puck = goal[2:4]
+        return np.linalg.norm(achieved_state_puck - achieved_state_hand)
+        ## Previously used reward function
         if achieved_state_puck[0] > subgoal[0,0] :
             if achieved_state_puck[0] > subgoal[1,0]:
                 distance = np.linalg.norm(achieved_state_puck - desired_goal_puck) 
