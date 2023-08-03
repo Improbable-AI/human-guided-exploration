@@ -55,7 +55,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
             select_last_k_steps = -1,
             sample_new_goal_freq=5,
             normalize_reward=False,
-            ddl_num_epochs=400,
+            reward_model_epochs=400,
             use_final_goal=False,
     ):
         super().__init__(
@@ -66,7 +66,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
             evaluation_data_collector,
             replay_buffer,
         )
-        self.ddl_num_epochs = ddl_num_epochs
+        self.reward_model_epochs = reward_model_epochs
         self.normalize_reward = normalize_reward
         self.clip = clip
         self.use_oracle = use_oracle
