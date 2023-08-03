@@ -4,8 +4,6 @@ from re import I
 from telnetlib import IP, PRAGMA_HEARTBEAT
 from click import command
 import numpy as np
-from huge.envs.extra_ravens.ravens_block_stacking import RavensGoalEnvStackBlock
-from huge.envs.complex_maze_env import ComplexMazeGoalEnv
 from rlutil.logging import logger
 import rlutil.torch as torch
 import rlutil.torch.pytorch_util as ptu
@@ -13,7 +11,7 @@ import torch
 import time
 import tqdm
 import os.path as osp
-import copy
+import copy 
 import pickle
 import seaborn as sns
 from huge.algo import buffer, huge, networks
