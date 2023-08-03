@@ -484,7 +484,14 @@ class LEXA:
             self.densities = np.zeros((self.grid_size, self.grid_size))
             self.delta_x = 1.8/self.grid_size
             self.delta_y = 1.8/self.grid_size
-            self.shift = 0.9
+            self.shift_x = 0.9
+            self.shift_y = 0.9
+        if self.env_name == "pusher_hard":
+            self.densities = np.zeros((self.grid_size, self.grid_size, self.grid_size, self.grid_size))
+            self.delta_x = 0.6/self.grid_size
+            self.delta_y = 0.4/self.grid_size
+            self.shift_x = 0.3
+            self.shift_y = -0.45
     def get_density(self, state):
         idx = self.get_grid_cell(np.array([state]))
         return self.densities[tuple(idx)] 
@@ -495,9 +502,15 @@ class LEXA:
   
     def get_grid_cell(self, achieved_states):
         if self.env_name == "pointmass_rooms":
-            x = np.floor((achieved_states[:,0] + self.shift)/ self.delta_x).astype(np.int)
-            y = np.floor((achieved_states[:, 1] + self.shift) / self.delta_y).astype(np.int)
+            x = np.floor((achieved_states[:,0] + self.shift_x)/ self.delta_x).astype(np.int)
+            y = np.floor((achieved_states[:, 1] + self.shift_y) / self.delta_y).astype(np.int)
             return x,y
+        if self.env_name == "pusher_hard":
+            x = np.floor((achieved_states[:,0] + self.shift_x)/ self.delta_x).astype(np.int)
+            y = np.floor((achieved_states[:, 1] + self.shift_y) / self.delta_y).astype(np.int)
+            x_puck = np.floor((achieved_states[:, 2] + self.shift_x) / self.delta_x).astype(np.int)
+            y_puck = np.floor((achieved_states[:, 3] + self.shift_y) / self.delta_y).astype(np.int)
+            return x,y, x_puck, y_puck
         
     
     def oracle_model(self, state, goal):
@@ -507,7 +520,7 @@ class LEXA:
             self.get_density(state[i])
             for i in range(goal.shape[0])
         ] 
-        scores = - torch.tensor(np.array([dist])).T
+        scores = torch.tensor(np.array([dist])).T
         return scores
     
 
