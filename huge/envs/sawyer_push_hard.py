@@ -849,24 +849,25 @@ class SawyerHardPushGoalEnv(GymGoalEnvWrapper):
         dict_state = {'state_desired_goal':state}
         self.base_env.set_to_goal(dict_state)
         return self.base_env.render(mode="rgb_array", width=640, height=480, camera_id=1)
+    
     def goal_distance(self, states, goal_states):
         return self.puck_distance(states, goal_states) # + self.endeff_distance(states, goal_states)
     
     def compute_shaped_distance(self, achieved_state, goal):
         subgoal = np.array([(-0.1, 0.7), (0, 0.65),(0.1, 0.5)])
         achieved_state = self.observation(achieved_state)
-        achieved_state_puck = achieved_state[2:4]#achieved_state[2:4]
+        achieved_state_puck = achieved_state[0:2]#achieved_state[2:4]
         achieved_state_hand = achieved_state[0:2]
         desired_goal_puck = goal[2:4]
         bonus = 2
         if achieved_state_puck[0] < subgoal[0,0] :
-            return np.linalg.norm(achieved_state_puck - achieved_state_hand) + 2*np.linalg.norm(achieved_state_puck - subgoal[0]) + bonus*3
+            return np.linalg.norm(achieved_state_puck - achieved_state_hand) + np.linalg.norm(achieved_state_puck - subgoal[0]) + bonus*3
         
         if achieved_state_puck[1] < subgoal[1,1] :
-            return np.linalg.norm(achieved_state_puck - achieved_state_hand) + 2*np.linalg.norm(achieved_state_puck - subgoal[1]) + bonus*2
+            return np.linalg.norm(achieved_state_puck - achieved_state_hand) + 5*np.linalg.norm(achieved_state_puck - subgoal[1]) + bonus*2
 
-        if achieved_state_puck[0] < subgoal[2,0]:
-            return np.linalg.norm(achieved_state_puck - achieved_state_hand) + 2*np.linalg.norm(achieved_state_puck - subgoal[2]) + bonus
+        # if achieved_state_puck[0] < subgoal[2,0]:
+        #     return np.linalg.norm(achieved_state_puck - achieved_state_hand) + 2*np.linalg.norm(achieved_state_puck - subgoal[2]) + bonus
         
         return np.linalg.norm(achieved_state_puck - achieved_state_hand) + 2*np.linalg.norm(achieved_state_puck - desired_goal_puck)
         ## Previously used reward function
