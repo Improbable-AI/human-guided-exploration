@@ -113,6 +113,10 @@ block_stacking:
   train_goal_selector_freq: 1
   continuous_action_space: True
   max_timesteps: 2500000
+  pretrain: True
+  num_demos: 5
+  demo_epochs: 20000
+  demo_goal_selector_epochs: 10000
 
 bandu:
   epsilon_greedy_rollout: 1
