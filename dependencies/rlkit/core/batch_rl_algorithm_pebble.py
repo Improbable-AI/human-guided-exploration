@@ -261,6 +261,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
        
         # Train reward model
         losses_reward_model = 0
+        eval_loss_reward_model = 0
         if not self.use_oracle:
             # Generate labels with preferences
             losses_reward_model, eval_loss_reward_model = self.train_reward_model()
