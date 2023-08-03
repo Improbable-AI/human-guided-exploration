@@ -658,6 +658,8 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
             #self.plot_reward_model(goal)
 
             self.training_mode(True)
+            mean = 0
+            std = 1
             for i in range(self.num_trains_per_train_loop):
                 train_data = self.replay_buffer.random_batch(self.batch_size)
                 
