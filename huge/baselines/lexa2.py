@@ -501,7 +501,7 @@ class LEXA:
         if self.env_name == "kitchenSeq":
             # slide cabinet, hinge_cabinet, microwave joint, task succeeded 1, task succeeded 2, task succeeded 3, ee_quat, ee_obs 
             self.densities = np.zeros((self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size,self.grid_size, self.grid_size,self.grid_size, self.grid_size,self.grid_size))
-            self.delta = np.array([0.2,2,0.8, 2,0.8,1,2,2,2,2-1,-1,-1])/self.grid_size
+            self.delta = np.array([0.2,2,0.8, 1,1,1,2,2,2,2,-1,-1,-1])/self.grid_size
             self.shift = np.array([0.37-0.1, 1.45-1, -0.75-0.4,1,-0.2,-1,1,1,1,1,0.2,0.2,0.2])
             # x :[-1, 1], y: [0.2, 1], z: [1:2]
         if self.env_name == "bandu" or self.env_name == "block_stacking":
@@ -531,8 +531,6 @@ class LEXA:
             y_puck = np.floor((achieved_states[:, 3] + self.shift_y) / self.delta_y).astype(np.int)
             return x,y, x_puck, y_puck
         if self.env_name == "kitchenSeq":
-            import IPython
-            IPython.embed()
             x = np.floor((achieved_states[:,:] + self.shift)/ self.delta).astype(np.int)
             return tuple(x)
         
