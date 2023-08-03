@@ -526,17 +526,17 @@ class LEXA:
   
     def get_grid_cell(self, achieved_states):
         if self.env_name == "pointmass_rooms" or self.env_name == "complex_maze":
-            x = np.floor((achieved_states[:,0] + self.shift_x)/ self.delta_x).astype(np.int)
-            y = np.floor((achieved_states[:, 1] + self.shift_y) / self.delta_y).astype(np.int)
+            x = np.clip(np.floor((achieved_states[:,0] + self.shift_x)/ self.delta_x).astype(np.int), 0, self.grid_size-1)
+            y = np.clip(np.floor((achieved_states[:, 1] + self.shift_y) / self.delta_y).astype(np.int), 0, self.grid_size-1)
             return x,y
         if self.env_name == "pusher_hard":
-            x = np.floor((achieved_states[:,0] + self.shift_x)/ self.delta_x).astype(np.int)
-            y = np.floor((achieved_states[:, 1] + self.shift_y) / self.delta_y).astype(np.int)
-            x_puck = np.floor((achieved_states[:, 2] + self.shift_x) / self.delta_x).astype(np.int)
-            y_puck = np.floor((achieved_states[:, 3] + self.shift_y) / self.delta_y).astype(np.int)
+            x = np.clip(np.floor((achieved_states[:,0] + self.shift_x)/ self.delta_x).astype(np.int), 0, self.grid_size-1)
+            y = np.clip(np.floor((achieved_states[:, 1] + self.shift_y) / self.delta_y).astype(np.int), 0, self.grid_size-1)
+            x_puck = np.clip(np.floor((achieved_states[:, 2] + self.shift_x) / self.delta_x).astype(np.int), 0, self.grid_size-1)
+            y_puck =np.clip( np.floor((achieved_states[:, 3] + self.shift_y) / self.delta_y).astype(np.int), 0, self.grid_size-1)
             return x,y, x_puck, y_puck
         if self.env_name == "kitchenSeq" or self.env_name == "bandu" or self.env_name == "block_stacking":
-            x = np.floor((achieved_states[:,:] + self.shift)/ self.delta).astype(np.int)
+            x = np.clip(np.floor((achieved_states[:,:] + self.shift)/ self.delta).astype(np.int), 0, self.grid_size-1)
             return tuple(x.T)
         
     def oracle_model(self, state, goal):
