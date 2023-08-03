@@ -544,7 +544,7 @@ class LEXA:
             self.get_density(state[i])
             for i in range(goal.shape[0])
         ] 
-        scores = torch.tensor(np.array([dist])).T
+        scores = - torch.tensor(np.array([dist])).T
         return scores
     
 
