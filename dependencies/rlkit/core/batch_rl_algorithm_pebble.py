@@ -208,8 +208,8 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
     
     def generate_pref_labels(self, goal_states):
         print("label from last k steps", self.label_from_last_k_steps)
-        observations_1, _,_ = self.pebble_replay_buffer.sample_obs_last_steps(self.reward_model_num_samples, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
-        observations_2,_, _ = self.pebble_replay_buffer.sample_obs_last_steps(self.reward_model_num_samples, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
+        observations_1, _ = self.pebble_replay_buffer.sample_obs_last_steps(self.reward_model_num_samples, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
+        observations_2, _ = self.pebble_replay_buffer.sample_obs_last_steps(self.reward_model_num_samples, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
    
         goals = [] 
         labels = []
