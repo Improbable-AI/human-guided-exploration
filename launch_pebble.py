@@ -208,7 +208,7 @@ def random_rollout(
     )
 
 
-def experiment(variant, env_name, task_config, seed=0, num_blocks=1, random_goal=False, maze_type=5, pick_or_place=False, continuous_action_space=True, goal_threshold=0.05, select_goal_from_last_k_trajectories=100,use_final_goal=False, ddl_num_epochs=400, normalize_reward=False, buffer_size=20000, sample_new_goal_freq=5, use_oracle=False, ddpg_trainer=False, display_plots=False, max_path_length=50, network_layers='128,128', train_rewardmodel_freq=2, fourier=False, fourier_goal_selector=False, normalize=False, goal_selector_name=""):
+def experiment(variant, env_name, task_config, seed=0, num_blocks=1, random_goal=False, maze_type=5, pick_or_place=False, continuous_action_space=True, goal_threshold=0.05, select_goal_from_last_k_trajectories=100,use_final_goal=False, reward_model_epochs=400, normalize_reward=False, buffer_size=20000, sample_new_goal_freq=5, use_oracle=False, ddpg_trainer=False, display_plots=False, max_path_length=50, network_layers='128,128', train_rewardmodel_freq=2, fourier=False, fourier_goal_selector=False, normalize=False, goal_selector_name=""):
     torch.manual_seed(seed)
     np.random.seed(seed)
 
@@ -313,7 +313,7 @@ def experiment(variant, env_name, task_config, seed=0, num_blocks=1, random_goal
         normalize_reward=normalize_reward,
         env_name=env_name,
         use_final_goal=use_final_goal,
-        ddl_num_epochs=ddl_num_epochs,
+        reward_model_epochs=reward_model_epochs,
         **variant['algorithm_kwargs']
     )
     print(ptu.device)
@@ -349,7 +349,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_eval_steps_per_epoch",type=int, default=5000)
     parser.add_argument("--num_expl_steps_per_train_loop",type=int, default=1000)
     parser.add_argument("--min_num_steps_before_training",type=int, default=1000)
-    parser.add_argument("--ddl_num_epochs",type=int, default=400)
+    parser.add_argument("--reward_model_epochs",type=int, default=400)
     parser.add_argument("--select_goal_from_last_k_trajectories",type=int, default=100)
     parser.add_argument("--gpu",type=int, default=0)
     parser.add_argument("--num_blocks",type=int, default=3)
@@ -359,7 +359,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    wandb_suffix = "ddl"
+    wandb_suffix = "pebble"
     if args.use_oracle:
         wandb_suffix = wandb_suffix + "oracle"
 
@@ -383,7 +383,7 @@ if __name__ == "__main__":
     'network_layers':args.network_layers,
     'sample_new_goal_freq':args.sample_new_goal_freq,
     'normalize_reward':args.normalize_reward,
-    'ddl_num_epochs':args.ddl_num_epochs,
+    'reward_model_epochs':args.reward_model_epochs,
     'select_goal_from_last_k_trajectories':args.select_goal_from_last_k_trajectories,
     'use_final_goal':args.use_final_goal,
     'continuous_action_space':args.continuous_action_space,
@@ -448,7 +448,7 @@ if __name__ == "__main__":
         normalize_reward=args.normalize_reward,
         select_goal_from_last_k_trajectories=args.select_goal_from_last_k_trajectories,
         use_final_goal=args.use_final_goal,
-        ddl_num_epochs=args.ddl_num_epochs,
+        reward_model_epochs=args.reward_model_epochs,
         continuous_action_space=args.continuous_action_space,
         num_blocks=args.num_blocks,
         goal_threshold=args.goal_threshold,
