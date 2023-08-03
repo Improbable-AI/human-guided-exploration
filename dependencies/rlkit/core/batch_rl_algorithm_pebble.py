@@ -59,6 +59,8 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
             normalize_reward=False,
             reward_model_epochs=400,
             use_final_goal=False,
+            label_from_last_k_steps=20,
+            label_from_last_k_trajectories=1000,
     ):
         super().__init__(
             trainer,
@@ -68,6 +70,8 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
             evaluation_data_collector,
             replay_buffer,
         )
+        self.label_from_last_k_steps = label_from_last_k_steps
+        self.label_from_last_k_trajectories = label_from_last_k_trajectories
         self.reward_model_epochs = reward_model_epochs
         self.normalize_reward = normalize_reward
         self.clip = clip
@@ -215,7 +219,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
         num_goals = len(goal_states)
         for state_1, state_2 in zip(observations_1, observations_2):
             goal_idx = np.random.randint(0, len(goal_states)) 
-            goal = self.env.extract_goal(goal_states[goal_idx])
+            goal = goal_states[goal_idx]
             label = self.oracle(state_1, state_2, goal)
             self.num_labels_queried += 1 
 
