@@ -297,16 +297,11 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
             
             self.reward_optimizer.zero_grad()
             
-            if self.use_images_in_reward_model:
-                state1 = torch.Tensor(img1).to(self.device)
-                state2 = torch.Tensor(img2).to(self.device)
-                goal = torch.Tensor(img_goals).to(self.device)
-                label_t = torch.Tensor(labels).long().to(self.device)
-            else:
-                state1 = torch.Tensor(achieved_states_1).to(self.device)
-                state2 = torch.Tensor(achieved_states_2).to(self.device)
-                goal = torch.Tensor(goals).to(self.device)
-                label_t = torch.Tensor(labels).long().to(self.device)
+
+            state1 = torch.Tensor(achieved_states_1).to(self.device)
+            state2 = torch.Tensor(achieved_states_2).to(self.device)
+            goal = torch.Tensor(goals).to(self.device)
+            label_t = torch.Tensor(labels).long().to(self.device)
             
 
             g1 = self.reward_model(state1, goal)
