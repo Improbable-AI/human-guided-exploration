@@ -244,9 +244,8 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
  
         achieved_state_1, achieved_state_2, goals, labels = self.generate_pref_labels(desired_goal_states_reward_model)
 
-        if self.full_iters % self.display_trajectories_freq == 0 and ("maze" in self.env_name or "ravens" in self.env_name or "pusher" in self.env_name):
-            self.display_collected_labels(achieved_state_1, achieved_state_2, goals)
-            self.test_reward_model(self.total_timesteps)
+        self.display_collected_labels(achieved_state_1, achieved_state_2, goals)
+        # self.test_reward_model(self.total_timesteps)
         if achieved_state_1 is None:
             return 0.0, 0.0 
 
