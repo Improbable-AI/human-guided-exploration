@@ -20,7 +20,9 @@ from huge.algo import networks
 from PIL import Image
 import copy
 from datetime import datetime
+import random 
 
+from math import floor
 class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
     def __init__(
             self,
@@ -230,8 +232,8 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
         
         return achieved_state_1, achieved_state_2, goals, labels 
     
-    def collect_and_train_reward_model(self, desired_goal_states_reward_model, total_timesteps, desired_goal_images_reward_model = None):
-        if len(desired_goal_states_reward_model) == 0 or self.total_timesteps > self.stop_training_reward_model_after:
+    def collect_and_train_reward_model(self, desired_goal_states_reward_model, desired_goal_images_reward_model = None):
+        if len(desired_goal_states_reward_model) == 0:
             return 0, 0
 
         # print("Collecting and training reward_model")
@@ -249,12 +251,8 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
         train_set_mask = np.ones(len(achieved_state_1), bool)
         train_set_mask[validation_set] = False
 
-        if self.use_images_in_reward_model:
-            self.reward_model_buffer.add_multiple_data_points(achieved_state_1[train_set_mask], achieved_state_2[train_set_mask], goals[train_set_mask], labels[train_set_mask], images1[train_set_mask], images2[train_set_mask], img_goals[train_set_mask])
-            self.reward_model_buffer_validation.add_multiple_data_points(achieved_state_1[validation_set], achieved_state_2[validation_set], goals[validation_set], labels[validation_set], images1[validation_set], images2[validation_set], img_goals[validation_set])
-        else:
-            self.reward_model_buffer.add_multiple_data_points(achieved_state_1[train_set_mask], achieved_state_2[train_set_mask], goals[train_set_mask], labels[train_set_mask])
-            self.reward_model_buffer_validation.add_multiple_data_points(achieved_state_1[validation_set], achieved_state_2[validation_set], goals[validation_set], labels[validation_set])
+
+        self.reward_model_buffer.add_multiple_data_points(achieved_state_1[train_set_mask], achieved_state_2[train_set_mask], goals[train_set_mask], labels[train_set_mask])
        
         # Train reward model
         if not self.use_oracle:
@@ -262,12 +260,10 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
             losses_reward_model, eval_loss_reward_model = self.train_reward_model()
 
             print("Computing reward model loss ", np.mean(losses_reward_model), "eval loss is: ", eval_loss_reward_model)
-            if self.summary_writer:
-                self.summary_writer.add_scalar('Lossesreward_model/Train', np.mean(losses_reward_model), total_timesteps)
+
             wandb.log({'Lossesreward_model/Train':np.mean(losses_reward_model), 'timesteps':total_timesteps, 'num_labels_queried':self.num_labels_queried})
             wandb.log({'Lossesreward_model/Eval':eval_loss_reward_model, 'timesteps':total_timesteps, 'num_labels_queried':self.num_labels_queried})
 
-            self.train_loss_reward_model_arr.append((np.mean(losses_reward_model), total_timesteps))
 
             # torch.save(self.reward_model.state_dict(), f"checkpoint/reward_model_model_intermediate_{self.total_timesteps}.h5")
         
@@ -612,7 +608,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
 
         if self.epoch % self.sample_new_goal_freq == 0: 
             print("epoch", self.epoch)
-            self.train_reward_model()
+            self.collect_and_train_reward_model(np.array([self.goal]))
             self.plot_reward_model()
 
         gt.stamp('evaluation sampling')
