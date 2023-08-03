@@ -245,7 +245,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
         achieved_state_1, achieved_state_2, goals, labels = self.generate_pref_labels(desired_goal_states_reward_model)
 
         self.display_collected_labels(achieved_state_1, achieved_state_2, goals)
-        # self.test_reward_model(self.total_timesteps)
+        # self.test_reward_model(self.timesteps)
         if achieved_state_1 is None:
             return 0.0, 0.0 
 
@@ -264,11 +264,11 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
 
             print("Computing reward model loss ", np.mean(losses_reward_model), "eval loss is: ", eval_loss_reward_model)
 
-            wandb.log({'Lossesreward_model/Train':np.mean(losses_reward_model), 'timesteps':total_timesteps, 'num_labels_queried':self.num_labels_queried})
-            wandb.log({'Lossesreward_model/Eval':eval_loss_reward_model, 'timesteps':total_timesteps, 'num_labels_queried':self.num_labels_queried})
+            wandb.log({'Lossesreward_model/Train':np.mean(losses_reward_model), 'timesteps':self.timesteps, 'num_labels_queried':self.num_labels_queried})
+            wandb.log({'Lossesreward_model/Eval':eval_loss_reward_model, 'timesteps':self.timesteps, 'num_labels_queried':self.num_labels_queried})
 
 
-            # torch.save(self.reward_model.state_dict(), f"checkpoint/reward_model_model_intermediate_{self.total_timesteps}.h5")
+            # torch.save(self.reward_model.state_dict(), f"checkpoint/reward_model_model_intermediate_{self.timesteps}.h5")
         
         return losses_reward_model, eval_loss_reward_model
 
@@ -330,7 +330,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
             torch.save(self.reward_model.state_dict(), f"checkpoint/reward_model_model_{dt_string}.h5")
             # Save a model file manually from the current directory:
             wandb.save(f"checkpoint/reward_model_model_{dt_string}.h5")
-            wandb.log({"Control/Model_degenerated":1, "timesteps":self.total_timesteps})
+            wandb.log({"Control/Model_degenerated":1, "timesteps":self.timesteps})
 
             self.reward_model = copy.deepcopy(self.reward_model_backup)
             self.reward_optimizer = torch.optim.Adam(list(self.reward_model.parameters()))
@@ -411,7 +411,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
         if is_oracle:
             plt.scatter(goals[0],
                     goals[1], marker='+', s=20, color=color, zorder=1)
-        filename = self.env_name+f"/reward_model{self.total_timesteps}_{np.random.randint(10)}.png"
+        filename = self.env_name+f"/reward_model{self.timesteps}_{np.random.randint(10)}.png"
         plt.savefig(filename)
         
         image = Image.open(filename)
@@ -437,7 +437,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
                         goals[j][1], marker='o', s=20, color=color, zorder=1)
             from PIL import Image
             
-            filename = "complex_maze/"+f"train_states_preferences/reward_model_labels_{self.total_timesteps}_{np.random.randint(10)}.png"
+            filename = "complex_maze/"+f"train_states_preferences/reward_model_labels_{self.timesteps}_{np.random.randint(10)}.png"
             plt.savefig(filename)
             
             image = Image.open(filename)
