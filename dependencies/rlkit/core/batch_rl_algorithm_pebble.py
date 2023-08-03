@@ -526,7 +526,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
 
 
         else:
-            goal_pos = goal
+            goal_pos = self.goal
             states = np.meshgrid(np.linspace(-.6,.6,200), np.linspace(-.6,.6,200))
             states = np.array(states).reshape(2,-1).T
             goals = np.repeat(goal_pos[None], 200*200, axis=0)
