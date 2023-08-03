@@ -105,6 +105,8 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
         )
         self.sample_new_goal_freq = sample_new_goal_freq
 
+        import IPython
+        IPython.embed()
         self.pebble_replay_buffer =  buffer.ReplayBuffer(**buffer_kwargs)
 
         self.train_rewardmodel_freq = train_rewardmodel_freq
