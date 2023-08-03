@@ -506,12 +506,12 @@ class LEXA:
             # x :[-1, 1], y: [0, 1], z: [1:2]
         if self.env_name == "block_stacking":
             self.densities = np.zeros((self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size,self.grid_size, self.grid_size,self.grid_size, self.grid_size))
-            self.delta = np.array([0.4,1.55,0.2, 1,0.6,1,0.6,1,0.6])/self.grid_size
-            self.shift = np.array([0.5, -0.2,0, 0.5, -0.2,0.5, -0.2,0.5, -0.2])
+            self.delta = np.array([0.5,1,0.35,0.5,1,0.5,1,0.5,1])/self.grid_size
+            self.shift = np.array([-0.25, 0.5,0, -0.25, 0.5,-0.25, 0.5,-0.25, 0.5])
         if self.env_name == "bandu":
-            self.densities = np.zeros((self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size,self.grid_size, self.grid_size,self.grid_size, self.grid_size))
-            self.delta = np.array([0.4,1.55,0.2, 1,0.6,1,0.6,1,0.6,1,0.6])/self.grid_size
-            self.shift = np.array([0.5, -0.2,0, 0.5, -0.2,0.5, -0.2,0.5, -0.2,0.5, -0.2])
+            self.densities = np.zeros((self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size,self.grid_size, self.grid_size,self.grid_size, self.grid_size))
+            self.delta = np.array([0.5,1,0.35, 1,0.5,1,0.5,1,0.5,1,0.5,1])/self.grid_size
+            self.shift = np.array([-0.25, 0.5,0, -0.25, 0.5,-0.25, 0.5,-0.25, 0.5,-0.25, 0.5])
 
     def get_density(self, state):
         idx = self.get_grid_cell(np.array([state]))
