@@ -69,7 +69,14 @@ def run(model_name, run_path,
     env_params['normalize']=normalize
     env_params['env_name'] = env_name
     env_params['goal_selector_buffer_size'] = goal_selector_buffer_size
-
+    env_params['input_image_size'] = 64
+    env_params['img_width'] = 64
+    env_params['img_height'] = 64
+    env_params['use_images_in_policy'] = False
+    env_params['use_images_in_reward_model'] = False
+    env_params['use_images_in_stopping_criteria'] = False
+    env_params['close_frames'] = False
+    env_params['far_frames'] = False
     print(env_params)
     env_params['goal_selector_name']=goal_selector_name
     env_params['continuous_action_space'] = continuous_action_space
