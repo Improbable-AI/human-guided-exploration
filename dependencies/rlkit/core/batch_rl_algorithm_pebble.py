@@ -3,7 +3,7 @@ from turtle import distance
 from dependencies.multiworld.envs.env_util import get_stat_in_paths
 
 import gtimer as gt
-from huge.algo import buffer
+from huge.baselines import buffer_ddl
 from rlkit.core.rl_algorithm import BaseRLAlgorithm
 from rlkit.data_management.replay_buffer import ReplayBuffer
 from rlkit.samplers.data_collector import PathCollector
@@ -105,9 +105,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
         )
         self.sample_new_goal_freq = sample_new_goal_freq
 
-        import IPython
-        IPython.embed()
-        self.pebble_replay_buffer =  buffer.ReplayBuffer(**buffer_kwargs)
+        self.pebble_replay_buffer =  buffer_ddl.DDLReplayBuffer(**buffer_kwargs)
 
         self.train_rewardmodel_freq = train_rewardmodel_freq
         print("observation shape", exploration_env.observation_space.shape)
