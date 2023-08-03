@@ -21,24 +21,9 @@ import matplotlib.cm as cm
 import os
 from datetime import datetime
 import shutil
-from huge.envs.room_env import PointmassGoalEnv
-from huge.envs.sawyer_push import SawyerPushGoalEnv
-from huge.envs.sawyer_push_hard import SawyerHardPushGoalEnv
-from huge.envs.kitchen_simplified_state_space import KitchenGoalEnv
-from huge.envs.extra_ravens.ravens_env_continuous import RavensGoalEnvContinuous
-from huge.envs.extra_ravens.ravens_env_simple import RavensGoalEnvSimple
-from huge.envs.extra_ravens.ravens_env_reaching import RavensGoalEnvReaching
-from huge.envs.extra_ravens.ravens_env_pick_place import RavensGoalEnvPickAndPlace
-from huge.envs.ravens_env_pick_or_place import RavensGoalEnvPickOrPlace
-from huge.envs.extra_ravens.ravens_block_stack_continuous import RavensGoalEnvStackBlockContinuous
 
 from huge import envs
-from huge.algo import buffer, variants, networks
 from huge.baselines.ppo_new import PPO
-
-
-from huge.envs.kitchen_env_sequential import KitchenSequentialGoalEnv
-from huge.envs.kitchen_env_3d import Kitchen3DGoalEnv
 
 import wandb
 import skvideo.io
