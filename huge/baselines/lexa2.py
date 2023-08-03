@@ -506,10 +506,10 @@ class LEXA:
             # x :[-1, 1], y: [0.2, 1], z: [1:2]
         if self.env_name == "bandu" or self.env_name == "block_stacking":
             self.densities = np.zeros((self.grid_size, self.grid_size))
-            self.delta_x = 12/self.grid_size
-            self.delta_y = 13/self.grid_size
-            self.shift_x = 0
-            self.shift_y = 0
+            self.delta_x = 1/self.grid_size
+            self.delta_y = 0.6/self.grid_size
+            self.shift_x = 0.5
+            self.shift_y = -0.2
 
     def get_density(self, state):
         idx = self.get_grid_cell(np.array([state]))
@@ -531,6 +531,8 @@ class LEXA:
             y_puck = np.floor((achieved_states[:, 3] + self.shift_y) / self.delta_y).astype(np.int)
             return x,y, x_puck, y_puck
         if self.env_name == "kitchenSeq":
+            import IPython
+            IPython.embed()
             x = np.floor((achieved_states[:,:] + self.shift)/ self.delta).astype(np.int)
             return tuple(x)
         
