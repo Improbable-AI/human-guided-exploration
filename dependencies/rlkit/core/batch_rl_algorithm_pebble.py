@@ -41,6 +41,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
             num_trains_per_train_loop,
             num_train_loops_per_epoch=1,
             min_num_steps_before_training=0,
+            device="gpu:0",
             train_rewardmodel_freq=5,
             reward_model_num_samples = 100,
             display_plots=False,
@@ -94,6 +95,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
         self.num_labels_queried = 0
         self.sample_new_goal_freq = 0
         self.select_best_sample_size = select_best_sample_size
+        self.device = device
         self.use_final_goal = use_final_goal
 
 

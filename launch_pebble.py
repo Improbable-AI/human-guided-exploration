@@ -321,6 +321,7 @@ def experiment(variant, env_name, task_config, seed=0, num_blocks=1, random_goal
         normalize_reward=normalize_reward,
         env_name=env_name,
         use_final_goal=use_final_goal,
+        device=ptu.device,
         reward_model_epochs=reward_model_epochs,
         **variant['algorithm_kwargs']
     )
