@@ -501,15 +501,14 @@ class LEXA:
         if self.env_name == "kitchenSeq":
             # slide cabinet, hinge_cabinet, microwave joint, task succeeded 1, task succeeded 2, task succeeded 3, ee_quat, ee_obs 
             self.densities = np.zeros((self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size,self.grid_size, self.grid_size,self.grid_size, self.grid_size,self.grid_size))
-            self.delta = np.array([0.4,1.55,0.85, 1,1,1,2,2,2,2,2,2,2.5])/self.grid_size
+            self.delta = np.array([0.4,1.55,0.85, 1,1,1,2,2,2,2,2,2,3])/self.grid_size
             self.shift = np.array([0.1, 0.1, 0.8,0,0,0,1,1,1,1,1,1,0])
             # x :[-1, 1], y: [0, 1], z: [1:2]
         if self.env_name == "bandu" or self.env_name == "block_stacking":
-            self.densities = np.zeros((self.grid_size, self.grid_size))
-            self.delta_x = 1/self.grid_size
-            self.delta_y = 0.6/self.grid_size
-            self.shift_x = 0.5
-            self.shift_y = -0.2
+            self.densities = np.zeros((self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size,self.grid_size, self.grid_size,self.grid_size, self.grid_size))
+            self.delta = np.array([0.4,1.55,0.2, 1,0.6,1,0.6,1,0.6])/self.grid_size
+            self.shift = np.array([0.5, -0.2,0, 0.5, -0.2,0.5, -0.2,0.5, -0.2])
+
 
     def get_density(self, state):
         idx = self.get_grid_cell(np.array([state]))
@@ -530,11 +529,10 @@ class LEXA:
             x_puck = np.floor((achieved_states[:, 2] + self.shift_x) / self.delta_x).astype(np.int)
             y_puck = np.floor((achieved_states[:, 3] + self.shift_y) / self.delta_y).astype(np.int)
             return x,y, x_puck, y_puck
-        if self.env_name == "kitchenSeq":
+        if self.env_name == "kitchenSeq" or self.env_name == "bandu" or self.env_name == "block_stacking":
             x = np.floor((achieved_states[:,:] + self.shift)/ self.delta).astype(np.int)
             return tuple(x.T)
         
-    
     def oracle_model(self, state, goal):
         state = state.detach().cpu().numpy()
 
