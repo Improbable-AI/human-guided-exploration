@@ -506,11 +506,11 @@ class LEXA:
             # x :[-1, 1], y: [0, 1], z: [1:2]
         if self.env_name == "block_stacking":
             self.densities = np.zeros((self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size,self.grid_size, self.grid_size,self.grid_size, self.grid_size))
-            self.delta = np.array([0.5,1.1,0.35,0.5,1.1,0.5,1.1,0.5,1.1])/self.grid_size
+            self.delta = np.array([0.5,1.1,1.05,0.5,1.1,0.5,1.1,0.5,1.1])/self.grid_size
             self.shift = np.array([-0.25, 0.5,0, -0.25, 0.5,-0.25, 0.5,-0.25, 0.5])
         if self.env_name == "bandu":
             self.densities = np.zeros((self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size, self.grid_size,self.grid_size, self.grid_size,self.grid_size, self.grid_size))
-            self.delta = np.array([0.5,1.1,0.35,0.5,1.1,0.5,1,0.5,1.1,0.5,1.1])/self.grid_size
+            self.delta = np.array([0.5,1.1,1.05,0.5,1.1,0.5,1,0.5,1.1,0.5,1.1])/self.grid_size
             self.shift = np.array([-0.25, 0.55,0, -0.25, 0.55,-0.25, 0.55,-0.25, 0.55,-0.25, 0.55])
 
     def get_density(self, state):
@@ -518,8 +518,6 @@ class LEXA:
         return self.densities[tuple(idx)] 
 
     def add_visited_states(self, achieved_states):
-        import IPython
-        IPython.embed()
         idx = self.get_grid_cell(achieved_states)
 
         self.densities[tuple(idx)] += 1
