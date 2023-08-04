@@ -375,7 +375,7 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
         goal_pos = goal[-2:]
         ee_pos = achieved_state[:2]
         bonus = self.num_blocks 
-        return np.linalg.norm(ee_pos, goal_pos)
+        return np.linalg.norm(ee_pos-goal_pos)
         for i in range(self.num_blocks):
           if i == 0:
             obj_pos = achieved_state[-2:]
