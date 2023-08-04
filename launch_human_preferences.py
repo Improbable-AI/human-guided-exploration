@@ -240,7 +240,7 @@ def experiment(wandb_run, env_name, task_config, label_from_last_k_steps=-1,norm
 label_from_last_k_trajectories=-1, gpu=0, entropy_coefficient= 0.01, num_envs=4, num_steps_per_policy_step=1000, explore_episodes=10, 
 reward_model_epochs=400, reward_model_num_samples=1000, goal_threshold = 0.05, num_blocks=1, buffer_size=20000, use_oracle=False, 
 display_plots=False, max_path_length=50, network_layers='128,128', train_rewardmodel_freq=2, fourier=False, 
-use_wrong_oracle=False,
+use_wrong_oracle=False,n_steps=2048,
 fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_name="", no_training=False, continuous_action_space=True, maze_type=3):
     ptu.set_gpu(gpu)
     
@@ -287,10 +287,6 @@ fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_nam
     policy_kwargs = dict()
     policy_kwargs['net_arch'] = variants.get_network_layers(env_params)
 
-    n_steps = 2048
-
-    if "bandu" in env_name or "block" in env_name:
-        n_steps = 40
 
     model = PPO("MlpPolicy", env, verbose=2, n_steps=n_steps, tensorboard_log=f'runs/{wandb_run.id}', ent_coef=entropy_coefficient, device=ptu.CUDA_DEVICE, policy_kwargs=policy_kwargs)
 
@@ -344,6 +340,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed",type=int, default=0)
     parser.add_argument("--gpu",type=int, default=0)
+    parser.add_argument("--n_steps",type=int, default=2048)
     parser.add_argument("--maze_type",type=int, default=3)
     parser.add_argument("--num_blocks",type=int, default=3)
     parser.add_argument("--num_envs",type=int, default=4)
@@ -412,6 +409,7 @@ if __name__ == "__main__":
     'num_blocks':args.num_blocks,
     'continuous_action_space':args.continuous_action_space,
     'use_wrong_oracle':args.use_wrong_oracle,
+    'n_steps':args.n_steps,
     })
 
 
@@ -445,4 +443,5 @@ if __name__ == "__main__":
         num_blocks=args.num_blocks,
         continuous_action_space=args.continuous_action_space,
         use_wrong_oracle=args.use_wrong_oracle,
+        n_steps=args.n_steps,
         )
