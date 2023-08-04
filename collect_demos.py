@@ -141,11 +141,11 @@ def collect_demos(env, policy, num_demos, env_name, max_path_length, noise):
             success = success == 4
         else:
             success = env.compute_success(env.observation(states[-1]), goal)
-
+        final_dist_commanded = env_distance(env, states[-1], goal)
+        create_video(video, f"{env_name}_{final_dist_commanded}")
+        print("Final distance 1", final_dist_commanded)
         if success:
-            final_dist_commanded = env_distance(env, states[-1], goal)
-            create_video(video, f"{env_name}_{final_dist_commanded}")
-            print("Final distance 1", final_dist_commanded)
+  
             # put actions states into npy file
             actions = np.array(actions)
             states = np.array(states)
