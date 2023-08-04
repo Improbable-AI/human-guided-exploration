@@ -181,7 +181,7 @@ class OnPolicyAlgorithm(BaseAlgorithm):
                 obs_tensor = obs_as_tensor(self._last_obs, self.device)
                 actions, values, log_probs = self.policy.forward(obs_tensor)
             actions = actions.cpu().numpy()
-
+            print("actions", actions)
 
             # Rescale and perform action
             clipped_actions = actions

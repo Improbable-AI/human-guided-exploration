@@ -126,7 +126,6 @@ class RavensEnvPickAndPlace():
 
   def step(self, action=None):
       new_action = {}
-      print("Action", action)
 
       if action is not None:
           """
