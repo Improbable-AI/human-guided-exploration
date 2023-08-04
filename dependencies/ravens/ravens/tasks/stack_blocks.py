@@ -60,7 +60,7 @@ class StackBlocks(Task):
 
     # Generate randomly shaped box.
     #box_size = self.get_random_size(0.05, 0.15, 0.05, 0.15, 0.01, 0.06)
-    box_size = np.array([0.05, 0.05, 0.05])
+    box_size = np.array([0.1, 0.1, 0.1])
     # Add corner.
    
     dimx = (box_size[0] / 2 - 0.025 + 0.0025, box_size[0] / 2 + 0.0025)
