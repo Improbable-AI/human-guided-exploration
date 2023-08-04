@@ -671,7 +671,7 @@ class BatchRLAlgorithmPEBBLE(BaseRLAlgorithm, metaclass=abc.ABCMeta):
                 if self.use_oracle:
                     new_rewards = self.oracle_model(tensor_states, goal_tensor).cpu().numpy()
                 else:
-                    new_rewards = - self.reward_model(tensor_states, goal_tensor).detach().cpu().numpy()
+                    new_rewards = self.reward_model(tensor_states, goal_tensor).detach().cpu().numpy()
 
                 if i == 0 and self.normalize_reward:
                     mean = 0#np.mean(new_rewards)
