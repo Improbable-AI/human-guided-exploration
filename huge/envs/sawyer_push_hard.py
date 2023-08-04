@@ -872,8 +872,6 @@ class SawyerHardPushGoalEnv(GymGoalEnvWrapper):
         # return np.linalg.norm(achieved_state_puck - achieved_state_hand) + 2*np.linalg.norm(achieved_state_puck - desired_goal_puck)
         ## Previously used reward function
 
-        if self.compute_success(achieved_state, goal):
-            return -10
         
         if achieved_state_puck[0] > subgoal[0,0] :
             if achieved_state_puck[0] > subgoal[1,0]:
