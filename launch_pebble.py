@@ -149,8 +149,8 @@ def random_rollout(
         raw_obs.append(o)
         o_for_agent = preprocess_obs_for_policy_fn(o)
         
-        if path_length > max_path_length*0.9:
-            if previous_action is None or np.random.random() < 0.2:
+        if path_length > max_path_length*0.8:
+            if previous_action is None or np.random.random() < 0.8:
                 a, agent_info = np.random.uniform(env.action_space.low, env.action_space.high), {}
                 previous_action = a
             else:
