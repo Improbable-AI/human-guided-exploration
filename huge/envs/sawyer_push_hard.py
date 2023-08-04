@@ -856,7 +856,7 @@ class SawyerHardPushGoalEnv(GymGoalEnvWrapper):
     def compute_shaped_distance(self, achieved_state, goal):
         subgoal = np.array([(-0.1, 0.7), (0.15, 0.5)])
         achieved_state = self.observation(achieved_state)
-        achieved_state_puck = achieved_state[0:2]#achieved_state[2:4]
+        achieved_state_puck = achieved_state[2:4]#achieved_state[2:4]
         achieved_state_hand = achieved_state[0:2]
         desired_goal_puck = goal[2:4]
         bonus = 2
