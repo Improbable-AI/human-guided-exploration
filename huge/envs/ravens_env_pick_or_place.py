@@ -126,6 +126,7 @@ class RavensEnvPickAndPlace():
 
   def step(self, action=None):
       new_action = {}
+      print("Action", action)
 
       if action is not None:
           """
@@ -324,6 +325,8 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
 
 
     def plot_trajectories(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):
+        if len(traj_accumulated_states) == 0:
+           return
         # plot added trajectories to fake replay buffer
         plt.clf()
         #self.display_wall_maze()
