@@ -385,7 +385,7 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
           if np.linalg.norm(obj_pos2 - goal_pos) < 0.1:            
             return 0
           
-          if np.linalg.norm(obj_pos2 - ee_pos) > 0.1:
+          if np.linalg.norm(obj_pos2 - ee_pos) > 0.05:
             return np.linalg.norm(obj_pos2 - ee_pos) + bonus*2
 
           return np.linalg.norm(obj_pos2 - goal_pos) + bonus
