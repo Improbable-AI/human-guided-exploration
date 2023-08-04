@@ -376,27 +376,29 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
 
     def compute_shaped_distance(self, achieved_state, goal):
         assert achieved_state.shape == goal.shape
-        obj_pos1 = achieved_state[-2:]
+        obj_pos = achieved_state[-2:]
         goal_pos = goal[-2:]
         ee_pos = achieved_state[:2]
         bonus = self.num_blocks 
 
-        if np.linalg.norm(obj_pos1 - goal_pos) < 0.1:
-          obj_pos2 = achieved_state[-4:-2]
-           
-          if np.linalg.norm(obj_pos2 - goal_pos) < 0.1:            
-            return 0
-          
-          if np.linalg.norm(obj_pos2 - ee_pos) > 0.05:
-            return np.linalg.norm(obj_pos2 - ee_pos) + bonus*2
+        # obj_pos1 = achieved_state[-2:]
 
-          return np.linalg.norm(obj_pos2 - goal_pos) + bonus
+        # if np.linalg.norm(obj_pos1 - goal_pos) <= 0.1:
+        #   obj_pos2 = achieved_state[-4:-2]
+           
+        #   if np.linalg.norm(obj_pos2 - goal_pos) < 0.1:            
+        #     return 0
+          
+        #   if np.linalg.norm(obj_pos2 - ee_pos) > 0.05:
+        #     return np.linalg.norm(obj_pos2 - ee_pos) + bonus*2
+
+        #   return np.linalg.norm(obj_pos2 - goal_pos) + bonus
     
         
-        if np.linalg.norm(obj_pos1 - ee_pos) > 0.1:
-           return np.linalg.norm(obj_pos1 - ee_pos) + bonus*4
+        # if np.linalg.norm(obj_pos1 - ee_pos) > 0.1:
+        #    return np.linalg.norm(obj_pos1 - ee_pos) + bonus*4
 
-        return np.linalg.norm(obj_pos1- goal_pos) + bonus*3
+        # return np.linalg.norm(obj_pos1- goal_pos) + bonus*3
     
         for i in range(self.num_blocks):
           if i == 0:
