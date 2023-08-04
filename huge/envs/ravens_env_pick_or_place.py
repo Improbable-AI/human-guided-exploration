@@ -389,7 +389,7 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
 
           distance_obj_goal = np.linalg.norm(obj_pos - goal_pos)
 
-          if distance_obj_goal < self.goal_threshold:
+          if distance_obj_goal < 0.1:
             continue
 
           ee_pos = achieved_state[:2]
