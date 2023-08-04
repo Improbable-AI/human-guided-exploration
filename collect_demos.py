@@ -111,6 +111,8 @@ def collect_demos(env, policy, num_demos, env_name, max_path_length, noise):
     policy.eval()
     i = 0
     while i < num_demos:
+        import IPython
+        IPython.embed()
         actions = []
         states = []
         if env_name == "kitchenSeq":
@@ -138,7 +140,10 @@ def collect_demos(env, policy, num_demos, env_name, max_path_length, noise):
         if "block_stacking" in env_name or "bandu" in env_name:
             success = env.compute_success(env.observation(states[-1]), goal) 
             print("pre success", success)
-            success = success == 4
+            if "block_stacking" in env_name:
+                success = success == 3
+            else:
+                success = success == 4
         else:
             success = env.compute_success(env.observation(states[-1]), goal)
         final_dist_commanded = env_distance(env, states[-1], goal)
