@@ -422,7 +422,7 @@ class HumanPreferences:
         if goal is None:
             goal = self.goal
         size=50
-        if "ravens" in self.env_name or "pusher" in self.env_name:
+        if "bandu" in self.env_name or "block_stacking" in self.env_name or "pusher" in self.env_name:
             return
         goal_pos =  goal
 
