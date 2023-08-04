@@ -306,6 +306,8 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
 
           if distance_obj_goal < 0.1:
             success += 1
+          else:
+             break
         return success
 
     def goal_distance(self, state, goal_state):
