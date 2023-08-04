@@ -371,6 +371,7 @@ if __name__ == "__main__":
     parser.add_argument("--label_from_last_k_steps",type=int, default=400)
     parser.add_argument("--label_from_last_k_trajectories",type=int, default=400)
     parser.add_argument("--reward_model_name", type=str, default='')
+    parser.add_argument("--explore_episodes",type=int, default=10)
 
 
     args = parser.parse_args()
@@ -410,6 +411,7 @@ if __name__ == "__main__":
     'continuous_action_space':args.continuous_action_space,
     'use_wrong_oracle':args.use_wrong_oracle,
     'n_steps':args.n_steps,
+    'explore_episodes':args.explore_episodes,
     })
 
 
@@ -444,4 +446,5 @@ if __name__ == "__main__":
         continuous_action_space=args.continuous_action_space,
         use_wrong_oracle=args.use_wrong_oracle,
         n_steps=args.n_steps,
+        explore_episodes=args.explore_episodes,
         )
