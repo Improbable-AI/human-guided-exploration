@@ -289,7 +289,7 @@ fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_nam
 
     n_steps = 2048
 
-    if "ravens" in env_name:
+    if "bandu" in env_name or "block" in env_name:
         n_steps = 40
 
     model = PPO("MlpPolicy", env, verbose=2, n_steps=n_steps, tensorboard_log=f'runs/{wandb_run.id}', ent_coef=entropy_coefficient, device=ptu.CUDA_DEVICE, policy_kwargs=policy_kwargs)
