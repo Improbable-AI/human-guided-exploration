@@ -152,6 +152,8 @@ def run(start_frontier = -1,
     huge_kwargs['use_images_in_stopping_criteria'] = use_images_in_stopping_criteria
     print(huge_kwargs)
 
+    import IPython
+    IPython.embed()
     algo = huge.HUGE(
         env,
         policy,

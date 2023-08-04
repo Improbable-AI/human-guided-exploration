@@ -111,8 +111,6 @@ def collect_demos(env, policy, num_demos, env_name, max_path_length, noise):
     policy.eval()
     i = 0
     while i < num_demos:
-        import IPython
-        IPython.embed()
         actions = []
         states = []
         if env_name == "kitchenSeq":
