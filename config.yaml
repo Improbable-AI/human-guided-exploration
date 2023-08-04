@@ -64,6 +64,8 @@ common:
   start_frontier: 30
   repeat_previous_action_prob: 0
   select_goal_from_last_k_trajectories: 20
+  pretrain_policy: True
+  pretrain_goal_selector: True
 
 
 pointmass_rooms:

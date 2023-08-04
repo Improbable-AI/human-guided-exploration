@@ -222,8 +222,6 @@ if __name__ == "__main__":
     parser.add_argument("--task_config", type=str, default=None)
     parser.add_argument("--train_goal_selector_freq",type=int, default=None)
     parser.add_argument("--goal_selector_num_samples",type=int, default=None)
-    parser.add_argument("--pretrain_policy", action="store_true", default=False)
-    parser.add_argument("--pretrain_goal_selector", action="store_true", default=False)
     parser.add_argument("--num_demos", type=int, default=None)
     parser.add_argument("--demo_epochs", type=int, default=None)
     parser.add_argument("--lr", type=float, default=None)
