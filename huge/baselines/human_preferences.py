@@ -344,11 +344,11 @@ class HumanPreferences:
         for traj in eval_trajs:
             dist = self.fake_env.compute_shaped_distance(traj[-1], self.goal)
             distances.append(dist)
-            successes.append(dist < self.goal_threshold)
+            successes.append(self.fake_env.compute_shaped_distance(traj[-1], self.goal))
 
         wandb.log({"Eval/Distance":np.mean(distances), "Eval/success rate": np.mean(successes)})
         
-        return success_rate/self.eval_episodes, distance/self.eval_episodes
+        return np.mean(successes), distance/self.eval_episodes
 
     def collect_random_trajectories(self,):
         states = []
