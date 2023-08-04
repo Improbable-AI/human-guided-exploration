@@ -140,6 +140,7 @@ class RavensEnvPickAndPlace():
           if not self.continuous_action_space:
             pose = self.base_actions[action]
           else:
+
             pose = action
 
           new_action['pick_action'] = not self._env.ee.check_grasp() # True
@@ -378,11 +379,7 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
         goal_pos = goal[-2:]
         ee_pos = achieved_state[:2]
         bonus = self.num_blocks 
-        d = np.linalg.norm(ee_pos-goal_pos)
-        if d < 0.05:
-           return -1
-        
-        return d
+
         for i in range(self.num_blocks):
           if i == 0:
             obj_pos = achieved_state[-2:]
