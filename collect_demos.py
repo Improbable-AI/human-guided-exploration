@@ -97,9 +97,9 @@ def env_distance(env, state, goal):
         obs = env.observation(state)
         
         if isinstance(env.wrapped_env, PointmassGoalEnv):
-            return env.base_env.room.get_shaped_distance(obs, goal)
+            return env.base_env.room.compute_shaped_distance(obs, goal)
         else:
-            return env.get_shaped_distance(obs, goal)
+            return env.compute_shaped_distance(obs, goal)
 def create_video(images, video_filename):
         images = np.array(images).astype(np.uint8)
 
