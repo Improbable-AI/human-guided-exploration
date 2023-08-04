@@ -407,7 +407,7 @@ if __name__ == "__main__":
     variant = dict(
         algorithm=algorithm,
         version="normal",
-        layer_size=256,
+        layer_size=1024,
         replay_buffer_size=int(1E6),
         algorithm_kwargs=dict(
             num_epochs=args.num_epochs,
@@ -424,7 +424,7 @@ if __name__ == "__main__":
             target_entropy=-2, # target - action dim
             discount=0.99,
             soft_target_tau=5e-3,
-            target_update_period=1,
+            target_update_period=2,
             policy_lr=3E-4,
             qf_lr=3E-4,
             reward_scale=1,
