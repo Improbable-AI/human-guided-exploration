@@ -31,21 +31,21 @@ class Workspace(object):
         self.cfg = cfg
         self.logger = Logger(
             self.work_dir,
-            save_tb=cfg.log_save_tb,
-            log_frequency=cfg.log_frequency,
-            agent=cfg.agent.name)
+            save_tb=cfg['log_save_tb'],
+            log_frequency=cfg['log_frequency'],
+            agent=cfg['agent.name'])
 
-        utils.set_seed_everywhere(cfg.seed)
-        self.device = torch.device(cfg.device)
+        utils.set_seed_everywhere(cfg['seed'])
+        self.device = torch.device(cfg['device'])
         self.log_success = False
         
         if 'num_blocks' in cfg:
-            num_blocks = cfg.num_blocks
+            num_blocks = cfg['num_blocks']
         continuous_action_space = False
-        env = envs.create_env(cfg.env, "slide_cabinet,microwave,hinge_cabinet", num_blocks, False, 3, continuous_action_space, 0.05)
+        env = envs.create_env(cfg['env'], "slide_cabinet,microwave,hinge_cabinet", num_blocks, False, 3, continuous_action_space, 0.05)
 
-        env_params = envs.get_env_params(cfg.env)
-        env_params['max_trajectory_length']=cfg.max_path_length
+        env_params = envs.get_env_params(cfg['env'])
+        env_params['max_trajectory_length']=cfg['max_path_length']
         env_params['network_layers']="1,1"
         env_params['reward_layers'] = "1,1"
         env_params['buffer_size'] = 10
@@ -53,7 +53,7 @@ class Workspace(object):
         env_params['fourier'] = False
         env_params['fourier_goal_selector'] = False
         env_params['normalize']=False
-        env_params['env_name'] = cfg.name
+        env_params['env_name'] = cfg['name']
         env_params['goal_selector_buffer_size'] = 10
         env_params['input_image_size'] = 64
         env_params['img_width'] = 64
@@ -70,18 +70,17 @@ class Workspace(object):
 
 
         
-        cfg.agent.params.obs_dim = self.env.observation_space.shape[0]
-        cfg.agent.params.action_dim = self.env.action_space.shape[0]
-        cfg.agent.params.action_range = [
+        cfg['obs_dim'] = self.env.observation_space.shape[0]
+        cfg['action_dim'] = self.env.action_space.shape[0]
+        cfg['action_range'] = [
             float(self.env.action_space.low.min()),
             float(self.env.action_space.high.max())
         ]
-        self.agent = hydra.utils.instantiate(cfg.agent)
 
         self.replay_buffer = ReplayBuffer(
             self.env.observation_space.shape,
             self.env.action_space.shape,
-            int(cfg.replay_buffer_capacity),
+            int(cfg['replay_buffer_capacity']),
             self.device)
         
         # for logging
@@ -93,25 +92,25 @@ class Workspace(object):
         self.reward_model = RewardModel(
             self.env.observation_space.shape[0],
             self.env.action_space.shape[0],
-            ensemble_size=cfg.ensemble_size,
-            size_segment=cfg.segment,
-            activation=cfg.activation, 
-            lr=cfg.reward_lr,
-            mb_size=cfg.reward_batch, 
-            large_batch=cfg.large_batch, 
-            label_margin=cfg.label_margin, 
-            teacher_beta=cfg.teacher_beta, 
-            teacher_gamma=cfg.teacher_gamma, 
-            teacher_eps_mistake=cfg.teacher_eps_mistake, 
-            teacher_eps_skip=cfg.teacher_eps_skip, 
-            teacher_eps_equal=cfg.teacher_eps_equal)
+            ensemble_size=cfg['ensemble_size'],
+            size_segment=cfg['segment'],
+            activation=cfg['activation'], 
+            lr=cfg['reward_lr'],
+            mb_size=cfg['reward_batch'], 
+            large_batch=cfg['large_batch'], 
+            label_margin=cfg['label_margin'], 
+            teacher_beta=cfg['teacher_beta'], 
+            teacher_gamma=cfg['teacher_gamma'], 
+            teacher_eps_mistake=cfg['teacher_eps_mistake'], 
+            teacher_eps_skip=cfg['teacher_eps_skip'], 
+            teacher_eps_equal=cfg['teacher_eps_equal'])
         
     def evaluate(self):
         average_episode_reward = 0
         average_true_episode_reward = 0
         success_rate = 0
         
-        for episode in range(self.cfg.num_eval_episodes):
+        for episode in range(self.cfg['num_eval_episodes']):
             obs = self.env.reset()
             self.agent.reset()
             done = False
@@ -135,10 +134,10 @@ class Workspace(object):
             if self.log_success:
                 success_rate += episode_success
             
-        average_episode_reward /= self.cfg.num_eval_episodes
-        average_true_episode_reward /= self.cfg.num_eval_episodes
+        average_episode_reward /= self.cfg['num_eval_episodes']
+        average_true_episode_reward /= self.cfg['num_eval_episodes']
         if self.log_success:
-            success_rate /= self.cfg.num_eval_episodes
+            success_rate /= self.cfg['num_eval_episodes']
             success_rate *= 100.0
         
         self.logger.log('eval/episode_reward', average_episode_reward,
@@ -160,17 +159,17 @@ class Workspace(object):
             # if it is first time to get feedback, need to use random sampling
             labeled_queries = self.reward_model.uniform_sampling()
         else:
-            if self.cfg.feed_type == 0:
+            if self.cfg['feed_type'] == 0:
                 labeled_queries = self.reward_model.uniform_sampling()
-            elif self.cfg.feed_type == 1:
+            elif self.cfg['feed_type'] == 1:
                 labeled_queries = self.reward_model.disagreement_sampling()
-            elif self.cfg.feed_type == 2:
+            elif self.cfg['feed_type'] == 2:
                 labeled_queries = self.reward_model.entropy_sampling()
-            elif self.cfg.feed_type == 3:
+            elif self.cfg['feed_type'] == 3:
                 labeled_queries = self.reward_model.kcenter_sampling()
-            elif self.cfg.feed_type == 4:
+            elif self.cfg['feed_type'] == 4:
                 labeled_queries = self.reward_model.kcenter_disagree_sampling()
-            elif self.cfg.feed_type == 5:
+            elif self.cfg['feed_type'] == 5:
                 labeled_queries = self.reward_model.kcenter_entropy_sampling()
             else:
                 raise NotImplementedError
@@ -181,8 +180,8 @@ class Workspace(object):
         train_acc = 0
         if self.labeled_feedback > 0:
             # update reward
-            for epoch in range(self.cfg.reward_update):
-                if self.cfg.label_margin > 0 or self.cfg.teacher_eps_equal > 0:
+            for epoch in range(self.cfg['reward_update']):
+                if self.cfg['label_margin'] > 0 or self.cfg['teacher_eps_equal'] > 0:
                     train_acc = self.reward_model.train_soft_reward()
                 else:
                     train_acc = self.reward_model.train_reward()
@@ -204,16 +203,16 @@ class Workspace(object):
         start_time = time.time()
 
         interact_count = 0
-        while self.step < self.cfg.num_train_steps:
+        while self.step < self.cfg['num_train_steps']:
             if done:
                 if self.step > 0:
                     self.logger.log('train/duration', time.time() - start_time, self.step)
                     start_time = time.time()
                     self.logger.dump(
-                        self.step, save=(self.step > self.cfg.num_seed_steps))
+                        self.step, save=(self.step > self.cfg['num_seed_steps']))
 
                 # evaluate agent periodically
-                if self.step > 0 and self.step % self.cfg.eval_frequency == 0:
+                if self.step > 0 and self.step % self.cfg['eval_frequency'] == 0:
                     self.logger.log('eval/episode', episode, self.step)
                     self.evaluate()
                 
@@ -242,27 +241,27 @@ class Workspace(object):
                 self.logger.log('train/episode', episode, self.step)
                         
             # sample action for data collection
-            if self.step < self.cfg.num_seed_steps:
+            if self.step < self.cfg['num_seed_steps']:
                 action = self.env.action_space.sample()
             else:
                 with utils.eval_mode(self.agent):
                     action = self.agent.act(obs, sample=True)
 
             # run training update                
-            if self.step == (self.cfg.num_seed_steps + self.cfg.num_unsup_steps):
+            if self.step == (self.cfg['num_seed_steps'] + self.cfg['num_unsup_steps']):
                 # update schedule
-                if self.cfg.reward_schedule == 1:
-                    frac = (self.cfg.num_train_steps-self.step) / self.cfg.num_train_steps
+                if self.cfg['reward_schedule'] == 1:
+                    frac = (self.cfg['num_train_steps']-self.step) / self.cfg['num_train_steps']
                     if frac == 0:
                         frac = 0.01
-                elif self.cfg.reward_schedule == 2:
-                    frac = self.cfg.num_train_steps / (self.cfg.num_train_steps-self.step +1)
+                elif self.cfg['reward_schedule'] == 2:
+                    frac = self.cfg['num_train_steps'] / (self.cfg['num_train_steps']-self.step +1)
                 else:
                     frac = 1
                 self.reward_model.change_batch(frac)
                 
                 # update margin --> not necessary / will be updated soon
-                new_margin = np.mean(avg_train_true_return) * (self.cfg.segment / self.env._max_episode_steps)
+                new_margin = np.mean(avg_train_true_return) * (self.cfg['segment'] / self.env._max_episode_steps)
                 self.reward_model.set_teacher_thres_skip(new_margin)
                 self.reward_model.set_teacher_thres_equal(new_margin)
                 
@@ -278,34 +277,34 @@ class Workspace(object):
                 # update agent
                 self.agent.update_after_reset(
                     self.replay_buffer, self.logger, self.step, 
-                    gradient_update=self.cfg.reset_update, 
+                    gradient_update=self.cfg['reset_update'], 
                     policy_update=True)
                 
                 # reset interact_count
                 interact_count = 0
-            elif self.step > self.cfg.num_seed_steps + self.cfg.num_unsup_steps:
+            elif self.step > self.cfg['num_seed_steps'] + self.cfg['num_unsup_steps']:
                 # update reward function
-                if self.total_feedback < self.cfg.max_feedback:
-                    if interact_count == self.cfg.num_interact:
+                if self.total_feedback < self.cfg['max_feedback']:
+                    if interact_count == self.cfg['num_interact']:
                         # update schedule
-                        if self.cfg.reward_schedule == 1:
-                            frac = (self.cfg.num_train_steps-self.step) / self.cfg.num_train_steps
+                        if self.cfg['reward_schedule'] == 1:
+                            frac = (self.cfg['num_train_steps']-self.step) / self.cfg['num_train_steps']
                             if frac == 0:
                                 frac = 0.01
-                        elif self.cfg.reward_schedule == 2:
-                            frac = self.cfg.num_train_steps / (self.cfg.num_train_steps-self.step +1)
+                        elif self.cfg['reward_schedule'] == 2:
+                            frac = self.cfg['num_train_steps'] / (self.cfg['num_train_steps']-self.step +1)
                         else:
                             frac = 1
                         self.reward_model.change_batch(frac)
                         
                         # update margin --> not necessary / will be updated soon
-                        new_margin = np.mean(avg_train_true_return) * (self.cfg.segment / self.env._max_episode_steps)
-                        self.reward_model.set_teacher_thres_skip(new_margin * self.cfg.teacher_eps_skip)
-                        self.reward_model.set_teacher_thres_equal(new_margin * self.cfg.teacher_eps_equal)
+                        new_margin = np.mean(avg_train_true_return) * (self.cfg['segment'] / self.env._max_episode_steps)
+                        self.reward_model.set_teacher_thres_skip(new_margin * self.cfg['teacher_eps_skip'])
+                        self.reward_model.set_teacher_thres_equal(new_margin * self.cfg['teacher_eps_equal'])
                         
                         # corner case: new total feed > max feed
-                        if self.reward_model.mb_size + self.total_feedback > self.cfg.max_feedback:
-                            self.reward_model.set_batch(self.cfg.max_feedback - self.total_feedback)
+                        if self.reward_model.mb_size + self.total_feedback > self.cfg['max_feedback']:
+                            self.reward_model.set_batch(self.cfg['max_feedback'] - self.total_feedback)
                             
                         self.learn_reward()
                         self.replay_buffer.relabel_with_predictor(self.reward_model)
@@ -314,9 +313,9 @@ class Workspace(object):
                 self.agent.update(self.replay_buffer, self.logger, self.step, 1)
                 
             # unsupervised exploration
-            elif self.step > self.cfg.num_seed_steps:
+            elif self.step > self.cfg['num_seed_steps']:
                 self.agent.update_state_ent(self.replay_buffer, self.logger, self.step, 
-                                            gradient_update=1, K=self.cfg.topK)
+                                            gradient_update=1, K=self.cfg['topK'])
                 
             next_obs, reward, done, extra = self.env.step(action)
             reward_hat = self.reward_model.r_hat(np.concatenate([obs, action], axis=-1))
@@ -344,8 +343,10 @@ class Workspace(object):
         self.agent.save(self.work_dir, self.step)
         self.reward_model.save(self.work_dir, self.step)
         
-@hydra.main(version_base=None, config_path='conf',config_name="config")
-def main(cfg):
+def main():
+    import yaml
+    with open("conf/config.yaml") as file:
+        cfg = yaml.safe_load(file)
     workspace = Workspace(cfg)
     workspace.run()
 

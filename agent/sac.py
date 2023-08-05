@@ -29,8 +29,8 @@ def compute_state_entropy(obs, full_obs, k):
 
 class SACAgent(Agent):
     """SAC algorithm."""
-    def __init__(self, obs_dim, action_dim, action_range, device, critic_cfg,
-                 actor_cfg, discount, init_temperature, alpha_lr, alpha_betas,
+    def __init__(self, obs_dim, action_dim, action_range, device, cfg,
+                  discount, init_temperature, alpha_lr, alpha_betas,
                  actor_lr, actor_betas, actor_update_frequency, critic_lr,
                  critic_betas, critic_tau, critic_target_update_frequency,
                  batch_size, learnable_temperature,
@@ -45,7 +45,7 @@ class SACAgent(Agent):
         self.critic_target_update_frequency = critic_target_update_frequency
         self.batch_size = batch_size
         self.learnable_temperature = learnable_temperature
-        self.critic_cfg = critic_cfg
+        self.cfg = cfg
         self.critic_lr = critic_lr
         self.critic_betas = critic_betas
         self.s_ent_stats = utils.TorchRunningMeanStd(shape=[1], device=device)
@@ -53,15 +53,32 @@ class SACAgent(Agent):
         self.init_temperature = init_temperature
         self.alpha_lr = alpha_lr
         self.alpha_betas = alpha_betas
-        self.actor_cfg = actor_cfg
         self.actor_betas = actor_betas
         self.alpha_lr = alpha_lr
         
-        self.critic = hydra.utils.instantiate(critic_cfg).to(self.device)
-        self.critic_target = hydra.utils.instantiate(critic_cfg).to(
-            self.device)
+        self.critic = DoubleQCritic(
+            self.cfg['obs_dim'],
+            self.cfg['action_dim'],
+            self.cfg['critic_cfg']['hidden_dim'],
+            self.cfg['critic_cfg']['hidden_depth'],
+        ).to(self.device)
+
+        self.critic_target = DoubleQCritic(
+            self.cfg['obs_dim'],
+            self.cfg['action_dim'],
+            self.cfg['critic_cfg']['hidden_dim'],
+            self.cfg['critic_cfg']['hidden_depth'],
+        ).to(self.device)
+        
         self.critic_target.load_state_dict(self.critic.state_dict())
-        self.actor = hydra.utils.instantiate(actor_cfg).to(self.device)
+        self.actor = DiagGaussianActor(
+            self.cfg['obs_dim'],
+            self.cfg['action_dim'],
+            self.cfg['actor_cfg']['hidden_dim'],
+            self.cfg['actor_cfg']['hidden_depth'],
+            self.cfg['actor_cfg']['log_std_bounds'],
+        ).to(self.device)
+
         self.log_alpha = torch.tensor(np.log(init_temperature)).to(self.device)
         self.log_alpha.requires_grad = True
         
@@ -87,9 +104,20 @@ class SACAgent(Agent):
         self.critic_target.train()
     
     def reset_critic(self):
-        self.critic = hydra.utils.instantiate(self.critic_cfg).to(self.device)
-        self.critic_target = hydra.utils.instantiate(self.critic_cfg).to(
-            self.device)
+        self.critic =DoubleQCritic(
+            self.cfg['obs_dim'],
+            self.cfg['action_dim'],
+            self.cfg['critic_cfg']['hidden_dim'],
+            self.cfg['critic_cfg']['hidden_depth'],
+        ).to(self.device)
+
+        self.critic_target = DoubleQCritic(
+            self.cfg['obs_dim'],
+            self.cfg['action_dim'],
+            self.cfg['critic_cfg']['hidden_dim'],
+            self.cfg['critic_cfg']['hidden_depth'],
+        ).to(self.device)
+
         self.critic_target.load_state_dict(self.critic.state_dict())
         self.critic_optimizer = torch.optim.Adam(
             self.critic.parameters(),
@@ -106,7 +134,14 @@ class SACAgent(Agent):
             betas=self.alpha_betas)
         
         # reset actor
-        self.actor = hydra.utils.instantiate(self.actor_cfg).to(self.device)
+        self.actor =DiagGaussianActor(
+            self.cfg['obs_dim'],
+            self.cfg['action_dim'],
+            self.cfg['actor_cfg']['hidden_dim'],
+            self.cfg['actor_cfg']['hidden_depth'],
+            self.cfg['actor_cfg']['log_std_bounds'],
+        ).to(self.device)
+        
         self.actor_optimizer = torch.optim.Adam(
             self.actor.parameters(),
             lr=self.actor_lr,
