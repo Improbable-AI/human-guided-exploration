@@ -30,6 +30,7 @@ def run(model_name, run_path,
         goal_selector_buffer_size=50000,
         gpu=0,
         noise=0,
+        save_all=False,
         goal_selector_name='', **extra_params):
 
     import gym
@@ -91,7 +92,7 @@ def run(model_name, run_path,
 
     os.makedirs(f"demos/{env_name}", exist_ok=True)
     
-    collect_demos(env, policy, num_demos, env_name, max_path_length, noise)
+    collect_demos(env, policy, num_demos, env_name, max_path_length, noise, save_all)
 
 def env_distance(env, state, goal):
         obs = env.observation(state)
