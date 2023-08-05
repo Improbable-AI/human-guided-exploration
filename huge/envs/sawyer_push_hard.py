@@ -886,7 +886,7 @@ class SawyerHardPushGoalEnv(GymGoalEnvWrapper):
         return  distance + np.linalg.norm(achieved_state_puck - achieved_state_hand) #+ distance*10 
 
     def compute_success(self, achieved_state, goal):        
-      return np.linalg.norm(achieved_state[2:4] - goal[2:4]) < 0.03
+      return np.linalg.norm(achieved_state[2:4] - goal[2:4]) < 0.05
     
         
     def puck_distance(self, states, goal_states):
