@@ -39,13 +39,6 @@ class Workspace(object):
         self.device = torch.device(cfg.device)
         self.log_success = False
         
-        # make env
-        if 'metaworld' in cfg.env:
-            self.env = utils.make_metaworld_env(cfg)
-            self.log_success = True
-        else:
-            self.env = utils.make_env(cfg)
-        num_blocks = 0
         if 'num_blocks' in cfg:
             num_blocks = cfg.num_blocks
         continuous_action_space = False
@@ -351,7 +344,7 @@ class Workspace(object):
         self.agent.save(self.work_dir, self.step)
         self.reward_model.save(self.work_dir, self.step)
         
-@hydra.main(config_path="config", config_name='train_PEBBLE', strict=True)
+@hydra.main(config_path='config/train_PEBBLE.yaml', strict=True)
 def main(cfg):
     workspace = Workspace(cfg)
     workspace.run()
