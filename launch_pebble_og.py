@@ -16,7 +16,7 @@ from huge.baselines.pebble.replay_buffer import ReplayBuffer
 from huge.baselines.pebble.reward_model import RewardModel
 from collections import deque
 
-import utils
+import huge.baselines.pebble.utils
 import hydra
 
 class Workspace(object):
