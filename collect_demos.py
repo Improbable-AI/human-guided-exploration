@@ -107,7 +107,7 @@ def create_video(images, video_filename):
         
         wandb.log({"demos_video_trajectories":wandb.Video(images, fps=10)})
 
-def collect_demos(env, policy, num_demos, env_name, max_path_length, noise):
+def collect_demos(env, policy, num_demos, env_name, max_path_length, noise, save_all=False):
     policy.eval()
     i = 0
     while i < num_demos:
@@ -134,7 +134,7 @@ def collect_demos(env, policy, num_demos, env_name, max_path_length, noise):
                     action_space_range = (action_high - action_low)/2
                     action = np.random.normal(0, 1, 2)
                     action = action*action_space_range+action_space_mean
-                    
+
             elif np.random.random() < noise:
                 action = np.random.randint(env.action_space.n)
                 
@@ -156,7 +156,7 @@ def collect_demos(env, policy, num_demos, env_name, max_path_length, noise):
         final_dist_commanded = env_distance(env, states[-1], goal)
         create_video(video, f"{env_name}_{final_dist_commanded}")
         print("Final distance 1", final_dist_commanded)
-        if success:
+        if success or save_all:
   
             # put actions states into npy file
             actions = np.array(actions)
@@ -180,6 +180,7 @@ if __name__ == "__main__":
     parser.add_argument("--model_name", type=str, default='best_model_02_04_2023_09:36:41')
     parser.add_argument("--noise", type=float, default=0)
     parser.add_argument("--num_blocks", type=int, default=None)
+    parser.add_argument("--save_all", action="store_true", default=False)
 
     args = parser.parse_args()
 
