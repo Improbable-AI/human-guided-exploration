@@ -524,7 +524,7 @@ class HumanPreferences:
         for epoch in range(self.reward_model_epochs):  # loop over the dataset multiple times
             start = time.time()
             
-            achieved_states_1, achieved_states_2, goals ,labels = self.reward_model_buffer.sample_batch(self.reward_model_batch_size)
+            achieved_states_1, achieved_states_2, goals ,labels, img1, img2, img_goals= self.reward_model_buffer.sample_batch(self.reward_model_batch_size)
             
             self.reward_optimizer.zero_grad()
 
@@ -566,7 +566,7 @@ class HumanPreferences:
             
         self.reward_model.eval()
         eval_loss = 0.0
-        achieved_states_1, achieved_states_2, goals ,labels = self.reward_model_buffer_validation.sample_batch(1000)
+        achieved_states_1, achieved_states_2, goals ,labels, img1, img2, img_goals = self.reward_model_buffer_validation.sample_batch(1000)
 
         state1 = torch.Tensor(achieved_states_1).to(self.device)
         state2 = torch.Tensor(achieved_states_2).to(self.device)
