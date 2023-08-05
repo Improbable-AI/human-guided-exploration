@@ -11,6 +11,7 @@ import time
 import pickle as pkl
 import tqdm
 
+import yaml
 from huge.baselines.pebble.logger import Logger
 from huge.baselines.pebble.replay_buffer import ReplayBuffer
 from huge.baselines.pebble.reward_model import RewardModel
@@ -351,8 +352,9 @@ class Workspace(object):
         self.agent.save(self.work_dir, self.step)
         self.reward_model.save(self.work_dir, self.step)
         
-@hydra.main(config_path=".", config_name='train_PEBBLE')
 def main(cfg):
+    with open("config.yaml") as file:
+        cfg = yaml.safe_load(file)
     workspace = Workspace(cfg)
     workspace.run()
 
