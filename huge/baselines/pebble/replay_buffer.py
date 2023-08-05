@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-import utils
+import huge.baselines.pebble.utils
 
 class ReplayBuffer(object):
     """Buffer to store environment transitions."""
