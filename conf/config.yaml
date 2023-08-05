@@ -54,8 +54,8 @@ teacher_eps_equal: 0
 # scheduling
 reward_schedule: 0
 
-num_train_steps: 1e6
-replay_buffer_capacity: 1e6
+num_train_steps: 1000000
+replay_buffer_capacity: 1000000
 
 # evaluation config
 eval_frequency: 10000
