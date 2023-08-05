@@ -32,8 +32,7 @@ class Workspace(object):
         self.logger = Logger(
             self.work_dir,
             save_tb=cfg['log_save_tb'],
-            log_frequency=cfg['log_frequency'],
-            agent=cfg['agent.name'])
+            log_frequency=cfg['log_frequency'])
 
         utils.set_seed_everywhere(cfg['seed'])
         self.device = torch.device(cfg['device'])
