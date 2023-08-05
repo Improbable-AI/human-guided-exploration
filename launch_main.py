@@ -239,6 +239,9 @@ if __name__ == "__main__":
     parser.add_argument("--fill_buffer_first_episodes", type=int, default=None)
     parser.add_argument("--goal_selector_name", type=str, default=None)
     parser.add_argument("--use_images", action="store_true", default=False)
+    parser.add_argument("--pretrain_policy", action="store_true", default=False)
+    parser.add_argument("--num_demos", type=int, default=None)
+    parser.add_argument("--pretrain_goal_selector", action="store_true", default=False)
 
     args = parser.parse_args()
 
