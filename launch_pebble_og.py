@@ -344,7 +344,7 @@ class Workspace(object):
         self.agent.save(self.work_dir, self.step)
         self.reward_model.save(self.work_dir, self.step)
         
-@hydra.main(version_base=None, config_path='config',config_name="train_PEBBLE")
+@hydra.main(version_base=None, config_path='conf',config_name="config")
 def main(cfg):
     workspace = Workspace(cfg)
     workspace.run()
