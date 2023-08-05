@@ -51,7 +51,7 @@ class Workspace(object):
         env_params['fourier'] = False
         env_params['fourier_goal_selector'] = False
         env_params['normalize']=False
-        env_params['env_name'] = cfg['name']
+        env_params['env_name'] = cfg['env']
         env_params['goal_selector_buffer_size'] = 10
         env_params['input_image_size'] = 64
         env_params['img_width'] = 64
