@@ -125,7 +125,16 @@ def collect_demos(env, policy, num_demos, env_name, max_path_length, noise):
             horizon = np.arange(max_path_length) >= (max_path_length - 1 - t) # Temperature encoding of horizon
             action = policy.act_vectorized(observation[None], goal[None], horizon=horizon[None], greedy=False, noise=noise)[0]
             if "block_stacking" in env_name or "bandu" in env_name:
-                action = action + np.random.normal(0, noise)
+                if np.random.random() < noise:
+                    action_low = np.array([0.25, -0.5])
+                    action_high = np.array([0.75, 0.5])
+
+
+                    action_space_mean = (action_low + action_high)/2
+                    action_space_range = (action_high - action_low)/2
+                    action = np.random.normal(0, 1, 2)
+                    action = action*action_space_range+action_space_mean
+                    
             elif np.random.random() < noise:
                 action = np.random.randint(env.action_space.n)
                 
