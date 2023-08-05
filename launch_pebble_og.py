@@ -64,7 +64,7 @@ class Workspace(object):
         print(env_params)
         env_params['goal_selector_name']=""
         env_params['continuous_action_space'] = continuous_action_space
-        env, policy, goal_selector, classifier_model, replay_buffer, goal_selector_buffer, huge_kwargs = variants.get_params(env, env_params)
+        self.env, policy, goal_selector, classifier_model, replay_buffer, goal_selector_buffer, huge_kwargs = variants.get_params(env, env_params)
 
 
         
