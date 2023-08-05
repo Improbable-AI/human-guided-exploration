@@ -16,8 +16,12 @@ from huge.baselines.pebble.replay_buffer import ReplayBuffer
 from huge.baselines.pebble.reward_model import RewardModel
 from collections import deque
 
-import huge.baselines.pebble.utils
+from huge import envs
+from huge.algo import variants
+
+import huge.baselines.pebble.utils as utils
 import hydra
+
 
 class Workspace(object):
     def __init__(self, cfg):
@@ -41,6 +45,37 @@ class Workspace(object):
             self.log_success = True
         else:
             self.env = utils.make_env(cfg)
+        num_blocks = 0
+        if 'num_blocks' in cfg:
+            num_blocks = cfg.num_blocks
+        continuous_action_space = False
+        env = envs.create_env(cfg.env, "slide_cabinet,microwave,hinge_cabinet", num_blocks, False, 3, continuous_action_space, 0.05)
+
+        env_params = envs.get_env_params(cfg.env)
+        env_params['max_trajectory_length']=cfg.max_path_length
+        env_params['network_layers']="1,1"
+        env_params['reward_layers'] = "1,1"
+        env_params['buffer_size'] = 10
+        env_params['use_horizon'] = False
+        env_params['fourier'] = False
+        env_params['fourier_goal_selector'] = False
+        env_params['normalize']=False
+        env_params['env_name'] = cfg.name
+        env_params['goal_selector_buffer_size'] = 10
+        env_params['input_image_size'] = 64
+        env_params['img_width'] = 64
+        env_params['img_height'] = 64
+        env_params['use_images_in_policy'] = False
+        env_params['use_images_in_reward_model'] = False
+        env_params['use_images_in_stopping_criteria'] = False
+        env_params['close_frames'] = False
+        env_params['far_frames'] = False
+        print(env_params)
+        env_params['goal_selector_name']=""
+        env_params['continuous_action_space'] = continuous_action_space
+        env, policy, goal_selector, classifier_model, replay_buffer, goal_selector_buffer, huge_kwargs = variants.get_params(env, env_params)
+
+
         
         cfg.agent.params.obs_dim = self.env.observation_space.shape[0]
         cfg.agent.params.action_dim = self.env.action_space.shape[0]
