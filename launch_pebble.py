@@ -403,6 +403,8 @@ if __name__ == "__main__":
     import os
     os.makedirs(args.env_name, exist_ok=True)
 
+    import IPython
+    IPython.embed()
     algorithm = 'SAC'
     variant = dict(
         algorithm=algorithm,
