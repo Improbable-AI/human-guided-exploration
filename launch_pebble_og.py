@@ -37,9 +37,8 @@ class Workspace(object):
         utils.set_seed_everywhere(cfg['seed'])
         self.device = torch.device(cfg['device'])
         self.log_success = False
-        
-        if 'num_blocks' in cfg:
-            num_blocks = cfg['num_blocks']
+
+        num_blocks = cfg['num_blocks']
         continuous_action_space = False
         env = envs.create_env(cfg['env'], "slide_cabinet,microwave,hinge_cabinet", num_blocks, False, 3, continuous_action_space, 0.05)
 
