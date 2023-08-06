@@ -15,7 +15,7 @@ from huge.baselines.pebble.logger import Logger
 from huge.baselines.pebble.replay_buffer import ReplayBuffer
 from huge.baselines.pebble.reward_model import RewardModel
 from collections import deque
-
+from agent.sac import SACAgent
 from huge import envs
 from huge.algo import variants
 
@@ -73,6 +73,23 @@ class Workspace(object):
             float(self.env.action_space.low.min()),
             float(self.env.action_space.high.max())
         ]
+
+        self.agent = SACAgent(
+            obs_dim=cfg['obs_dim'],
+            action_dim=cfg['action_dim'],
+            action_range=cfg['obs_dim'],
+            device=cfg['obs_dim'],
+            cfg=cfg,
+            discount=cfg['obs_dim'],
+            init_temperature=cfg['obs_dim'],
+            alpha_lr=cfg['obs_dim'],
+            alpha_betas=cfg['obs_dim'],
+            actor_lr=cfg['obs_dim'],
+            actor_betas=cfg['obs_dim'],
+            actor_update_frequency=cfg['obs_dim'],
+            critic_lr=cfg['obs_dim'],
+            critic_betas=cfg['obs_dim'],
+        )
 
         self.replay_buffer = ReplayBuffer(
             self.env.observation_space.shape,
