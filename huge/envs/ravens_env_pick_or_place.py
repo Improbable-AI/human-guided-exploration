@@ -359,15 +359,16 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
         plt.scatter(box_position[0],
                     box_position[1], marker='+', s=20, color="black")
         plt.scatter(goal_position[-2],
-                    goal_position[-1], marker='x', s=20, color="yellow")
+                    goal_position[-1], marker='x', s=20, color="red")
         if len(box_position) > 2:
             plt.scatter(box_position[2],
-                box_position[3], marker='+', s=20, color="red")
+                box_position[3], marker='+', s=20, color="blue")
         if len(box_position) > 4:
             plt.scatter(box_position[4],
-                box_position[5], marker='+', s=20, color="blue")
+                box_position[5], marker='+', s=20, color="green")
         plt.xlim([0.25, 0.75])
         plt.ylim([-0.5, 0.5])
+
         
         if 'eval' in filename:
             wandb.log({"trajectory_eval": wandb.Image(plt)})
@@ -431,35 +432,39 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
     def render_image(self):
       if self.num_blocks > 3:
          return self.base_env.render_image()
-      import IPython
-      IPython.embed()  
-      obs = self.base_env._get_obs()
+      obs = self.base_env._get_obs()['observation']
 
     
       # plot robot pose
       robot_pos = obs[:3]
-      plt.scatter(robot_pos[0], robot_pos[1], marker="o", s=60, color="black")
+      plt.scatter(robot_pos[0], robot_pos[1], marker="o", s=60, color="black", zorder=6)
 
       # plot goal 
       goal_pos = self.sample_goal()
-      plt.scatter(goal_pos[0], goal_pos[1], marker="x", s=60, color="purple")
-
+      plt.scatter(goal_pos[0], goal_pos[1], marker="x", s=60, color="purple", zorder=2)
+      from matplotlib.patches import Circle
+      circ = Circle((goal_pos[0],goal_pos[1]),0.1,zorder=1)
+      circ.set_facecolor("none")
+      circ.set_edgecolor("black")
+      plt.gca().add_patch(circ)
+      plt.gca().set_aspect('equal')
 
       # plot each block in a different color green blue yellow
       green_box = obs[-6:-4]
-      plt.scatter(green_box[0], green_box[1], marker="D", s=60, color="green")
+      plt.scatter(green_box[0], green_box[1], marker="D", s=60, color="green", zorder=3)
 
       blue_box = obs[-4:-2]
-      plt.scatter(blue_box[0], blue_box[1], marker="D", s=60, color="blue")
+      plt.scatter(blue_box[0], blue_box[1], marker="D", s=60, color="blue", zorder=4)
 
       red_box = obs[-2:]
-      plt.scatter(red_box[0], red_box[1], marker="D", s=60, color="red")
+      plt.scatter(red_box[0], red_box[1], marker="D", s=60, color="red", zorder=5)
 
-      plt.xlim([0.25, 0.75])
+      plt.xlim([0., 1])
       plt.ylim([-0.5, 0.5])
-      
+
 
       image = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep='')
+      image = image.reshape((480,640,3))
 
       return image
     
