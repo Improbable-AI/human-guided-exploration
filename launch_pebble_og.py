@@ -283,7 +283,7 @@ class Workspace(object):
                 self.reward_model.change_batch(frac)
                 
                 # update margin --> not necessary / will be updated soon
-                new_margin = np.mean(avg_train_true_return) * (self.cfg['segment'] / self.env._max_episode_steps)
+                new_margin = np.mean(avg_train_true_return) * (self.cfg['segment'] / self.cfg['max_path_length'])
                 self.reward_model.set_teacher_thres_skip(new_margin)
                 self.reward_model.set_teacher_thres_equal(new_margin)
                 
