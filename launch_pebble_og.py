@@ -267,9 +267,8 @@ class Workspace(object):
                 episode += 1
 
                 self.logger.log('train/episode', episode, self.step)
-                import IPython
-                IPython.embed()
-                self.env.plot_trajectories(np.array(observations), np.array([self.goal for i in range(len(observations))]))
+
+                self.env.plot_trajectories(np.array([observations]), np.array([[self.goal for i in range(len(observations))]]))
 
                 observations = []
 
