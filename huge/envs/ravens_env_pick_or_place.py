@@ -437,6 +437,9 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
       if self.num_blocks > 3:
          return self.base_env.render_image()
       
+      plt.cla()
+      plt.clf()
+      
       obs = self.base_env._get_obs()['observation']
 
       # plot robot pose
