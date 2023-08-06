@@ -602,7 +602,8 @@ class HUGE:
     def prob(self, g_this, g_other):
         return torch.exp(g_this)/(torch.exp(g_this)+torch.exp(g_other))
 
-    def train_goal_selector(self,buffer=None, epochs=None):
+    def train_goal_selector(self,buffer=None, epochs=None, depth=0):
+
         if buffer is None:
             buffer = self.goal_selector_buffer
         if epochs is None:
@@ -664,7 +665,9 @@ class HUGE:
             self.goal_selector = copy.deepcopy(self.goal_selector_backup)
             self.reward_optimizer = torch.optim.Adam(list(self.goal_selector.parameters()))
             self.goal_selector.to(self.device)
-            return self.train_goal_selector(buffer)
+            if depth > 0:
+                return 0,0
+            return self.train_goal_selector(buffer, depth=1)
             
         self.goal_selector.eval()
         eval_loss = 0.0
@@ -1604,7 +1607,7 @@ class HUGE:
                                     goal_states_goal_selector[j][-1], marker='x', s=20, color=color)
                         
                     # relabel and add to buffer
-                    if not self.use_oracle and (not self.human_input or self.human_input is not None):
+                    if not self.use_oracle and (not self.human_input or self.human_data_info is not None):
                         self.collect_and_train_goal_selector(desired_goal_states_goal_selector, total_timesteps)
                     
                     desired_goal_states_goal_selector = []
