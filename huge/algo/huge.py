@@ -1604,7 +1604,7 @@ class HUGE:
                                     goal_states_goal_selector[j][-1], marker='x', s=20, color=color)
                         
                     # relabel and add to buffer
-                    if not self.use_oracle and (not self.human_input or self.human_input is not None):
+                    if not self.use_oracle and (not self.human_input or self.human_data_info is not None):
                         self.collect_and_train_goal_selector(desired_goal_states_goal_selector, total_timesteps)
                     
                     desired_goal_states_goal_selector = []
