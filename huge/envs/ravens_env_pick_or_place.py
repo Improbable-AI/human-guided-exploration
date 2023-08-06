@@ -444,14 +444,14 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
 
       # plot robot pose
       robot_pos = obs[:3]
-      plt.scatter(robot_pos[0], robot_pos[1], marker="o", s=120, color="black", zorder=6)
+      plt.scatter(robot_pos[0], robot_pos[1], marker="o", s=180, color="black", zorder=6)
 
       # plot goal 
       goal_pos = self.sample_goal()
-      plt.scatter(goal_pos[0], goal_pos[1], marker="x", s=120, color="purple", zorder=2)
+      plt.scatter(goal_pos[0], goal_pos[1], marker="x", s=180, color="purple", zorder=2)
       circ = Circle((goal_pos[0],goal_pos[1]),0.1,zorder=1, linewidth=5)
       circ.set_facecolor("none")
-      circ.set_edgecolor("black")
+      circ.set_edgecolor("purple")
       plt.gca().add_patch(circ)
       plt.gca().set_aspect('equal')
 
