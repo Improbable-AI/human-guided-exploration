@@ -139,12 +139,13 @@ class Workspace(object):
             true_episode_reward = 0
             if self.log_success:
                 episode_success = 0
-
+            observations = []
             while not done:
                 with utils.eval_mode(self.agent):
                     action = self.agent.act(obs, sample=False)
                 obs, reward, done, extra = self.env.step(action)
                 obs = self.env.observation(obs)
+                observations.append(obs)
                 reward = - self.env.compute_shaped_distance(obs, self.goal)[0]
                 episode_reward += reward
                 true_episode_reward += reward
@@ -155,6 +156,8 @@ class Workspace(object):
             average_true_episode_reward += true_episode_reward
             if self.log_success:
                 success_rate += episode_success
+
+            self.env.plot_trajectories(observations, np.array([self.goal for i in range(len(observations))]))
             
         average_episode_reward /= self.cfg['num_eval_episodes']
         average_true_episode_reward /= self.cfg['num_eval_episodes']
@@ -224,6 +227,7 @@ class Workspace(object):
         avg_train_true_return = deque([], maxlen=10) 
         start_time = time.time()
 
+        observations = []
         interact_count = 0
         while self.step < self.cfg['num_train_steps']:
             if done:
@@ -262,6 +266,11 @@ class Workspace(object):
                 episode += 1
 
                 self.logger.log('train/episode', episode, self.step)
+
+                self.env.plot_trajectories(observations, np.array([self.goal for i in range(len(observations))]))
+
+                observations = []
+
             # sample action for data collection
             if self.step < self.cfg['num_seed_steps']:
                 action = self.env.action_space.sample()
@@ -343,6 +352,7 @@ class Workspace(object):
             next_obs = self.env.observation(next_obs)
             reward = - self.env.compute_shaped_distance(next_obs, self.goal)[0]
             reward_hat = self.reward_model.r_hat(np.concatenate([obs, action], axis=-1))
+            observations.append(next_obs)
 
             # allow infinite bootstrap
             done = float(done)
