@@ -93,7 +93,6 @@ class Workspace(object):
             critic_target_update_frequency=cfg['critic_target_update_frequency'],
             batch_size=cfg['batch_size'],
             learnable_temperature=cfg['learnable_temperature'],
-            normalize_state_entropy=cfg['normalize_state_entropy'],
         )
 
         self.replay_buffer = ReplayBuffer(
