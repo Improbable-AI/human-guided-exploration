@@ -129,6 +129,7 @@ class Workspace(object):
         average_episode_reward = 0
         average_true_episode_reward = 0
         success_rate = 0
+        all_observations = []
 
         for episode in range(self.cfg['num_eval_episodes']):
             obs = self.env.reset()
@@ -160,7 +161,9 @@ class Workspace(object):
 
             
             if len(observations) > 0:
-                self.env.plot_trajectories(np.array([observations]), np.array([[self.goal for i in range(len(observations))]]))
+                all_observations.append(observations)
+
+
 
         average_episode_reward /= self.cfg['num_eval_episodes']
         average_true_episode_reward /= self.cfg['num_eval_episodes']
@@ -178,6 +181,10 @@ class Workspace(object):
             self.logger.log('train/true_episode_success', success_rate,
                         self.step)
         self.logger.dump(self.step)
+
+        
+        goals = [self.goal for i in range(len(all_observations[0]))]
+        self.env.plot_trajectories(np.array(all_observations), np.array([goals for i in range(len(all_observations))]), filename="eval")
     
     def learn_reward(self, first_flag=0):
                 
@@ -231,6 +238,7 @@ class Workspace(object):
         start_time = time.time()
 
         observations = []
+        all_observations = []
         interact_count = 0
         while self.step < self.cfg['num_train_steps']:
             if done:
@@ -270,8 +278,12 @@ class Workspace(object):
 
                 self.logger.log('train/episode', episode, self.step)
                 if len(observations) > 0:
-                    self.env.plot_trajectories(np.array([observations]), np.array([[self.goal for i in range(len(observations))]]))
+                    all_observations.append(observations)
+                    if len(all_observations) % 20 == 0:
+                        goals = [self.goal for i in range(len(all_observations[0]))]
+                        self.env.plot_trajectories(np.array(all_observations), np.array([goals for i in range(len(all_observations))]), filename="eval")
 
+                        all_observations = []
                 observations = []
 
             # sample action for data collection
