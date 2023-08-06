@@ -34,7 +34,7 @@ segment: 10 # 50
 activation: tanh
 num_seed_steps: 1000
 num_unsup_steps: 9000
-num_interact: 5000
+num_interact: 100 #5000
 reward_lr: 0.0003
 reward_batch: 50
 reward_update: 10
@@ -42,7 +42,7 @@ feed_type: 1
 reset_update: 100
 topK: 5
 ensemble_size: 3
-max_feedback: 10000
+max_feedback: 1000000
 large_batch: 10
 label_margin: 0.0
 teacher_beta: -1
