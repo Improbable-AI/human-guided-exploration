@@ -532,6 +532,7 @@ class HUGE:
             return None
 
         if self.human_input and not self.training_goal_selector_now and self.answered_questions % self.train_goal_selector_freq == 0:
+            print("about to train goal selector", self.train_goal_selector_freq,self.answered_questions )
             self.training_goal_selector_now = True
             self.collect_and_train_goal_selector_human()
             self.training_goal_selector_now = False
