@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import math
-import utils
+import huge.baselines.pebble.utils as utils
 import hydra
 
 from agent import Agent
@@ -141,7 +141,7 @@ class SACAgent(Agent):
             self.cfg['actor_cfg']['hidden_depth'],
             self.cfg['actor_cfg']['log_std_bounds'],
         ).to(self.device)
-        
+
         self.actor_optimizer = torch.optim.Adam(
             self.actor.parameters(),
             lr=self.actor_lr,
