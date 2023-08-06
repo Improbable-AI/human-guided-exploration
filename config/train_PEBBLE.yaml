@@ -24,7 +24,7 @@ teacher_beta: -1
 teacher_gamma: 1
 teacher_eps_mistake: 0
 teacher_eps_skip: 0
-teacher_eps_equal: 0
+teacher_eps_equal: 0.1
 
 # scheduling
 reward_schedule: 0

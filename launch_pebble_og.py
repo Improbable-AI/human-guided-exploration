@@ -129,6 +129,7 @@ class Workspace(object):
         average_episode_reward = 0
         average_true_episode_reward = 0
         success_rate = 0
+
         for episode in range(self.cfg['num_eval_episodes']):
             obs = self.env.reset()
             obs = self.env.observation(obs)
