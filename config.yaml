@@ -112,7 +112,7 @@ block_stacking:
   start_frontier: 4
   select_goal_from_last_k_trajectories: 20
   desired_goal_sampling_freq: 0.1
-  train_goal_selector_freq: 1
+  train_goal_selector_freq: 20
   continuous_action_space: True
   max_timesteps: 2500000
   demo_epochs: 20000
