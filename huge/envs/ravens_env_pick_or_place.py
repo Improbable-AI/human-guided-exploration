@@ -431,13 +431,11 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
     def render_image(self):
       if self.num_blocks > 3:
          return self.base_env.render_image()
-      
+      import IPython
+      IPython.embed()  
       obs = self.base_env._get_obs()
 
-      traj_accumulated_states = np.array(traj_accumulated_states)
-      traj_accumulated_goal_states = np.array(traj_accumulated_goal_states)
-      
-
+    
       # plot robot pose
       robot_pos = obs[:3]
       plt.scatter(robot_pos[0], robot_pos[1], marker="o", s=60, color="black")
