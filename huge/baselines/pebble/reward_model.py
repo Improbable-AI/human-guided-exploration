@@ -310,6 +310,8 @@ class RewardModel:
         return np.mean(ensemble_acc)
     
     def get_queries(self, mb_size=20):
+        import IPython
+        IPython.embed()
         len_traj, max_len = len(self.inputs[0]), len(self.inputs)
         img_t_1, img_t_2 = None, None
         
