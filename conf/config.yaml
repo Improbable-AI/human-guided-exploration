@@ -38,7 +38,7 @@ num_interact: 5000
 reward_lr: 0.0003
 reward_batch: 50
 reward_update: 10
-feed_type: $1
+feed_type: 1
 reset_update: 100
 topK: 5
 ensemble_size: 3
