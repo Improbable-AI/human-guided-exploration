@@ -52,8 +52,8 @@ common:
   pretrain: False
   num_demos: 0
   desired_goal_sampling_freq: 0
-  img_width: 64
-  img_height: 64
+  img_width: 256
+  img_height: 256
   human_input: False
   max_timesteps: 1000000
   explore_length: 20

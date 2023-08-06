@@ -437,8 +437,6 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
       if self.num_blocks > 3:
          return self.base_env.render_image()
       
-      import IPython
-      IPython.embed()
       plt.cla()
       plt.clf()
 
@@ -451,7 +449,7 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
       # plot goal 
       goal_pos = self.sample_goal()
       plt.scatter(goal_pos[0], goal_pos[1], marker="x", s=120, color="purple", zorder=2)
-      circ = Circle((goal_pos[0],goal_pos[1]),0.1,zorder=1, linewidth=0.01)
+      circ = Circle((goal_pos[0],goal_pos[1]),0.1,zorder=1, linewidth=5)
       circ.set_facecolor("none")
       circ.set_edgecolor("black")
       plt.gca().add_patch(circ)
@@ -459,21 +457,21 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
 
       # plot each block in a different color green blue yellow
       green_box = obs[-6:-4]
-      plt.scatter(green_box[0], green_box[1], marker="D", s=120, color="green", zorder=3)
+      plt.scatter(green_box[0], green_box[1], marker="s", s=180, color="green", zorder=3)
 
       blue_box = obs[-4:-2]
-      plt.scatter(blue_box[0], blue_box[1], marker="D", s=120, color="blue", zorder=4)
+      plt.scatter(blue_box[0], blue_box[1], marker="s", s=180, color="blue", zorder=4)
 
       red_box = obs[-2:]
-      plt.scatter(red_box[0], red_box[1], marker="D", s=120, color="red", zorder=5)
+      plt.scatter(red_box[0], red_box[1], marker="s", s=180, color="red", zorder=5)
 
       plt.xlim([0., 1])
       plt.ylim([-0.5, 0.5])
-
+      plt.axis('off')   
       plt.gcf().canvas.draw()
 
       image = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep='')
-      image = image.reshape((480,640,3))
+      image = image.reshape(plt.gcf().canvas.get_width_height()[::-1] + (3,))
 
       return image
     
