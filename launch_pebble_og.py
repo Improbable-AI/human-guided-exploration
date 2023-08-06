@@ -423,8 +423,8 @@ def main():
     parser.add_argument("--env", type=str, default='pointmass_empty')
     parser.add_argument("--num_unsup_steps",type=int, default=None)
     parser.add_argument("--num_interact",type=int, default=None)
-    parser.add_argument("--entropy_coeff",type=int, default=None)
-    parser.add_argument("--action_std",type=int, default=None)
+    parser.add_argument("--entropy_coeff",type=float, default=None)
+    parser.add_argument("--action_std",type=float, default=None)
 
     args = parser.parse_args()
 
