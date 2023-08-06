@@ -129,7 +129,8 @@ class Workspace(object):
         average_episode_reward = 0
         average_true_episode_reward = 0
         success_rate = 0
-        
+        import IPython
+        IPython.embed()
         for episode in range(self.cfg['num_eval_episodes']):
             obs = self.env.reset()
             self.agent.reset()
@@ -261,7 +262,6 @@ class Workspace(object):
                 episode += 1
 
                 self.logger.log('train/episode', episode, self.step)
-                        
             # sample action for data collection
             if self.step < self.cfg['num_seed_steps']:
                 action = self.env.action_space.sample()
