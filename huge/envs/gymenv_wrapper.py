@@ -82,8 +82,6 @@ class GymGoalEnvWrapper(goal_env.GoalEnv):
                 done
                 infos
         """
-        import IPython
-        IPython.embed()
         ns, reward, done, infos = self.base_env.step(a)
         infos['observation'] = ns
         ns = self._base_obs_to_state(ns)

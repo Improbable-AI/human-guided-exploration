@@ -66,7 +66,8 @@ class Workspace(object):
         env_params['continuous_action_space'] = continuous_action_space
         self.env, policy, goal_selector, classifier_model, replay_buffer, goal_selector_buffer, huge_kwargs = variants.get_params(env, env_params)
 
-
+        import IPython
+        IPython.embed()
         cfg['obs_dim'] = self.env.observation_space.shape[0]
         cfg['action_dim'] = self.env.action_space.shape[0]
         cfg['action_range'] = [
