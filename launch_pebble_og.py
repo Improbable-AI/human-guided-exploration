@@ -141,8 +141,7 @@ class Workspace(object):
                 with utils.eval_mode(self.agent):
                     action = self.agent.act(obs, sample=False)
                 obs, reward, done, extra = self.env.step(action)
-                import IPython
-                IPython.embed()
+                obs = self.env.observation(obs)
                 episode_reward += reward
                 true_episode_reward += reward
                 if self.log_success:
@@ -247,6 +246,7 @@ class Workspace(object):
                         self.step)
                 
                 obs = self.env.reset()
+                obs = self.env.observation(obs)
                 self.agent.reset()
                 done = False
                 episode_reward = 0
@@ -337,13 +337,12 @@ class Workspace(object):
                                             gradient_update=1, K=self.cfg['topK'])
                 
             next_obs, reward, done, extra = self.env.step(action)
-            import IPython
-            IPython.embed()
+            next_obs = self.env.observation(next_obs)
             reward_hat = self.reward_model.r_hat(np.concatenate([obs, action], axis=-1))
 
             # allow infinite bootstrap
             done = float(done)
-            done_no_max = 0 if episode_step + 1 == self.env._max_episode_steps else done
+            done_no_max = 0 if episode_step + 1 == self.cfg['max_path_length'] else done
             episode_reward += reward_hat
             true_episode_reward += reward
             
