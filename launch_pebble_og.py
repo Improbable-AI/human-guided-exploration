@@ -158,7 +158,7 @@ class Workspace(object):
             if self.log_success:
                 success_rate += episode_success
 
-            self.env.plot_trajectories(np.array(observations), np.array([self.goal for i in range(len(observations))]))
+            self.env.plot_trajectories(np.array([observations]), np.array([[self.goal for i in range(len(observations))]]))
             
         average_episode_reward /= self.cfg['num_eval_episodes']
         average_true_episode_reward /= self.cfg['num_eval_episodes']
