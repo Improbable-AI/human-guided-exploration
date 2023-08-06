@@ -381,9 +381,22 @@ class Workspace(object):
         self.reward_model.save(self.work_dir, self.step)
         
 def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--seed",type=int, default=1)
+    parser.add_argument("--gpu",type=int, default=0)
+    parser.add_argument("--env_name", type=str, default='pointmass_empty')
+    args = parser.parse_args()
+
+
     import yaml
     with open("conf/config.yaml") as file:
         cfg = yaml.safe_load(file)
+
+    for key in args.__dict__:
+        value = args.__dict__[key]
+        if value is not None:
+            cfg[key] = value
     
     wandb.init(project=cfg['env']+"_huge", name=f"{cfg['env']}_pebble_{cfg['seed']}")
 
