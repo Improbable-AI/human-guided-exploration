@@ -141,7 +141,8 @@ class Workspace(object):
                 with utils.eval_mode(self.agent):
                     action = self.agent.act(obs, sample=False)
                 obs, reward, done, extra = self.env.step(action)
-                
+                import IPython
+                IPython.embed()
                 episode_reward += reward
                 true_episode_reward += reward
                 if self.log_success:
