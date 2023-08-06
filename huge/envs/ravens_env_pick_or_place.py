@@ -432,9 +432,8 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
     def render_image(self):
       if self.num_blocks > 3:
          return self.base_env.render_image()
-      import matplotlib
-      matplotlib.use('Agg')
-
+      import IPython
+      IPython.embed()
       obs = self.base_env._get_obs()['observation']
 
     
@@ -465,7 +464,6 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
       plt.xlim([0., 1])
       plt.ylim([-0.5, 0.5])
 
-      plt.gcf().draw()
       image = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep='')
       image = image.reshape((480,640,3))
 
