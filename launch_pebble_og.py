@@ -74,6 +74,8 @@ class Workspace(object):
             float(self.env.action_space.high.max())
         ]
 
+        self.timesteps = 0
+
         self.agent = SACAgent(
             obs_dim=cfg['obs_dim'],
             action_dim=cfg['action_dim'],
@@ -282,7 +284,15 @@ class Workspace(object):
                     if len(all_observations) % 20 == 0:
                         goals = [self.goal for i in range(len(all_observations[0]))]
                         self.env.plot_trajectories(np.array(all_observations), np.array([goals for i in range(len(all_observations))]), filename="eval")
-
+                        distance = [self.env.compute_shaped_distance(all_observations[i][-1], self.goal) for i in range(len(all_observations))]
+                        success_rate = [self.env.compute_success(all_observations[i][-1], self.goal) for i in range(len(all_observations))]
+                        wandb.log({
+                            "Train/Distance": np.mean(distance),
+                            "Train/Success rate": np.mean(success_rate),
+                            "timesteps": self.timesteps, 
+                            "num_labels_queried": self.total_feedback,
+                            "labeled_feedback": self.labeled_feedback,
+                        })
                         all_observations = []
                 observations = []
 
@@ -387,6 +397,7 @@ class Workspace(object):
             obs = next_obs
             episode_step += 1
             self.step += 1
+            self.timesteps += self.cfg['max_path_length']
             interact_count += 1
             
         self.agent.save(self.work_dir, self.step)
