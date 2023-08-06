@@ -196,8 +196,6 @@ human:
   goal_selector_num_samples: 20
   train_goal_selector_freq: 10
 
-
-
 huge:
   train_with_preferences: True
   use_oracle: False
