@@ -385,7 +385,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed",type=int, default=1)
     parser.add_argument("--gpu",type=int, default=0)
-    parser.add_argument("--env_name", type=str, default='pointmass_empty')
+    parser.add_argument("--env", type=str, default='pointmass_empty')
     args = parser.parse_args()
 
 
