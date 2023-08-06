@@ -383,9 +383,7 @@ class Workspace(object):
                                             gradient_update=1, K=self.cfg['topK'])
                 
             # add some randomness in action
-            import IPython
-            IPython.embed()
-            action = action + np.random.normal(0, self.cfg['action_std'], self.env.action_space)
+            action = action + np.random.normal(0, self.cfg['action_std'], self.env.action_space.shape)
 
             next_obs, reward, done, extra = self.env.step(action)
             next_obs = self.env.observation(next_obs)
