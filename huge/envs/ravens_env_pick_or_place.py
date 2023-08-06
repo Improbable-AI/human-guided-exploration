@@ -304,7 +304,7 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
           
           distance_obj_goal = np.linalg.norm(obj_pos - goal_pos)
 
-          if distance_obj_goal < 0.05:
+          if distance_obj_goal < 0.1:
             success += 1
           else:
              break
@@ -380,29 +380,90 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
         goal_pos = goal[-2:]
         ee_pos = achieved_state[:2]
         bonus = self.num_blocks 
+
+        obj_pos1 = achieved_state[-2:]
+
+        if np.linalg.norm(obj_pos1 - goal_pos) <= 0.1:
+          obj_pos2 = achieved_state[-4:-2]
+           
+          if np.linalg.norm(obj_pos2 - goal_pos) < 0.1:            
+            obj_pos3 = achieved_state[-6:-4]
+            
+            if np.linalg.norm(obj_pos3 - goal_pos) < 0.1:            
+              return 0
+            
+            if np.linalg.norm(obj_pos3 - ee_pos) > 0.05:
+              return np.linalg.norm(obj_pos3 - ee_pos) + bonus*2
+
+            return np.linalg.norm(obj_pos3 - goal_pos) + bonus
+            
+          if np.linalg.norm(obj_pos2 - ee_pos) > 0.05:
+            return np.linalg.norm(obj_pos2 - ee_pos) + bonus*4
+
+          return np.linalg.norm(obj_pos2 - goal_pos) + bonus*3
     
-        for i in range(self.num_blocks):
-          if i == 0:
-            obj_pos = achieved_state[-2:]
-            goal_pos = goal[-2:]
-          else:
-            obj_pos = achieved_state[-2*(i+1):-2*i]
-            goal_pos = goal[-2*(i+1):-2*i]
-
-          distance_obj_goal = np.linalg.norm(obj_pos - goal_pos)
-
-          if distance_obj_goal < 0.05:
-            continue
-
-          ee_pos = achieved_state[:2]
-
-          return np.linalg.norm(ee_pos - obj_pos) + distance_obj_goal + bonus * (self.num_blocks - i -1)
         
-        return np.linalg.norm(ee_pos - obj_pos) + distance_obj_goal
+        if np.linalg.norm(obj_pos1 - ee_pos) > 0.1:
+           return np.linalg.norm(obj_pos1 - ee_pos) + bonus*6
+
+        return np.linalg.norm(obj_pos1- goal_pos) + bonus*5
+    
+        # for i in range(self.num_blocks):
+        #   if i == 0:
+        #     obj_pos = achieved_state[-2:]
+        #     goal_pos = goal[-2:]
+        #   else:
+        #     obj_pos = achieved_state[-2*(i+1):-2*i]
+        #     goal_pos = goal[-2*(i+1):-2*i]
+
+        #   distance_obj_goal = np.linalg.norm(obj_pos - goal_pos)
+
+        #   if distance_obj_goal < 0.1:
+        #     continue
+
+        #   ee_pos = achieved_state[:2]
+
+        #   return np.linalg.norm(ee_pos - obj_pos) + distance_obj_goal + bonus * (self.num_blocks - i -1)
+        
+        # return np.linalg.norm(ee_pos - obj_pos) + distance_obj_goal
 
 
     def render_image(self):
-      return self.base_env.render_image()
+      if self.num_blocks > 3:
+         return self.base_env.render_image()
+      
+      obs = self.base_env._get_obs()
+
+      traj_accumulated_states = np.array(traj_accumulated_states)
+      traj_accumulated_goal_states = np.array(traj_accumulated_goal_states)
+      
+
+      # plot robot pose
+      robot_pos = obs[:3]
+      plt.scatter(robot_pos[0], robot_pos[1], marker="o", s=60, color="black")
+
+      # plot goal 
+      goal_pos = self.sample_goal()
+      plt.scatter(goal_pos[0], goal_pos[1], marker="x", s=60, color="purple")
+
+
+      # plot each block in a different color green blue yellow
+      green_box = obs[-6:-4]
+      plt.scatter(green_box[0], green_box[1], marker="D", s=60, color="green")
+
+      blue_box = obs[-4:-2]
+      plt.scatter(blue_box[0], blue_box[1], marker="D", s=60, color="blue")
+
+      red_box = obs[-2:]
+      plt.scatter(red_box[0], red_box[1], marker="D", s=60, color="red")
+
+      plt.xlim([0.25, 0.75])
+      plt.ylim([-0.5, 0.5])
+      
+
+      image = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep='')
+
+      return image
     
     def get_diagnostics(self, trajectories, desired_goal_states):
         """
