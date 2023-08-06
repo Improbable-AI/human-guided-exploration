@@ -34,6 +34,9 @@ import pybullet as p
 import wandb 
 import seaborn as sns
 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot
 
 class Discretized(gym.spaces.Discrete):    
     def __init__(self, n, n_dims, granularity):
@@ -461,6 +464,8 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
 
       plt.xlim([0., 1])
       plt.ylim([-0.5, 0.5])
+
+      plt.gcf().canvas.draw()
 
       image = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep='')
       image = image.reshape((480,640,3))
