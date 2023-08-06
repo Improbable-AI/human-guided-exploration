@@ -2,7 +2,8 @@ import numpy as np
 import torch
 import math
 import torch.nn.functional as F
-import utils
+import huge.baselines.pebble.utils as utils
+
 
 from torch import nn
 from torch import distributions as pyd
