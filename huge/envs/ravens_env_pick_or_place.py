@@ -2,6 +2,7 @@ from telnetlib import IP
 from dependencies.ravens.ravens.environments.environment import EnvironmentNoRotationsWithHeightmap
 from dependencies.ravens.ravens.tasks.align_box_corner import AlignBoxCorner
 from dependencies.ravens.ravens.tasks.stack_blocks import StackBlocks
+from matplotlib.patches import Circle
 
 from lexa_benchmark.envs.kitchen import KitchenEnv
 from collections import OrderedDict
@@ -359,13 +360,13 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
         plt.scatter(box_position[0],
                     box_position[1], marker='+', s=20, color="black")
         plt.scatter(goal_position[-2],
-                    goal_position[-1], marker='x', s=20, color="red")
+                    goal_position[-1], marker='x', s=20, color="yellow")
         if len(box_position) > 2:
             plt.scatter(box_position[2],
-                box_position[3], marker='+', s=20, color="blue")
+                box_position[3], marker='+', s=20, color="red")
         if len(box_position) > 4:
             plt.scatter(box_position[4],
-                box_position[5], marker='+', s=20, color="green")
+                box_position[5], marker='+', s=20, color="blue")
         plt.xlim([0.25, 0.75])
         plt.ylim([-0.5, 0.5])
 
@@ -432,11 +433,9 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
     def render_image(self):
       if self.num_blocks > 3:
          return self.base_env.render_image()
-      import IPython
-      IPython.embed()
+      
       obs = self.base_env._get_obs()['observation']
 
-    
       # plot robot pose
       robot_pos = obs[:3]
       plt.scatter(robot_pos[0], robot_pos[1], marker="o", s=60, color="black", zorder=6)
@@ -444,7 +443,6 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
       # plot goal 
       goal_pos = self.sample_goal()
       plt.scatter(goal_pos[0], goal_pos[1], marker="x", s=60, color="purple", zorder=2)
-      from matplotlib.patches import Circle
       circ = Circle((goal_pos[0],goal_pos[1]),0.1,zorder=1)
       circ.set_facecolor("none")
       circ.set_edgecolor("black")
@@ -469,6 +467,9 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
 
       return image
     
+
+
+
     def get_diagnostics(self, trajectories, desired_goal_states):
         """
         Logs things
