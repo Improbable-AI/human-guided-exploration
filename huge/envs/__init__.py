@@ -54,35 +54,46 @@ def get_env_params(env_name, images=False):
     base_params = dict(
         eval_freq=10000,
         eval_episodes=50,
-        max_trajectory_length=50,
         max_timesteps=1e6,
     )
 
     if env_name == 'pusher':
         env_specific_params = dict(
             goal_threshold=0.05,
+            max_trajectory_length=120,
+
         )
     elif env_name == 'pusher_hard':
         env_specific_params = dict(
             goal_threshold=0.05,
+            max_trajectory_length=120,
+
         )
     elif env_name == 'complex_maze':
         env_specific_params = dict(
             goal_threshold=0.2,
+            max_trajectory_length=300,
+
         )
     elif 'block_stacking' in env_name or "bandu" in env_name:
         env_specific_params = dict(
             goal_threshold=0.05,
+            max_trajectory_length=12,
+
         )
     elif 'pointmass' in env_name:
         env_specific_params = dict(
             goal_threshold=0.08,
             max_timesteps=2e5,
             eval_freq=2000,
+            max_trajectory_length=100,
+
         )
     elif env_name == 'kitchenSeq':
         env_specific_params = dict(
             goal_threshold=0.05,
+            max_trajectory_length=200,
+
         )
     else:
         env_specific_params = dict(
