@@ -5,7 +5,7 @@ defaults:
 experiment: PEBBLE
 
 # reward learning
-segment: 50
+segment: 50 #segment
 activation: tanh
 num_seed_steps: 1000
 num_unsup_steps: 5000

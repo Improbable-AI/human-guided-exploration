@@ -30,7 +30,7 @@ experiment: PEBBLE
 num_blocks: 3
 max_path_length: 100
 # reward learning
-segment: 50
+segment: 10 # 50
 activation: tanh
 num_seed_steps: 1000
 num_unsup_steps: 9000
