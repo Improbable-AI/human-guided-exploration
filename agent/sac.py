@@ -83,7 +83,7 @@ class SACAgent(Agent):
         self.log_alpha.requires_grad = True
         
         # set target entropy to -|A|
-        self.target_entropy = -action_dim
+        self.target_entropy = -action_dim*self.cfg['entropy_coef']
 
         # optimizers
         self.actor_optimizer = torch.optim.Adam(

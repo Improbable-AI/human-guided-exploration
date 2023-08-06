@@ -187,6 +187,15 @@ class Workspace(object):
         
         goals = [self.goal for i in range(len(all_observations[0]))]
         self.env.plot_trajectories(np.array(all_observations), np.array([goals for i in range(len(all_observations))]), filename="eval")
+        distance = [self.env.compute_shaped_distance(all_observations[i][-1], self.goal) for i in range(len(all_observations))]
+        success_rate = [self.env.compute_success(all_observations[i][-1], self.goal) for i in range(len(all_observations))]
+        wandb.log({
+            "Eval/Distance": np.mean(distance),
+            "Eval/Success rate": np.mean(success_rate),
+            "timesteps": self.timesteps, 
+            "num_labels_queried": self.total_feedback,
+            "labeled_feedback": self.labeled_feedback,
+        })
     
     def learn_reward(self, first_flag=0):
                 
@@ -283,7 +292,7 @@ class Workspace(object):
                     all_observations.append(observations)
                     if len(all_observations) % 20 == 0:
                         goals = [self.goal for i in range(len(all_observations[0]))]
-                        self.env.plot_trajectories(np.array(all_observations), np.array([goals for i in range(len(all_observations))]), filename="eval")
+                        self.env.plot_trajectories(np.array(all_observations), np.array([goals for i in range(len(all_observations))]))
                         distance = [self.env.compute_shaped_distance(all_observations[i][-1], self.goal) for i in range(len(all_observations))]
                         success_rate = [self.env.compute_success(all_observations[i][-1], self.goal) for i in range(len(all_observations))]
                         wandb.log({
@@ -373,6 +382,11 @@ class Workspace(object):
                 self.agent.update_state_ent(self.replay_buffer, self.logger, self.step, 
                                             gradient_update=1, K=self.cfg['topK'])
                 
+            # add some randomness in action
+            import IPython
+            IPython.embed()
+            action = action + np.random.normal(0, self.cfg['action_std'], self.env.action_space)
+
             next_obs, reward, done, extra = self.env.step(action)
             next_obs = self.env.observation(next_obs)
             reward = - self.env.compute_shaped_distance(next_obs, self.goal)[0]
@@ -409,6 +423,11 @@ def main():
     parser.add_argument("--seed",type=int, default=1)
     parser.add_argument("--gpu",type=int, default=0)
     parser.add_argument("--env", type=str, default='pointmass_empty')
+    parser.add_argument("--num_unsup_steps",type=int, default=None)
+    parser.add_argument("--num_interact",type=int, default=None)
+    parser.add_argument("--entropy_coeff",type=int, default=None)
+    parser.add_argument("--action_std",type=int, default=None)
+
     args = parser.parse_args()
 
 

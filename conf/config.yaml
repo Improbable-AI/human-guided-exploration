@@ -74,7 +74,9 @@ seed: 1
 
 # Environment
 env: pointmass_empty
+entropy_coeff: 1
 gradient_update: 1
+action_std: 0
 
 # hydra configuration
 hydra:
