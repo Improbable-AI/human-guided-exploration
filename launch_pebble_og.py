@@ -337,6 +337,8 @@ class Workspace(object):
                                             gradient_update=1, K=self.cfg['topK'])
                 
             next_obs, reward, done, extra = self.env.step(action)
+            import IPython
+            IPython.embed()
             reward_hat = self.reward_model.r_hat(np.concatenate([obs, action], axis=-1))
 
             # allow infinite bootstrap
