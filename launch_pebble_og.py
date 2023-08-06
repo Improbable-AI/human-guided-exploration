@@ -106,7 +106,7 @@ class Workspace(object):
         self.labeled_feedback = 0
         self.step = 0
 
-        self.goal = self.env.observation(self.env.sample_goal())
+        self.goal = self.env.extract_goal(self.env.sample_goal())
 
         # instantiating the reward model
         self.reward_model = RewardModel(
@@ -342,8 +342,6 @@ class Workspace(object):
             next_obs, reward, done, extra = self.env.step(action)
             next_obs = self.env.observation(next_obs)
             reward = self.env.compute_shaped_distance(next_obs, self.goal)
-            import IPython
-            IPython.embed()
             print("reward", reward)
             reward_hat = self.reward_model.r_hat(np.concatenate([obs, action], axis=-1))
 
