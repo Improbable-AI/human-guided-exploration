@@ -129,10 +129,10 @@ class Workspace(object):
         average_episode_reward = 0
         average_true_episode_reward = 0
         success_rate = 0
-        import IPython
-        IPython.embed()
         for episode in range(self.cfg['num_eval_episodes']):
             obs = self.env.reset()
+            obs = self.env.observation(obs)
+
             self.agent.reset()
             done = False
             episode_reward = 0
@@ -145,7 +145,7 @@ class Workspace(object):
                     action = self.agent.act(obs, sample=False)
                 obs, reward, done, extra = self.env.step(action)
                 obs = self.env.observation(obs)
-                reward = self.env.compute_shaped_distance(obs, self.goal)[0]
+                reward = - self.env.compute_shaped_distance(obs, self.goal)[0]
                 episode_reward += reward
                 true_episode_reward += reward
                 if self.log_success:
@@ -341,7 +341,7 @@ class Workspace(object):
                 
             next_obs, reward, done, extra = self.env.step(action)
             next_obs = self.env.observation(next_obs)
-            reward = self.env.compute_shaped_distance(next_obs, self.goal)[0]
+            reward = - self.env.compute_shaped_distance(next_obs, self.goal)[0]
             reward_hat = self.reward_model.r_hat(np.concatenate([obs, action], axis=-1))
 
             # allow infinite bootstrap
