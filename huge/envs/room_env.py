@@ -67,8 +67,8 @@ class PointmassGoalEnv(GymGoalEnvWrapper):
         )
 
     def plot_trajectories(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):
-        import IPython
-        IPython.embed()
+        if len(traj_accumulated_states) == 0:
+            return
         # plot added trajectories to fake replay buffer
         plt.clf()
         self.display_wall()
