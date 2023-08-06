@@ -22,6 +22,7 @@ from huge.algo import variants
 import huge.baselines.pebble.utils as utils
 import hydra
 
+import wandb
 
 class Workspace(object):
     def __init__(self, cfg):
@@ -381,6 +382,9 @@ def main():
     import yaml
     with open("conf/config.yaml") as file:
         cfg = yaml.safe_load(file)
+    
+    wandb.init(project=cfg['env']+"_huge", name=f"{cfg['env']}_pebble_{cfg['seed']}")
+
     workspace = Workspace(cfg)
     workspace.run()
 
