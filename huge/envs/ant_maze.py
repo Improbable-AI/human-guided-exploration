@@ -256,9 +256,12 @@ class AntMazeIntermediate():
     return goal_state
 
   def render_image(self):
+    return np.zeros((64,64,3))
+
     return self._env.render(mode="rgb_array", width=64, height=64)
 
   def render(self, mode='rgb_array', width=480, height=64, camera_id=0):
+      return np.zeros((64,64,3))
       
       return self._env.render(mode=mode)
    
@@ -450,7 +453,7 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
             for h in range(height):
                 if maze_arr[w, h] == 1:
 
-                    plt.gca().add_patch(Rectangle((w,),1,1,
+                    plt.gca().add_patch(Rectangle((w,h),1,1,
                     edgecolor='black',
                     facecolor='black',
                     lw=0))
