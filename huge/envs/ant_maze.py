@@ -416,6 +416,7 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
 
         
     def test_goal_selector(self, oracle_model, goal_selector, size=50):
+        return
         goal = self.sample_goal()#np.random.uniform(-0.5, 0.5, size=(2,))
         goal_pos =  self.extract_goal(goal)
         pos = np.meshgrid(np.linspace(-1.5, 5.5,size), np.linspace(-1.5, 5.5,size))
