@@ -262,7 +262,8 @@ class AntMazeIntermediate():
 
   def generate_goal(self,):
     goal_state = np.zeros(self._observation_space.shape)
-    goal_state[:2] = np.array([2,0])*self.maze_scaling
+    # goal_state[:2] = np.array([2,0])*self.maze_scaling
+    goal_state[:2] = np.array([0,2])*self.maze_scaling
     return goal_state
 
   def render_image(self):
@@ -396,6 +397,7 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
     # The task is to open the microwave, then open the slider and then open the cabinet
     def compute_shaped_distance(self, achieved_state, goal):
         # TODO: 
+        return np.linalg.norm(achieved_state[:2]-goal[:2])
         
         if torch.is_tensor(achieved_state):
           achieved_state = achieved_state.detach().cpu().numpy()
