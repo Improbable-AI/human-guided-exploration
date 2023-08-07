@@ -241,7 +241,7 @@ from gym import spaces
 from gym.spaces import Box, Dict
 
 class AntMazeIntermediate():
-  def __init__(self, max_path_length=300, continuous_action_space=True, maze_scaling=4 ):
+  def __init__(self, max_path_length=300, continuous_action_space=True, maze_scaling=1 ):
 
     
     self._env =  AntMazeEnv(maze_scaling=maze_scaling)
@@ -251,7 +251,7 @@ class AntMazeIntermediate():
     self._goal_space = self._env.observation_space
     self.max_path_length = max_path_length
     self.continuous_action_space = continuous_action_space
-
+    self.maze_scaling = maze_scaling
     print("observation space in ant", self._observation_space)
        
     initial_obs = self.reset()
@@ -259,7 +259,7 @@ class AntMazeIntermediate():
 
   def generate_goal(self,):
     goal_state = np.zeros(self._observation_space.shape)
-    goal_state[:2] = [2,0]
+    goal_state[:2] = [2,0]*self.maze_scaling
     return goal_state
 
   def render_image(self):
@@ -354,7 +354,7 @@ class AntMazeIntermediate():
 class AntMazeGoalEnv(GymGoalEnvWrapper):
     def __init__(self, task_config='slide_cabinet,microwave', fixed_start=True, max_path_length=300, fixed_goal=False, images=False, image_kwargs=None, continuous_action_space=True):
         self.task_config = task_config.split(",")
-        self.maze_scaling = 4
+        self.maze_scaling = 2
         env = AntMazeIntermediate(max_path_length, continuous_action_space, self.maze_scaling)
        
         self.maze_arr = np.array(U_MAZE_TEST)
