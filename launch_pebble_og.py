@@ -380,7 +380,6 @@ class Workspace(object):
                         # corner case: new total feed > max feed
                         if self.reward_model.mb_size + self.total_feedback > self.cfg['max_feedback']:
                             self.reward_model.set_batch(self.cfg['max_feedback'] - self.total_feedback)
-                        print("second learn reward")
                         self.learn_reward()
                         self.replay_buffer.relabel_with_predictor(self.reward_model)
                         interact_count = 0
@@ -436,7 +435,9 @@ def main():
     parser.add_argument("--entropy_coeff",type=float, default=None)
     parser.add_argument("--action_std",type=float, default=None)
     parser.add_argument("--max_path_length",type=int, default=None)
-    parser.add_argument("--segment",type=int, default=None)
+    parser.add_argument("--segment",type=int, default=None)    
+    parser.add_argument("--max_path_length",type=int, default=None)
+    parser.add_argument("--num_seed_steps",type=int, default=None)
 
     args = parser.parse_args()
 
