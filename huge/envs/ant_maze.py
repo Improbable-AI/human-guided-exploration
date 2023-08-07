@@ -205,6 +205,7 @@ class AntMazeEnv(maze_env.MazeEnv, GoalReachingAntEnv, offline_env.OfflineEnv):
         goal_sampler=None,
         expose_all_qpos=True,
         reward_type="dense",
+        maze_scaling=1,
         *args,
         **kwargs
     ):
@@ -213,7 +214,7 @@ class AntMazeEnv(maze_env.MazeEnv, GoalReachingAntEnv, offline_env.OfflineEnv):
         maze_env.MazeEnv.__init__(
             self,
             maze_map=U_MAZE_TEST,
-            maze_size_scaling=1,
+            maze_size_scaling=maze_scaling,
             *args,
             manual_collision=False,
             goal_sampler=goal_sampler,
@@ -235,10 +236,10 @@ from gym import spaces
 from gym.spaces import Box, Dict
 
 class AntMazeIntermediate():
-  def __init__(self, max_path_length=300, continuous_action_space=True ):
+  def __init__(self, max_path_length=300, continuous_action_space=True, maze_scaling=1 ):
 
     
-    self._env =  AntMazeEnv()
+    self._env =  AntMazeEnv(maze_scaling=maze_scaling)
     
     self._action_repeat = 1
     self._observation_space = self._env.observation_space
@@ -347,8 +348,8 @@ class AntMazeIntermediate():
 class AntMazeGoalEnv(GymGoalEnvWrapper):
     def __init__(self, task_config='slide_cabinet,microwave', fixed_start=True, max_path_length=300, fixed_goal=False, images=False, image_kwargs=None, continuous_action_space=True):
         self.task_config = task_config.split(",")
-
-        env = AntMazeIntermediate(max_path_length, continuous_action_space)
+        self.maze_scaling = 10
+        env = AntMazeIntermediate(max_path_length, continuous_action_space, self.maze_scaling)
        
         self.maze_arr = np.array(U_MAZE_TEST)
         self.maze_reward = np.array(U_MAZE_TEST_REWARD)
@@ -450,7 +451,7 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
             for h in range(height):
                 if maze_arr[w, h] == '1':
 
-                    plt.gca().add_patch(Rectangle((w-1,h-1),1,1,
+                    plt.gca().add_patch(Rectangle(((w-1)*self.maze_scaling,(h-1)*self.maze_scaling),1,1,
                     edgecolor='black',
                     facecolor='black',
                     lw=0))
