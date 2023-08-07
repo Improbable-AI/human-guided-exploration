@@ -18,7 +18,7 @@ from huge.envs.sawyer_push import SawyerPushGoalEnv
 from huge.envs.sawyer_push_hard import SawyerHardPushGoalEnv
 from huge.envs.kitchen_env_sequential import KitchenSequentialGoalEnv
 from huge.envs.simple_example import SimpleExample
-from huge.envs.ant_maze import AntMazeEnv
+from huge.envs.ant_maze import AntMazeGoalEnv
 
 def create_env(env_name, task_config="slide_cabinet,microwave", num_blocks=1, random_goal=False, maze_type=0,continuous_action_space=False, goal_threshold=-1, deterministic_rollout=False, max_path_length=50):
     """Helper function."""
@@ -44,7 +44,7 @@ def create_env(env_name, task_config="slide_cabinet,microwave", num_blocks=1, ra
     elif env_name == "env_example":
         return SimpleExample(max_path_length=max_path_length,)
     elif env_name == "ant_maze":
-        return AntMazeEnv()
+        return AntMazeGoalEnv()
     elif env_name == 'pusher_hard':
         if deterministic_rollout:
             return SawyerHardPushGoalEnv(max_path_length=max_path_length,fixed_start=True, fixed_goal=True)

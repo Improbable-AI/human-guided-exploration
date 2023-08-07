@@ -5,9 +5,11 @@ import mujoco_py
 import numpy as np
 from gym import utils
 from gym.envs.mujoco import mujoco_env
+from huge.envs.gymenv_wrapper import GymGoalEnvWrapper
 
 from d4rl import offline_env
 from d4rl.locomotion import goal_reaching_env, maze_env, mujoco_goal_env, wrappers
+from collections import OrderedDict
 
 GYM_ASSETS_DIR = os.path.join(os.path.dirname(mujoco_goal_env.__file__), "assets")
 
@@ -219,6 +221,60 @@ class AntMazeEnv(maze_env.MazeEnv, GoalReachingAntEnv, offline_env.OfflineEnv):
         mujoco_env.MujocoEnv.seed(self, seed)
 
 
-def make_ant_maze_env(**kwargs):
-    env = AntMazeEnv(**kwargs)
-    return wrappers.NormalizedBoxEnv(env)
+class AntMazeGoalEnv(GymGoalEnvWrapper):
+    def __init__(self, task_config='slide_cabinet,microwave', fixed_start=True, max_path_length=50, fixed_goal=False, images=False, image_kwargs=None, continuous_action_space=False):
+        self.task_config = task_config.split(",")
+
+        env = AntMazeEnv()
+       
+
+        super(AntMazeGoalEnv, self).__init__(
+            env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal',max_path_length=max_path_length
+        )
+
+
+        import IPython
+        IPython.embed()
+        self.action_low = np.array([0.25, -0.5])
+        self.action_high = np.array([0.75, 0.5])
+
+        self.continuous_action_space = continuous_action_space
+
+        if self.continuous_action_space:
+           self.action_space = Box(low=-np.ones(7), high=np.ones(7),dtype=np.float32 )
+        else:
+          self.action_space = Discrete(15)
+
+
+
+    def compute_success(self, achieved_state, goal):        
+     
+      return 0
+      #return int(per_obj_success['slide_cabinet'])  + #int(per_obj_success['hinge_cabinet'])+ int(per_obj_success['microwave'])
+    
+   
+
+    def goal_distance(self, state, goal_state):
+        # Uses distance in state_goal_key to determine distance (useful for images)
+        achieved_state = self.observation(state)
+
+        return self.compute_shaped_distance(achieved_state, None)
+  
+    def plot_trajectories(self,obs=None, goal=None, filename=""):
+       return
+    
+    def distance_to_goal(self, goal_name, achieved_state):
+        return 0
+ 
+    # The task is to open the microwave, then open the slider and then open the cabinet
+    def compute_shaped_distance(self, achieved_state, goal):
+        
+        return 0
+        
+
+    def render_image(self):
+      return self.base_env.render_image()
+    
+    def get_diagnostics(self, trajectories, desired_goal_states):
+ 
+        return OrderedDict()
