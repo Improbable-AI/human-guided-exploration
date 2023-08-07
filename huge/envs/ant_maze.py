@@ -479,7 +479,29 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
 
 
     def render_image(self):
-      return self.base_env.render_image()
+        plt.cla()
+        plt.clf()
+
+        self.display_wall()
+        obs = self.base_env._get_obs()['observation']
+
+        # plot robot pose
+        robot_pos = obs[:2]
+        plt.scatter(robot_pos[0], robot_pos[1], marker="o", s=180, color="black", zorder=6)
+
+        # plot goal 
+        goal_pos = self.sample_goal()
+        plt.scatter(goal_pos[0], goal_pos[1], marker="x", s=180, color="purple", zorder=2)
+        
+        plt.axis('off')   
+        plt.gcf().canvas.draw()
+
+        image = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep='')
+        image = image.reshape(plt.gcf().canvas.get_width_height()[::-1] + (3,))
+    
+        return image
+
+    #   return self.base_env.render_image()
     
     def get_diagnostics(self, trajectories, desired_goal_states):
  
