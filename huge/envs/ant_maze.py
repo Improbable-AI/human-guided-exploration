@@ -354,7 +354,7 @@ class AntMazeIntermediate():
 class AntMazeGoalEnv(GymGoalEnvWrapper):
     def __init__(self, task_config='slide_cabinet,microwave', fixed_start=True, max_path_length=300, fixed_goal=False, images=False, image_kwargs=None, continuous_action_space=True):
         self.task_config = task_config.split(",")
-        self.maze_scaling = 1
+        self.maze_scaling = 4
         env = AntMazeIntermediate(max_path_length, continuous_action_space, self.maze_scaling)
        
         self.maze_arr = np.array(U_MAZE_TEST)
