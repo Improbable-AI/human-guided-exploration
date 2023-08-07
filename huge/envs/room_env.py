@@ -21,7 +21,7 @@ import matplotlib.cm as cm
 
 
 class PointmassGoalEnv(GymGoalEnvWrapper):
-    def __init__(self, room_type='empty', fixed_start=True, fixed_goal=False, images=False, image_kwargs=None, env_kwargs=None):
+    def __init__(self, room_type='empty', fixed_start=True, fixed_goal=False, images=False, image_kwargs=None, env_kwargs=None,max_path_length=50):
         
         assert room_type in ['empty', 'wall', 'rooms', 'maze', 'complex_maze']
         config = dict(
@@ -63,7 +63,7 @@ class PointmassGoalEnv(GymGoalEnvWrapper):
             env = ImageEnv(env, **config)
 
         super(PointmassGoalEnv, self).__init__(
-            env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal'
+            env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal',max_path_length=max_path_length
         )
 
     def plot_trajectories(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):

@@ -247,14 +247,14 @@ class KitchenIntermediateEnv(BenchEnv):
     return self._get_obs()
 
 class KitchenSequentialGoalEnv(GymGoalEnvWrapper):
-    def __init__(self, task_config='slide_cabinet,microwave', fixed_start=True, fixed_goal=False, images=False, image_kwargs=None, continuous_action_space=False):
+    def __init__(self, task_config='slide_cabinet,microwave', fixed_start=True, max_path_length=50, fixed_goal=False, images=False, image_kwargs=None, continuous_action_space=False):
         self.task_config = task_config.split(",")
 
         env = KitchenIntermediateEnv(task_config=self.task_config, continuous_action_space=continuous_action_space)
        
 
         super(KitchenSequentialGoalEnv, self).__init__(
-            env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal'
+            env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal',max_path_length=max_path_length
         )
 
         self.action_low = np.array([0.25, -0.5])

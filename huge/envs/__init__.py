@@ -19,34 +19,34 @@ from huge.envs.sawyer_push_hard import SawyerHardPushGoalEnv
 from huge.envs.kitchen_env_sequential import KitchenSequentialGoalEnv
 from huge.envs.simple_example import SimpleExample
 
-def create_env(env_name, task_config="slide_cabinet,microwave", num_blocks=1, random_goal=False, maze_type=0,continuous_action_space=False, goal_threshold=-1, deterministic_rollout=False):
+def create_env(env_name, task_config="slide_cabinet,microwave", num_blocks=1, random_goal=False, maze_type=0,continuous_action_space=False, goal_threshold=-1, deterministic_rollout=False, max_path_length=50):
     """Helper function."""
     if env_name == 'pusher':
-        return SawyerPushGoalEnv()
+        return SawyerPushGoalEnv(max_path_length=max_path_length)
     elif env_name == "block_stacking" or env_name == "bandu":
-        return RavensGoalEnvPickOrPlace(num_blocks=num_blocks, random_goal=random_goal, continuous_action_space=continuous_action_space, goal_threshold=goal_threshold)
+        return RavensGoalEnvPickOrPlace(max_path_length=max_path_length,num_blocks=num_blocks, random_goal=random_goal, continuous_action_space=continuous_action_space, goal_threshold=goal_threshold)
     elif env_name == "complex_maze":
-        return ComplexMazeGoalEnv(maze_type=maze_type)    
+        return ComplexMazeGoalEnv(max_path_length=max_path_length,maze_type=maze_type)    
     elif env_name == "kitchenSeq":
-        return KitchenSequentialGoalEnv(task_config=task_config, continuous_action_space=continuous_action_space)
+        return KitchenSequentialGoalEnv(max_path_length=max_path_length,task_config=task_config, continuous_action_space=continuous_action_space)
     elif env_name == 'pointmass_empty':
-        return PointmassGoalEnv(room_type='empty')
+        return PointmassGoalEnv(max_path_length=max_path_length,room_type='empty')
     elif env_name == 'pointmass_rooms':
         print("Point mass rooms")
-        return PointmassGoalEnv(room_type='rooms')
+        return PointmassGoalEnv(max_path_length=max_path_length,room_type='rooms')
     elif env_name == 'pointmass_maze':
         print("Point mass maze")
-        return PointmassGoalEnv(room_type='maze')
+        return PointmassGoalEnv(max_path_length=max_path_length,room_type='maze')
     elif env_name == 'pointmass_rooms_large':
         print("Point mass rooms large")
-        return PointmassGoalEnv(room_type='rooms')
+        return PointmassGoalEnv(max_path_length=max_path_length,room_type='rooms')
     elif env_name == "env_example":
-        return SimpleExample()
+        return SimpleExample(max_path_length=max_path_length,)
     elif env_name == 'pusher_hard':
         if deterministic_rollout:
-            return SawyerHardPushGoalEnv(fixed_start=True, fixed_goal=True)
+            return SawyerHardPushGoalEnv(max_path_length=max_path_length,fixed_start=True, fixed_goal=True)
         else:
-            return SawyerHardPushGoalEnv(fixed_start=True , fixed_goal=not random_goal)
+            return SawyerHardPushGoalEnv(max_path_length=max_path_length,fixed_start=True , fixed_goal=not random_goal)
     else:
         raise AssertionError("Environment not defined")
 

@@ -254,7 +254,8 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
                num_blocks=1, 
                random_goal=False,
                goal_threshold=0.5,
-               continuous_action_space=False):
+               continuous_action_space=False,
+               max_path_length=50):
     
         self.num_blocks = num_blocks
 
@@ -269,7 +270,7 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
        
 
         super().__init__(
-            env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal'
+            env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal',max_path_length=max_path_length
         )
         if goal_threshold <= 0:
           self.goal_threshold = 0.02#0.1#0.02# goal_threshold

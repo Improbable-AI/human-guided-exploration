@@ -41,7 +41,7 @@ class Workspace(object):
 
         num_blocks = cfg['num_blocks']
         continuous_action_space = True
-        env = envs.create_env(cfg['env'], "slide_cabinet,microwave,hinge_cabinet", num_blocks, False, 3, continuous_action_space, 0.05)
+        env = envs.create_env(cfg['env'], "slide_cabinet,microwave,hinge_cabinet", num_blocks, False, 3, continuous_action_space, 0.05, max_path_length=cfg['max_path_length'])
 
         env_params = envs.get_env_params(cfg['env'])
         env_params['max_trajectory_length']=cfg['max_path_length']

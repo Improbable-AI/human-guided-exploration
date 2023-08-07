@@ -596,12 +596,12 @@ class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
 
 
 class ComplexMazeGoalEnv(GymGoalEnvWrapper):
-    def __init__(self, maze_type=HARD, fixed_start=True, fixed_goal=False, images=False, image_kwargs=None):
+    def __init__(self, maze_type=HARD, fixed_start=True, fixed_goal=False, images=False, image_kwargs=None, max_path_length=50):
 
         env = MazeEnv(maze_type=maze_type)
 
         super(ComplexMazeGoalEnv, self).__init__(
-            env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal'
+            env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal', max_path_length=max_path_length
         )
 
     def compute_success(self, achieved_state, goal):        
