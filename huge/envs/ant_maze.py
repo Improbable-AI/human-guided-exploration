@@ -338,7 +338,6 @@ class AntMazeIntermediate():
     self.goal = self.generate_goal()#self.goals[self.goal_idx]
 
     state = self._env.reset()
-    print("reset state", state)
     return self._get_obs()
 
 
