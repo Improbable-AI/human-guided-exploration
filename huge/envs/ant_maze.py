@@ -221,37 +221,6 @@ class AntMazeEnv(maze_env.MazeEnv, GoalReachingAntEnv, offline_env.OfflineEnv):
     def render(self, mode='rgb_array', width=480, height=64, camera_id=0):
         return self.render(mode=mode)
     
-    @property
-    def state_space(self):
-        #shape = self._size + (p.linalg.norm(state - goal) < self.goal_threshold
-        #shape = self._size + (3,)
-        #space = gym.spaces.Box(low=0, high=255, shape=shape, dtype=np.uint8)
-        #return gym.spaces.Dict({'image': space})
-        return self._goal_space
-    @property
-    def action_space(self):
-        return self._env.action_space
-
-    @property
-    def goal_space(self):
-        return self._env.goal_space
-    @property
-    def observation_space(self):
-        #shape = self._size + (3,)
-        #space = gym.spaces.Box(low=0, high=255, shape=shape, dtype=np.uint8)
-        #return gym.spaces.Dict({'image': space})
-
-        observation_space = Dict([
-                ('observation', self.state_space),
-                ('desired_goal', self.goal_space),
-                ('achieved_goal', self.state_space),
-                ('state_observation', self.state_space),
-                ('state_desired_goal', self.goal_space),
-                ('state_achieved_goal', self.state_space),
-            ])
-        return observation_space
-    
-
     def set_target(self, target_location=None):
         return self.set_target_goal(target_location)
 
