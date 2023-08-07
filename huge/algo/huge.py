@@ -1276,7 +1276,7 @@ class HUGE:
         return distance_to_slide, distance_to_hinge, distance_to_microwave, distance_joint_slide, distance_joint_hinge, distance_microwave
 
     def plot_trajectories(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):
-        if "pointmass" in self.env_name or "pusher" in self.env_name or self.env_name == "complex_maze" or "bandu" in self.env_name or "block" in self.env_name:
+        if "pointmass" in self.env_name or "pusher" in self.env_name or self.env_name == "complex_maze" or "bandu" in self.env_name or "block" in self.env_name or "ant" in self.env_name:
             return self.env.plot_trajectories(np.array(traj_accumulated_states.copy()), np.array(traj_accumulated_goal_states.copy()), extract, f"{self.env_name}/{filename}")
 
     def display_collected_labels(self, state_1, state_2, goals, is_oracle=False):
