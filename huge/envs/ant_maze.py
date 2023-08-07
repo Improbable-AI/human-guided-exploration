@@ -243,7 +243,7 @@ class AntMazeIntermediate():
     self.max_path_length = max_path_length
     self.continuous_action_space = continuous_action_space
 
-      print("observation space in ant", self._observation_space)
+    print("observation space in ant", self._observation_space)
        
     initial_obs = self.reset()
     print("initial obs", initial_obs)
