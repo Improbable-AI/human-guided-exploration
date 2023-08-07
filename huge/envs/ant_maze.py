@@ -314,8 +314,8 @@ class AntMazeIntermediate():
     #image = self._env.render('rgb_array', width=self._env.imwidth, height =self._env.imheight)
     #obs = {'image': image, 'state': state, 'image_goal': self.render_goal(), 'goal': self.goal}'
     obs = self._env._get_obs()
-    
-    # TODO missing griper opening
+    import IPython
+    IPython.embed()
    
     goal =  self.generate_goal()
 
