@@ -491,9 +491,9 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
         robot_pos = obs[:2]
         plt.scatter(robot_pos[0], robot_pos[1], marker="o", s=180, color="black", zorder=6)
 
-        # plot goal 
-        goal_pos = self.sample_goal()
-        plt.scatter(goal_pos[0], goal_pos[1], marker="x", s=180, color="purple", zorder=2)
+        # # plot goal 
+        # goal_pos = self.sample_goal()
+        # plt.scatter(goal_pos[0], goal_pos[1], marker="x", s=180, color="purple", zorder=2)
         
         plt.axis('off')   
         plt.gcf().canvas.draw()
