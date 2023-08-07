@@ -74,9 +74,9 @@ class AntEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         # reward = forward_reward - ctrl_cost - contact_cost + survive_reward
         forward_reward = 0
         reward = 0
-        state = self.state_vector()
-        notdone = np.isfinite(state).all() and state[2] >= 0.2 and state[2] <= 1.0
-        done = not notdone
+        # state = self.state_vector()
+        # notdone = np.isfinite(state).all() and state[2] >= 0.2 and state[2] <= 1.0
+        done = False
         ob = self._get_obs()
         return (
             ob,
