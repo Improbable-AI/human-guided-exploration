@@ -4,7 +4,8 @@ import os
 import mujoco_py
 import numpy as np
 from gym import utils
-from gym.envs.mujoco import mujoco_env
+# from gym.envs.mujoco import mujoco_env
+from d4rl.kitchen.adept_envs import mujoco_env
 from huge.envs.gymenv_wrapper import GymGoalEnvWrapper
 
 from d4rl import offline_env
