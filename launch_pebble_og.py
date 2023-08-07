@@ -437,6 +437,7 @@ def main():
     parser.add_argument("--max_path_length",type=int, default=None)
     parser.add_argument("--segment",type=int, default=None)    
     parser.add_argument("--num_seed_steps",type=int, default=None)
+    parser.add_argument("--num_train_steps",type=int, default=None)
 
     args = parser.parse_args()
 
