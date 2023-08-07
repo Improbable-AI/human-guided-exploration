@@ -234,10 +234,7 @@ class AntMazeIntermediate():
     
     self._env =  AntMazeEnv()
     
-    obs_upper = 1 * np.ones(6)
-    obs_lower = -obs_upper
-    obs_upper_pose = 3 * np.ones(7)
-    obs_lower_pose = -obs_upper_pose
+
     self._observation_space = self._env.observation_space
     self._goal_space = self._env.observation_space
     self.max_path_length = max_path_length
@@ -331,8 +328,7 @@ class AntMazeIntermediate():
 
   def reset(self):
 
-    with self.LOCK:
-      state = self._env.reset()
+    state = self._env.reset()
     self.goal = self.generate_goal()#self.goals[self.goal_idx]
     return self._get_obs()
 
