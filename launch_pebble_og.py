@@ -20,7 +20,6 @@ from huge import envs
 from huge.algo import variants
 
 import huge.baselines.pebble.utils as utils
-import hydra
 
 import wandb
 
