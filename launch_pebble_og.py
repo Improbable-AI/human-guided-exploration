@@ -259,8 +259,6 @@ class Workspace(object):
         all_observations = []
         interact_count = 0
 
-        import IPython
-        IPython.embed()
         while self.step < self.cfg['num_train_steps']:
             if done == 1:
                 print("done", done, self.step)
@@ -342,8 +340,6 @@ class Workspace(object):
                 self.reward_model.set_teacher_thres_skip(new_margin)
                 self.reward_model.set_teacher_thres_equal(new_margin)
                 print("first learn reward")
-                import IPython
-                IPython.embed()
                 # first learn reward
                 self.learn_reward(first_flag=1)
                 
@@ -385,8 +381,6 @@ class Workspace(object):
                         if self.reward_model.mb_size + self.total_feedback > self.cfg['max_feedback']:
                             self.reward_model.set_batch(self.cfg['max_feedback'] - self.total_feedback)
                         print("second learn reward")
-                        import IPython
-                        IPython.embed()
                         self.learn_reward()
                         self.replay_buffer.relabel_with_predictor(self.reward_model)
                         interact_count = 0
