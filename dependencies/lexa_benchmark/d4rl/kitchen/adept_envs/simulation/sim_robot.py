@@ -61,7 +61,7 @@ class MujocoSimRobot:
 
 
         # if self._use_dm_backend:
-        print("Using dm mujoco renderer")
+        print("******************************Using dm mujoco renderer*************************************")
         dm_mujoco = module.get_dm_mujoco()
         if model_file.endswith(".mjb"):
             self.sim = dm_mujoco.Physics.from_binary_path(model_file)
