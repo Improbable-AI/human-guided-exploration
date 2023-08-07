@@ -96,8 +96,6 @@ class MetersGroup(object):
         self._csv_file.flush()
 
     def _format(self, key, value, ty):
-        import IPython
-        IPython.embed()
         if ty == 'int':
             value = int(value)
             return f'{key}: {value}'

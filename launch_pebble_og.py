@@ -129,7 +129,7 @@ class Workspace(object):
         
 
     def compute_reward(self, obs):
-        if self.cfg['env'] == "pointmass_rooms":
+        if self.cfg['env'] == "pointmass_rooms" or self.cfg['env'] == "kitchenSeq":
             return - self.env.compute_shaped_distance(obs, self.goal)[0]
         else:
             return - self.env.compute_shaped_distance(obs, self.goal)
