@@ -241,7 +241,7 @@ from gym import spaces
 from gym.spaces import Box, Dict
 
 class AntMazeIntermediate():
-  def __init__(self, max_path_length=300, continuous_action_space=True, maze_scaling=1 ):
+  def __init__(self, max_path_length=300, continuous_action_space=True, maze_scaling=4 ):
 
     
     self._env =  AntMazeEnv(maze_scaling=maze_scaling)

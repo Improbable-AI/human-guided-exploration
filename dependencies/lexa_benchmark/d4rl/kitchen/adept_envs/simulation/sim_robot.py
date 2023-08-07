@@ -61,8 +61,6 @@ class MujocoSimRobot:
 
 
         # if self._use_dm_backend:
-        import IPython
-        IPython.embed()
         print("******************************Using dm mujoco renderer*************************************")
         dm_mujoco = module.get_dm_mujoco()
         if model_file.endswith(".mjb"):
