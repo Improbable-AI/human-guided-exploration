@@ -213,8 +213,7 @@ class AntMazeEnv(maze_env.MazeEnv, GoalReachingAntEnv, offline_env.OfflineEnv):
 
         ## We set the target foal here for evaluation
         self.set_target()
-        import IPython
-        IPython.embed()
+
     def render_image(self):
         return self.render(mode="rgb_array", width=64, height=64)
 
@@ -226,13 +225,124 @@ class AntMazeEnv(maze_env.MazeEnv, GoalReachingAntEnv, offline_env.OfflineEnv):
 
     def seed(self, seed=0):
         mujoco_env.MujocoEnv.seed(self, seed)
+from gym import spaces
+from gym.spaces import Box, Dict
+
+class AntMazeIntermediate():
+  def __init__(self, max_path_length=300, continuous_action_space=True ):
+
+    
+    with self.LOCK:
+      self._env =  AntMazeEnv()
+     
+      obs_upper = 1 * np.ones(6)
+      obs_lower = -obs_upper
+      obs_upper_pose = 3 * np.ones(7)
+      obs_lower_pose = -obs_upper_pose
+      self._observation_space = self._env.observation_space
+      self._goal_space = self._env.observation_space
+      self.max_path_length = max_path_length
+      self.continuous_action_space = continuous_action_space
+
+      print("observation space in ant", self._observation_space)
+       
+    initial_obs = self.reset()
+    print("initial obs", initial_obs)
+
+  def generate_goal(self,):
+    goal_state = np.zeros(self.observation_space.shape)
+
+    return goal_state
+
+  def render_image(self):
+    return self._env.render(mode="rgb_array", width=64, height=64)
+
+  def render(self, mode='rgb_array', width=480, height=64, camera_id=0):
+      return self._env.render(mode=mode)
+   
+  @property
+  def state_space(self):
+    #shape = self._size + (p.linalg.norm(state - goal) < self.goal_threshold
+    #shape = self._size + (3,)
+    #space = gym.spaces.Box(low=0, high=255, shape=shape, dtype=np.uint8)
+    #return gym.spaces.Dict({'image': space})
+    return self._observation_space
+  @property
+  def action_space(self):
+    return self._env.action_space
+
+  @property
+  def goal_space(self):
+    return self._observation_space
+  
+  @property
+  def observation_space(self):
+    #shape = self._size + (3,)
+    #space = gym.spaces.Box(low=0, high=255, shape=shape, dtype=np.uint8)
+    #return gym.spaces.Dict({'image': space})
+
+    observation_space = Dict([
+            ('observation', self.state_space),
+            ('desired_goal', self.goal_space),
+            ('achieved_goal', self.state_space),
+            ('state_observation', self.state_space),
+            ('state_desired_goal', self.goal_space),
+            ('state_achieved_goal', self.state_space),
+        ])
+    return observation_space
+  
+
+  def _get_obs(self, ):
+    #image = self._env.render('rgb_array', width=self._env.imwidth, height =self._env.imheight)
+    #obs = {'image': image, 'state': state, 'image_goal': self.render_goal(), 'goal': self.goal}'
+    obs = self._env._get_obs()
+    
+    # TODO missing griper opening
+   
+    goal =  self.generate_goal()
+
+
+    return dict(
+            observation=obs,
+            desired_goal=goal,
+            achieved_goal=obs,
+            state_observation=obs,
+            state_desired_goal=goal,
+            state_achieved_goal=obs
+    )
+
+  def step(self, action):
+    total_reward = 0.0
+    if self.continuous_action_space:
+       cont_action = action
+    else:
+      assert False
+
+    for step in range(self._action_repeat):
+      state, reward, done, info = self._env.step(cont_action)
+      reward = 0 #self.compute_reward()
+      total_reward += reward
+      if done:
+        break
+    obs = self._get_obs()
+    for k, v in obs.items():
+      if 'metric_' in k:
+        info[k] = v
+    return obs, total_reward, done, info
+
+  def reset(self):
+
+    with self.LOCK:
+      state = self._env.reset()
+    self.goal = self.generate_goal()#self.goals[self.goal_idx]
+    return self._get_obs()
 
 
 class AntMazeGoalEnv(GymGoalEnvWrapper):
-    def __init__(self, task_config='slide_cabinet,microwave', fixed_start=True, max_path_length=50, fixed_goal=False, images=False, image_kwargs=None, continuous_action_space=False):
+    def __init__(self, task_config='slide_cabinet,microwave', fixed_start=True, max_path_length=300, fixed_goal=False, images=False, image_kwargs=None, continuous_action_space=True):
         self.task_config = task_config.split(",")
 
-        env = AntMazeEnv()
+        env = AntMazeIntermediate(max_path_length, continuous_action_space)
        
 
         super(AntMazeGoalEnv, self).__init__(
@@ -240,8 +350,6 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
         )
 
 
-        import IPython
-        IPython.embed()
         self.action_low = np.array([0.25, -0.5])
         self.action_high = np.array([0.75, 0.5])
 
