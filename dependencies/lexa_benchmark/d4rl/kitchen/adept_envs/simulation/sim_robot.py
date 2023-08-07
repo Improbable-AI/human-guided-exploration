@@ -61,19 +61,21 @@ class MujocoSimRobot:
 
 
         # if self._use_dm_backend:
-        #     dm_mujoco = module.get_dm_mujoco()
-        #     if model_file.endswith(".mjb"):
-        #         self.sim = dm_mujoco.Physics.from_binary_path(model_file)
-        #     else:
-        #         self.sim = dm_mujoco.Physics.from_xml_path(model_file)
-        #     self.model = self.sim.model
-        #     self._patch_mjlib_accessors(self.model, self.sim.data)
-        #     self.renderer = DMRenderer(self.sim, camera_settings=camera_settings)
+        print("Using dm mujoco renderer")
+        dm_mujoco = module.get_dm_mujoco()
+        if model_file.endswith(".mjb"):
+            self.sim = dm_mujoco.Physics.from_binary_path(model_file)
+        else:
+            self.sim = dm_mujoco.Physics.from_xml_path(model_file)
+        self.model = self.sim.model
+        self._patch_mjlib_accessors(self.model, self.sim.data)
+        self.renderer = DMRenderer(self.sim, camera_settings=camera_settings)
         # else:  # Use mujoco_py
-        mujoco_py = module.get_mujoco_py()
-        self.model = mujoco_py.load_model_from_path(model_file)
-        self.sim = mujoco_py.MjSim(self.model)
-        self.renderer = MjPyRenderer(self.sim, camera_settings=camera_settings)
+        # print("Using mujoco py renderer")
+        # mujoco_py = module.get_mujoco_py()
+        # self.model = mujoco_py.load_model_from_path(model_file)
+        # self.sim = mujoco_py.MjSim(self.model)
+        # self.renderer = MjPyRenderer(self.sim, camera_settings=camera_settings)
 
         self.data = self.sim.data
 
