@@ -205,7 +205,7 @@ class AntMazeEnv(maze_env.MazeEnv, GoalReachingAntEnv, offline_env.OfflineEnv):
         maze_env.MazeEnv.__init__(
             self,
             maze_map=U_MAZE_TEST,
-            maze_size_scaling=1,
+            maze_size_scaling=len(U_MAZE_TEST),
             *args,
             manual_collision=False,
             goal_sampler=goal_sampler,
