@@ -213,12 +213,6 @@ class AntMazeEnv(maze_env.MazeEnv, GoalReachingAntEnv, offline_env.OfflineEnv):
 
         ## We set the target foal here for evaluation
         self.set_target()
-
-    def render_image(self):
-        return self.render(mode="rgb_array", width=64, height=64)
-
-    def render(self, mode='rgb_array', width=480, height=64, camera_id=0):
-        return self.render(mode=mode)
     
     def set_target(self, target_location=None):
         return self.set_target_goal(target_location)
