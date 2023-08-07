@@ -93,12 +93,14 @@ class AntEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def _get_obs(self):
         # No cfrc observation.
         if self._expose_all_qpos:
-            obs = np.concatenate(
-                [
-                    self.physics.data.qpos.flat[:15],  # Ensures only ant obs.
-                    self.physics.data.qvel.flat[:14],
-                ]
-            )
+                    
+            obs = self.physics.data.qpos.flat[:15]  # Ensures only ant obs.
+            # np.concatenate(
+            #     [
+            #         self.physics.data.qpos.flat[:15],  # Ensures only ant obs.
+            #         self.physics.data.qvel.flat[:14],
+            #     ]
+            # )
         else:
             obs = np.concatenate(
                 [
@@ -247,8 +249,9 @@ class AntMazeIntermediate():
     self._env =  AntMazeEnv(maze_scaling=maze_scaling)
     
     self._action_repeat = 1
-    self._observation_space = self._env.observation_space
-    self._goal_space = self._env.observation_space
+    print("env observation space", self._env.observation_space)
+    self._observation_space = Box(-30*np.ones(15), 30*np.ones(15), dtype=np.float)#self._env.observation_space
+    self._goal_space = self._observation_space
     self.max_path_length = max_path_length
     self.continuous_action_space = continuous_action_space
     self.maze_scaling = maze_scaling
@@ -412,10 +415,9 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
 
         
     def test_goal_selector(self, oracle_model, goal_selector, size=50):
-        return
         goal = self.sample_goal()#np.random.uniform(-0.5, 0.5, size=(2,))
         goal_pos =  self.extract_goal(goal)
-        pos = np.meshgrid(np.linspace(0, 11.5,size), np.linspace(0, 12.5,size))
+        pos = np.meshgrid(np.linspace(-1.5, 5.5,size), np.linspace(-1.5, 5.5,size))
         vels = np.meshgrid(np.random.uniform(-1,1, size=(size)),np.zeros((size)))
         
         pos = np.array(pos).reshape(2,-1).T
