@@ -96,6 +96,8 @@ class GymGoalEnvWrapper(goal_env.GoalEnv):
             print(self.max_path_length)
             done = 1.0
             self.episode_length = 0
+        else:
+            done = 0.0
 
         return ns, reward, done, infos
 
