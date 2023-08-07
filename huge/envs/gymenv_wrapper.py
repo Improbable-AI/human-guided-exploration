@@ -43,6 +43,8 @@ class GymGoalEnvWrapper(goal_env.GoalEnv):
         self.goal_dims = goal_low.shape[0]
         self.sgoal_dims = sgoal_low.shape[0]
 
+
+        self.episode_length = 0
         self.use_internal_rewards = use_internal_rewards
 
     def _base_obs_to_state(self, base_obs):
@@ -82,9 +84,16 @@ class GymGoalEnvWrapper(goal_env.GoalEnv):
                 done
                 infos
         """
+
         ns, reward, done, infos = self.base_env.step(a)
+
         infos['observation'] = ns
         ns = self._base_obs_to_state(ns)
+        if self.episode_length >= self.base_env.max_path_length:
+            print(self.base_env.max_path_length)
+            done = True
+            self.episode_length = 0
+        self.episode_length+=1
         return ns, reward, done, infos
 
     def observation(self, state):
