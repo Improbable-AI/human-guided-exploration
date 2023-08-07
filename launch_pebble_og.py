@@ -262,6 +262,7 @@ class Workspace(object):
         import IPython
         IPython.embed()
         while self.step < self.cfg['num_train_steps']:
+            print("done", done)
             if done:
                 if self.step > 0:
                     self.logger.log('train/duration', time.time() - start_time, self.step)
@@ -339,7 +340,9 @@ class Workspace(object):
                 new_margin = np.mean(avg_train_true_return) * (self.cfg['segment'] / self.cfg['max_path_length'])
                 self.reward_model.set_teacher_thres_skip(new_margin)
                 self.reward_model.set_teacher_thres_equal(new_margin)
-                
+                print("first learn reward")
+                import IPython
+                IPython.embed()
                 # first learn reward
                 self.learn_reward(first_flag=1)
                 
@@ -380,7 +383,9 @@ class Workspace(object):
                         # corner case: new total feed > max feed
                         if self.reward_model.mb_size + self.total_feedback > self.cfg['max_feedback']:
                             self.reward_model.set_batch(self.cfg['max_feedback'] - self.total_feedback)
-                            
+                        print("second learn reward")
+                        import IPython
+                        IPython.embed()
                         self.learn_reward()
                         self.replay_buffer.relabel_with_predictor(self.reward_model)
                         interact_count = 0
