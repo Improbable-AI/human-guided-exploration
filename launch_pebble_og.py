@@ -68,8 +68,6 @@ class Workspace(object):
         self.env = variants.get_params_pebble(env, env_params)
 
         cfg['obs_dim'] = self.env.observation_space.shape[0]
-        import IPython
-        IPython.embed()
         cfg['action_dim'] = self.env.action_space.shape[0]
         cfg['action_range'] = [
             float(self.env.action_space.low.min()),
@@ -260,6 +258,9 @@ class Workspace(object):
         observations = []
         all_observations = []
         interact_count = 0
+
+        import IPython
+        IPython.embed()
         while self.step < self.cfg['num_train_steps']:
             if done:
                 if self.step > 0:

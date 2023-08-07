@@ -28,7 +28,7 @@ def create_env(env_name, task_config="slide_cabinet,microwave", num_blocks=1, ra
     elif env_name == "complex_maze":
         return ComplexMazeGoalEnv(maze_type=maze_type)    
     elif env_name == "kitchenSeq":
-        return KitchenSequentialGoalEnv(task_config=task_config)
+        return KitchenSequentialGoalEnv(task_config=task_config, continuous_action_space=continuous_action_space)
     elif env_name == 'pointmass_empty':
         return PointmassGoalEnv(room_type='empty')
     elif env_name == 'pointmass_rooms':
