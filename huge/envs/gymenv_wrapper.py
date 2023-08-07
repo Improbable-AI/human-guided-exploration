@@ -149,8 +149,6 @@ class GymGoalEnvWrapper(goal_env.GoalEnv):
         Samples a goal state (of type self.state_space.sample()) using 'desired_goal'
         
         """
-        import IPython
-        IPython.embed()
 
         desired_key = self.goal_key.replace('achieved', 'desired')
         desired_state_key = self.sgoal_key.replace('achieved', 'desired')

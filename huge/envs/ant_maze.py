@@ -246,8 +246,7 @@ class AntMazeIntermediate():
     print("initial obs", initial_obs)
 
   def generate_goal(self,):
-    goal_state = np.zeros(self.observation_space.shape)
-
+    goal_state = np.zeros(self._observation_space.shape)
     return goal_state
 
   def render_image(self):
@@ -327,9 +326,9 @@ class AntMazeIntermediate():
     return obs, total_reward, done, info
 
   def reset(self):
+    self.goal = self.generate_goal()#self.goals[self.goal_idx]
 
     state = self._env.reset()
-    self.goal = self.generate_goal()#self.goals[self.goal_idx]
     return self._get_obs()
 
 
