@@ -187,6 +187,14 @@ U_MAZE_TEST = [
     [1, 1, 1, 1, 1],
 ]
 
+U_MAZE_TEST_REWARD = [
+    [100, 100, 100, 100, 100],
+    [100, 6, 5, 4, 100],
+    [100, 100, 100, 3, 100],
+    [100, 0, 1, 2, 100],
+    [100, 100, 100, 100, 100],
+]
+
 class AntMazeEnv(maze_env.MazeEnv, GoalReachingAntEnv, offline_env.OfflineEnv):
     """Ant navigating a maze."""
 
@@ -205,7 +213,7 @@ class AntMazeEnv(maze_env.MazeEnv, GoalReachingAntEnv, offline_env.OfflineEnv):
         maze_env.MazeEnv.__init__(
             self,
             maze_map=U_MAZE_TEST,
-            maze_size_scaling=len(U_MAZE_TEST),
+            maze_size_scaling=1,
             *args,
             manual_collision=False,
             goal_sampler=goal_sampler,
@@ -340,7 +348,8 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
 
         env = AntMazeIntermediate(max_path_length, continuous_action_space)
        
-
+        self.maze_arr = U_MAZE_TEST
+        self.maze_reward = U_MAZE_TEST_REWARD
         super(AntMazeGoalEnv, self).__init__(
             env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal',max_path_length=max_path_length
         )
@@ -380,11 +389,26 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
     # The task is to open the microwave, then open the slider and then open the cabinet
     def compute_shaped_distance(self, achieved_state, goal):
         # TODO: 
-        obs = self.get_xy(achieved_state)
+        
+        if torch.is_tensor(achieved_state):
+          achieved_state = achieved_state.detach().cpu().numpy()
+        if torch.is_tensor(goal):
+          goal = goal.detach().cpu().numpy()
 
-        return 0
+        obs = self.get_xy(achieved_state)
+        
+        i, j = np.floor(np.array(obs)).astype(int) 
+    
+        distance = self.maze_reward[i, j]
+
+        if distance == 0:
+            return np.linalg.norm(achieved_state[:2] - goal[:2])
+        else:
+            return distance
+
         
     def test_goal_selector(self, oracle_model, goal_selector, size=50):
+        return
         goal = self.sample_goal()#np.random.uniform(-0.5, 0.5, size=(2,))
         goal_pos =  self.extract_goal(goal)
         pos = np.meshgrid(np.linspace(0, 11.5,size), np.linspace(0, 12.5,size))
@@ -420,8 +444,24 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
         plt.scatter(goal_pos[0], goal_pos[1], marker='o', s=100, color='black')
         wandb.log({"oraclemodel": wandb.Image(plt)})
         
+    def display_wall(self):
+        from matplotlib.patches import Rectangle
 
+        maze_arr = self.maze_arr
+        width, height = maze_arr.shape
+        for w in range(width):
+            for h in range(height):
+                if maze_arr[w, h] == 1:
+
+                    plt.gca().add_patch(Rectangle((w,),1,1,
+                    edgecolor='black',
+                    facecolor='black',
+                    lw=0))
+    
     def plot_trajectories(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):
+        import seaborn as sns
+        from PIL import Image
+
         # plot added trajectories to fake replay buffer
         plt.clf()
         self.display_wall()
@@ -434,7 +474,7 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
             
             plt.scatter(traj_accumulated_goal_states[j][0],
                     traj_accumulated_goal_states[j][1], marker='o', s=20, color=color, zorder=1)
-        from PIL import Image
+            
         if 'eval' in filename:
             wandb.log({"trajectory_eval": wandb.Image(plt)})
         else:
