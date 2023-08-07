@@ -91,8 +91,9 @@ class GymGoalEnvWrapper(goal_env.GoalEnv):
         ns = self._base_obs_to_state(ns)
         if self.episode_length >= self.base_env.max_path_length:
             print(self.base_env.max_path_length)
-            done = True
+            done = 1.0
             self.episode_length = 0
+            
         self.episode_length+=1
         return ns, reward, done, infos
 
