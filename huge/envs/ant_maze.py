@@ -40,10 +40,12 @@ class AntEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         self._expose_body_comvels = expose_body_comvels
         self._body_com_indices = {}
         self._body_comvel_indices = {}
-
+        camera_settings =  dict(
+                    distance=10, lookat=[2,2,0], azimuth=-90, elevation=-90
+                )
         self._non_zero_reset = non_zero_reset
 
-        mujoco_env.MujocoEnv.__init__(self, file_path, 5)
+        mujoco_env.MujocoEnv.__init__(self, file_path, 5,camera_settings=camera_settings )
         utils.EzPickle.__init__(self)
 
     @property
