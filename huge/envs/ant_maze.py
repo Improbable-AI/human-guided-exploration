@@ -380,11 +380,6 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
         achieved_state = self.observation(state)
         return self.compute_shaped_distance(achieved_state, None)
   
-    def plot_trajectories(self,obs=None, goal=None, filename=""):
-       return
-    
-    def distance_to_goal(self, goal_name, achieved_state):
-        return 0
  
     # The task is to open the microwave, then open the slider and then open the cabinet
     def compute_shaped_distance(self, achieved_state, goal):
@@ -465,7 +460,7 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
         # plot added trajectories to fake replay buffer
         plt.clf()
         self.display_wall()
-        
+        goal = self.get_xy(self.base_env.generate_goal())
         states_plot =  traj_accumulated_states
         colors = sns.color_palette('hls', (len(traj_accumulated_states)))
         for j in range(len(traj_accumulated_states)):
@@ -474,7 +469,8 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
             
             plt.scatter(traj_accumulated_goal_states[j][0],
                     traj_accumulated_goal_states[j][1], marker='o', s=20, color=color, zorder=1)
-            
+        plt.scatter(goal[0],
+                    goal[1], marker='x', s=60, color="red", zorder=1) 
         if 'eval' in filename:
             wandb.log({"trajectory_eval": wandb.Image(plt)})
         else:
