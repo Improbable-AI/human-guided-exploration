@@ -251,7 +251,7 @@ class AntMazeIntermediate():
     
     self._action_repeat = 1
     print("env observation space", self._env.observation_space)
-    self._observation_space = Box(-30*np.ones(15), 30*np.ones(15), dtype=np.float)#self._env.observation_space
+    self._observation_space = Box(-30*np.ones(17), 30*np.ones(17), dtype=np.float)#self._env.observation_space
     self._goal_space = self._observation_space
     self.max_path_length = max_path_length
     self.continuous_action_space = continuous_action_space
@@ -314,8 +314,6 @@ class AntMazeIntermediate():
     #image = self._env.render('rgb_array', width=self._env.imwidth, height =self._env.imheight)
     #obs = {'image': image, 'state': state, 'image_goal': self.render_goal(), 'goal': self.goal}'
     obs = self._env._get_obs()
-    import IPython
-    IPython.embed()
    
     goal =  self.generate_goal()
 
