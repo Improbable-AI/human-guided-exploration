@@ -347,7 +347,7 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
         self.continuous_action_space = continuous_action_space
 
         if self.continuous_action_space:
-           self.action_space = Box(low=-np.ones(7), high=np.ones(7),dtype=np.float32 )
+           self.action_space = env.action_space
         else:
           self.action_space = Discrete(15)
 
