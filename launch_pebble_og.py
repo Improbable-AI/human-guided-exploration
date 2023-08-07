@@ -262,7 +262,8 @@ class Workspace(object):
         import IPython
         IPython.embed()
         while self.step < self.cfg['num_train_steps']:
-            print("done", done)
+            if done == 1:
+                print("done", done, self.step)
             if done:
                 if self.step > 0:
                     self.logger.log('train/duration', time.time() - start_time, self.step)
