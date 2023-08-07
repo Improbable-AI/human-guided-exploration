@@ -141,6 +141,8 @@ class MazeEnv(gym.Env):
         self._init_torso_x = torso_x
         self._init_torso_y = torso_y
 
+        import IPython
+        IPython.embed()
         for i in range(len(self._maze_map)):
             for j in range(len(self._maze_map[0])):
                 struct = self._maze_map[i][j]
