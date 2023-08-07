@@ -256,11 +256,9 @@ class AntMazeIntermediate():
     return goal_state
 
   def render_image(self):
-    return np.zeros((64,64,3))
     return self._env.render(mode="rgb_array", width=64, height=64)
 
   def render(self, mode='rgb_array', width=480, height=64, camera_id=0):
-      return np.zeros((64,64,3))
       
       return self._env.render(mode=mode)
    
