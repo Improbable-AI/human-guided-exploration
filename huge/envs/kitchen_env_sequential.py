@@ -306,7 +306,7 @@ class KitchenSequentialGoalEnv(GymGoalEnvWrapper):
 
         return self.compute_shaped_distance(achieved_state, None)
   
-    def plot_trajectories(self,obs=None, goal=None):
+    def plot_trajectories(self,obs=None, goal=None, filename=""):
        return
     
     def distance_to_goal(self, goal_name, achieved_state):
