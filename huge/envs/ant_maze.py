@@ -228,7 +228,7 @@ class AntMazeIntermediate():
     
     self._env =  AntMazeEnv()
     
-
+    self._action_repeat = 1
     self._observation_space = self._env.observation_space
     self._goal_space = self._env.observation_space
     self.max_path_length = max_path_length
