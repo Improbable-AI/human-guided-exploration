@@ -4,7 +4,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import math
 import huge.baselines.pebble.utils as utils
-import hydra
 
 from agent import Agent
 from agent.critic import DoubleQCritic
