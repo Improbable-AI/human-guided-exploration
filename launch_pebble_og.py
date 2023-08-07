@@ -394,7 +394,7 @@ class Workspace(object):
 
             next_obs, reward, done, extra = self.env.step(action)
             next_obs = self.env.observation(next_obs)
-            reward = - self.env.compute_shaped_distance(next_obs, self.goal)[0]
+            reward = self.compute_reward(next_obs)
             reward_hat = self.reward_model.r_hat(np.concatenate([obs, action], axis=-1))
             observations.append(next_obs)
 
