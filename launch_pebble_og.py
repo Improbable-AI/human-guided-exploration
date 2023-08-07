@@ -434,6 +434,9 @@ def main():
     parser.add_argument("--num_interact",type=int, default=None)
     parser.add_argument("--entropy_coeff",type=float, default=None)
     parser.add_argument("--action_std",type=float, default=None)
+    parser.add_argument("--max_path_length",type=int, default=None)
+    parser.add_argument("--segment",type=int, default=None)
+    parser.add_argument("--num_interact",type=int, default=None)
 
     args = parser.parse_args()
 
