@@ -171,6 +171,15 @@ class GoalReachingAntEnv(goal_reaching_env.GoalReachingEnv, AntEnv):
             non_zero_reset=non_zero_reset,
         )
 
+RESET = R = "r"  # Reset position.
+GOAL = G = "g"
+U_MAZE_TEST = [
+    [1, 1, 1, 1, 1],
+    [1, R, 0, 0, 1],
+    [1, 1, 1, 0, 1],
+    [1, G, 0, 0, 1],
+    [1, 1, 1, 1, 1],
+]
 
 class AntMazeEnv(maze_env.MazeEnv, GoalReachingAntEnv, offline_env.OfflineEnv):
     """Ant navigating a maze."""
@@ -189,6 +198,8 @@ class AntMazeEnv(maze_env.MazeEnv, GoalReachingAntEnv, offline_env.OfflineEnv):
             goal_sampler = lambda np_rand: maze_env.MazeEnv.goal_sampler(self, np_rand)
         maze_env.MazeEnv.__init__(
             self,
+            maze_map=U_MAZE_TEST,
+            maze_size_scaling=1,
             *args,
             manual_collision=False,
             goal_sampler=goal_sampler,
