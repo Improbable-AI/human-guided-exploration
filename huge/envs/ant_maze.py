@@ -11,6 +11,10 @@ from d4rl import offline_env
 from d4rl.locomotion import goal_reaching_env, maze_env, mujoco_goal_env, wrappers
 from collections import OrderedDict
 
+import torch
+import matplotlib.pyplot as plt
+import wandb
+
 GYM_ASSETS_DIR = os.path.join(os.path.dirname(mujoco_goal_env.__file__), "assets")
 
 
@@ -326,6 +330,7 @@ class AntMazeIntermediate():
     self.goal = self.generate_goal()#self.goals[self.goal_idx]
 
     state = self._env.reset()
+    print("reset state", state)
     return self._get_obs()
 
 
@@ -352,9 +357,10 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
           self.action_space = Discrete(15)
 
 
-
+    def get_xy(self, obs):
+       return obs[:2]
+    
     def compute_success(self, achieved_state, goal):        
-     
       return 0
       #return int(per_obj_success['slide_cabinet'])  + #int(per_obj_success['hinge_cabinet'])+ int(per_obj_success['microwave'])
     
@@ -363,7 +369,6 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
     def goal_distance(self, state, goal_state):
         # Uses distance in state_goal_key to determine distance (useful for images)
         achieved_state = self.observation(state)
-
         return self.compute_shaped_distance(achieved_state, None)
   
     def plot_trajectories(self,obs=None, goal=None, filename=""):
@@ -374,9 +379,68 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
  
     # The task is to open the microwave, then open the slider and then open the cabinet
     def compute_shaped_distance(self, achieved_state, goal):
-        
+        # TODO: 
+        obs = self.get_xy(achieved_state)
+
         return 0
         
+    def test_goal_selector(self, oracle_model, goal_selector, size=50):
+        goal = self.sample_goal()#np.random.uniform(-0.5, 0.5, size=(2,))
+        goal_pos =  self.extract_goal(goal)
+        pos = np.meshgrid(np.linspace(0, 11.5,size), np.linspace(0, 12.5,size))
+        vels = np.meshgrid(np.random.uniform(-1,1, size=(size)),np.zeros((size)))
+        
+        pos = np.array(pos).reshape(2,-1).T
+        vels = np.array(vels).reshape(2,-1).T
+        states = np.concatenate([pos, vels], axis=-1)
+        goals = np.repeat(goal_pos[None], size*size, axis=0)
+        
+        states_t = torch.Tensor(states).cuda()
+        goals_t = torch.Tensor(goals).cuda()
+        r_val = goal_selector(states_t, goals_t)
+        r_val = r_val.cpu().detach().numpy()
+        plt.clf()
+        plt.cla()
+        plt.scatter(states[:, 0], states[:, 1], c=r_val[:, 0], cmap=cm.jet)
+        self.display_wall()
+        plt.scatter(goal_pos[0], goal_pos[1], marker='o', s=100, color='black')
+
+        
+        wandb.log({"rewardmodel": wandb.Image(plt)})
+
+
+        r_val = oracle_model(states_t, goals_t)
+        r_val = r_val.cpu().detach().numpy()
+        plt.clf()
+        plt.cla()
+        #self.display_wall(plt)
+        plt.scatter(states[:, 0], states[:, 1], c=r_val[:, 0], cmap=cm.jet)
+
+        self.display_wall()
+        plt.scatter(goal_pos[0], goal_pos[1], marker='o', s=100, color='black')
+        wandb.log({"oraclemodel": wandb.Image(plt)})
+        
+
+    def plot_trajectories(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):
+        # plot added trajectories to fake replay buffer
+        plt.clf()
+        self.display_wall()
+        
+        states_plot =  traj_accumulated_states
+        colors = sns.color_palette('hls', (len(traj_accumulated_states)))
+        for j in range(len(traj_accumulated_states)):
+            color = colors[j]
+            plt.plot(self.observation(states_plot[j ])[:,0], self.observation(states_plot[j])[:, 1], color=color, zorder = -1)
+            
+            plt.scatter(traj_accumulated_goal_states[j][0],
+                    traj_accumulated_goal_states[j][1], marker='o', s=20, color=color, zorder=1)
+        from PIL import Image
+        if 'eval' in filename:
+            wandb.log({"trajectory_eval": wandb.Image(plt)})
+        else:
+            wandb.log({"trajectory": wandb.Image(plt)})
+
+
 
     def render_image(self):
       return self.base_env.render_image()
