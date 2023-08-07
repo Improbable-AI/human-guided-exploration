@@ -348,8 +348,8 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
 
         env = AntMazeIntermediate(max_path_length, continuous_action_space)
        
-        self.maze_arr = U_MAZE_TEST
-        self.maze_reward = U_MAZE_TEST_REWARD
+        self.maze_arr = np.array(U_MAZE_TEST)
+        self.maze_reward = np.array(U_MAZE_TEST_REWARD)
         super(AntMazeGoalEnv, self).__init__(
             env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal',max_path_length=max_path_length
         )
