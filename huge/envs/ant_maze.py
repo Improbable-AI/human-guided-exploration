@@ -253,6 +253,7 @@ class AntMazeIntermediate():
 
   def generate_goal(self,):
     goal_state = np.zeros(self._observation_space.shape)
+    goal_state[:2] = [0,2]
     return goal_state
 
   def render_image(self):
