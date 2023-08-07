@@ -393,7 +393,7 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
 
         obs = self.get_xy(achieved_state)
         
-        i, j = np.floor(np.array(obs)).astype(int) 
+        i, j = np.floor(np.array(obs) + 1).astype(int) 
     
         distance = self.maze_reward[i, j]
 
@@ -447,10 +447,9 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
         width, height = maze_arr.shape
         for w in range(width):
             for h in range(height):
-                print("displaying wall, ", w,h, maze_arr[w,h])
-                if maze_arr[w, h] == 1:
+                if maze_arr[w, h] == '1':
 
-                    plt.gca().add_patch(Rectangle((w,h),1,1,
+                    plt.gca().add_patch(Rectangle((w-1,h-1),1,1,
                     edgecolor='black',
                     facecolor='black',
                     lw=0))
