@@ -401,7 +401,7 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
 
         obs = self.get_xy(achieved_state)
         
-        i, j = np.floor(np.array(obs) + 1).astype(int) 
+        i, j = np.floor(np.array(obs)/2 + 1).astype(int) 
     
         distance = self.maze_reward[i, j]
 
