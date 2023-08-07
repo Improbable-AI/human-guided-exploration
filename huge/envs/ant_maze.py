@@ -232,17 +232,16 @@ class AntMazeIntermediate():
   def __init__(self, max_path_length=300, continuous_action_space=True ):
 
     
-    with self.LOCK:
-      self._env =  AntMazeEnv()
-     
-      obs_upper = 1 * np.ones(6)
-      obs_lower = -obs_upper
-      obs_upper_pose = 3 * np.ones(7)
-      obs_lower_pose = -obs_upper_pose
-      self._observation_space = self._env.observation_space
-      self._goal_space = self._env.observation_space
-      self.max_path_length = max_path_length
-      self.continuous_action_space = continuous_action_space
+    self._env =  AntMazeEnv()
+    
+    obs_upper = 1 * np.ones(6)
+    obs_lower = -obs_upper
+    obs_upper_pose = 3 * np.ones(7)
+    obs_lower_pose = -obs_upper_pose
+    self._observation_space = self._env.observation_space
+    self._goal_space = self._env.observation_space
+    self.max_path_length = max_path_length
+    self.continuous_action_space = continuous_action_space
 
       print("observation space in ant", self._observation_space)
        
