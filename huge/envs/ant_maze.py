@@ -447,6 +447,7 @@ class AntMazeGoalEnv(GymGoalEnvWrapper):
         width, height = maze_arr.shape
         for w in range(width):
             for h in range(height):
+                print("displaying wall, ", w,h, maze_arr[w,h])
                 if maze_arr[w, h] == 1:
 
                     plt.gca().add_patch(Rectangle((w,h),1,1,
