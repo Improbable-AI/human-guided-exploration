@@ -65,7 +65,7 @@ class Workspace(object):
         print(env_params)
         env_params['goal_selector_name']=""
         env_params['continuous_action_space'] = continuous_action_space
-        self.env, policy, goal_selector, classifier_model, replay_buffer, goal_selector_buffer, huge_kwargs = variants.get_params(env, env_params)
+        self.env = variants.get_params_pebble(env, env_params)
 
         cfg['obs_dim'] = self.env.observation_space.shape[0]
         cfg['action_dim'] = self.env.action_space.shape[0]
@@ -127,6 +127,13 @@ class Workspace(object):
             teacher_eps_skip=cfg['teacher_eps_skip'], 
             teacher_eps_equal=cfg['teacher_eps_equal'])
         
+
+    def compute_reward(self, obs):
+        if self.cfg['env'] == "pointmass_rooms":
+            return - self.env.compute_shaped_distance(obs, self.goal)[0]
+        else:
+            return - self.env.compute_shaped_distance(obs, self.goal)
+
     def evaluate(self):
         average_episode_reward = 0
         average_true_episode_reward = 0
@@ -150,7 +157,7 @@ class Workspace(object):
                 obs, reward, done, extra = self.env.step(action)
                 obs = self.env.observation(obs)
                 observations.append(obs)
-                reward = - self.env.compute_shaped_distance(obs, self.goal)[0]
+                reward = self.compute_reward(obs) 
                 episode_reward += reward
                 true_episode_reward += reward
                 if self.log_success:
