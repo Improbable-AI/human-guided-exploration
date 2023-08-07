@@ -34,7 +34,7 @@ segment: 10 # 50
 activation: tanh
 num_seed_steps: 1000
 num_unsup_steps: 9000
-num_interact: 100 #5000
+num_interact: 5000
 reward_lr: 0.0003
 reward_batch: 50
 reward_update: 10

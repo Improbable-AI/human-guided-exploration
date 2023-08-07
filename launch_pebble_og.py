@@ -418,7 +418,7 @@ class Workspace(object):
             obs = next_obs
             episode_step += 1
             self.step += 1
-            self.timesteps += self.cfg['max_path_length']
+            self.timesteps += 1
             interact_count += 1
             
         self.agent.save(self.work_dir, self.step)
