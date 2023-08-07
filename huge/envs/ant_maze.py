@@ -92,15 +92,16 @@ class AntEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def _get_obs(self):
         # No cfrc observation.
+        obs = self.physics.data.qpos.flat[:15]  # Ensures only ant obs.
+        return obs
         if self._expose_all_qpos:
                     
-            obs = self.physics.data.qpos.flat[:15]  # Ensures only ant obs.
-            # np.concatenate(
-            #     [
-            #         self.physics.data.qpos.flat[:15],  # Ensures only ant obs.
-            #         self.physics.data.qvel.flat[:14],
-            #     ]
-            # )
+            obs = np.concatenate(
+                [
+                    self.physics.data.qpos.flat[:15],  # Ensures only ant obs.
+                    self.physics.data.qvel.flat[:14],
+                ]
+            )
         else:
             obs = np.concatenate(
                 [
