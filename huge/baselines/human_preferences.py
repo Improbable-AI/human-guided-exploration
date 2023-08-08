@@ -435,6 +435,8 @@ class HumanPreferences:
                 action, _states = self.model.predict(obs)
                 obs, rewards, dones, info = self.env.step(action)
                 t += 1
+                if self.fake_env.compute_success(obs, self.goal):
+                    break
                 # plot some results
                     
                 
@@ -527,8 +529,9 @@ class HumanPreferences:
         return achieved_state_1, achieved_state_2, goals, labels # TODO: check ordering
         
     def test_rewardmodel(self, goal=None):
-        if not self.display_plots:
+        if not self.display_plots or self.generating_plot:
             return
+        self.generating_plot = True
         if goal is None:
             goal = self.goal
         size=50
@@ -578,6 +581,7 @@ class HumanPreferences:
             plt.scatter(self.goal[0], self.goal[1], marker='+', s=100, color='black')
 
         wandb.log({"reward model": wandb.Image(plt)})
+        self.generating_plot = False
         
     def collect_and_train_reward_model(self):
 
