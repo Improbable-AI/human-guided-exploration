@@ -99,7 +99,7 @@ class PointmassGoalEnv(GymGoalEnvWrapper):
 
     def plot_trajectories(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):
         print("plot trajectories", traj_accumulated_states, traj_accumulated_goal_states)
-        if traj_accumulated_states is None or len(traj_accumulated_goal_states)==0:
+        if traj_accumulated_states is None or len(traj_accumulated_goal_states)==0 or len(traj_accumulated_goal_states[0])==0:
             return
         # plot added trajectories to fake replay buffer
         plt.clf()
