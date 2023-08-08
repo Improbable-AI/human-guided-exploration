@@ -286,10 +286,11 @@ class PPO(OnPolicyAlgorithm):
             if len(all_gradients) >= 10:
                 cos = th.nn.CosineSimilarity(dim=1, eps=1e-6)
 
-                x1 = all_gradients[-i].reshape(-1,1)
                 sim = 0
                 count = 0
                 for i in range(10):
+                    x1 = all_gradients[-i].reshape(-1,1)
+
                     for j in range(10-i-1):
                         x2 = all_gradients[-10 +i +1].reshape(1,-1)
                         sim += cos(x1,x2)
