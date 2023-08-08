@@ -1212,8 +1212,6 @@ class HUGE:
                 val = torch.norm(torch.cov(torch.vstack([all_norms[-1], all_norms[-100]]).T)) 
                 wandb.log({"Variance of gradients (100 prev)":val, "total_timesteps":self.total_timesteps})
         
-        import IPython
-        IPython.embed()
         if len(self.all_gradients) >= 10:
             cos = torch.nn.CosineSimilarity(dim=1, eps=1e-6)
 
@@ -1227,7 +1225,7 @@ class HUGE:
                     x2 = self.all_gradients[-10 +i +1].reshape(1,-1)
                     sim += cos(x1,x2)
                     count += 1
-            wandb.log({"Cosine similarity between last 10":sim, "total_timesteps":self.total_timesteps})
+            wandb.log({"Cosine similarity between last 10":sim/count, "total_timesteps":self.total_timesteps})
             
 
 
