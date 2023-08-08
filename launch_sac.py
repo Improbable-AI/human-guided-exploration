@@ -225,7 +225,7 @@ def make_env(env_name, env_params, goal, dense_reward=False, continuous_action_s
     return final_env
 
 
-def run(wandb_run, continuous_action_space=False, goal=None,n_steps=2048, output_dir='/tmp', dense_reward=False, env_name='pointmass_empty', num_blocks=1, num_envs=4,network_layers='128,128',  display_plots=False, save_videos=True, num_tasks=2, task_config='slide_cabinet,microwave', eval_episodes=200, render=False, explore_timesteps=1e4, gpu=0, sample_softmax=False, seed=0, load_rewardmodel=False, batch_size=100, train_regression=False,load_buffer=False, save_buffer=-1, policy_updates_per_step=1,select_best_sample_size=1000, max_path_length=50, hallucinate_policy_freq=5, lr=5e-4, train_with_hallucination=True, start_policy_timesteps=500, log_tensorboard=False, use_oracle=False, comment="", max_timesteps=2e-4, reward_model_name='', **kwargs):
+def run(wandb_run, continuous_action_space=False, goal=None,n_steps=2048, output_dir='/tmp', dense_reward=False, env_name='pointmass_empty', num_blocks=1, num_envs=1,network_layers='128,128',  display_plots=False, save_videos=True, num_tasks=2, task_config='slide_cabinet,microwave', eval_episodes=200, render=False, explore_timesteps=1e4, gpu=0, sample_softmax=False, seed=0, load_rewardmodel=False, batch_size=100, train_regression=False,load_buffer=False, save_buffer=-1, policy_updates_per_step=1,select_best_sample_size=1000, max_path_length=50, hallucinate_policy_freq=5, lr=5e-4, train_with_hallucination=True, start_policy_timesteps=500, log_tensorboard=False, use_oracle=False, comment="", max_timesteps=2e-4, reward_model_name='', **kwargs):
     ptu.set_gpu(gpu)
     if not gpu:
         print('Not using GPU. Will be slow.')
@@ -339,7 +339,6 @@ if __name__ == "__main__":
     parser.add_argument("--network_layers",type=str, default='128,128')
     parser.add_argument("--task_config",type=str, default='slide_cabinet,microwave,hinge_cabinet')
     parser.add_argument("--num_tasks",type=int, default=2)
-    parser.add_argument("--num_envs",type=int, default=4)
     parser.add_argument("--n_steps",type=int, default=2048)
     parser.add_argument("--num_blocks",type=int, default=4)
     parser.add_argument("--dense_reward",  action='store_true', default=False)
@@ -363,7 +362,7 @@ if __name__ == "__main__":
         'max_timesteps':args.max_timesteps,
         'task_config':args.task_config,
         'num_tasks':args.num_tasks,
-        'num_envs':args.num_envs,
+        'num_envs':1,
         'num_blocks':args.num_blocks,
         'dense_reward':args.dense_reward,
         'continuous_action_space':True,
@@ -387,7 +386,7 @@ if __name__ == "__main__":
         'task_config':args.task_config,
         'num_tasks':args.num_tasks,
         'wandb_run':wandb_run,
-        'num_envs':args.num_envs,
+        'num_envs':1,
         'num_blocks':args.num_blocks,
         'dense_reward':args.dense_reward,
         'continuous_action_space':True,
