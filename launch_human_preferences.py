@@ -402,7 +402,8 @@ fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_nam
         for i in range(num_demos):
             actions = np.load(f"demos/{env_name}/demo_{i}_actions.npy")
             states = fake_env.observation(np.load(f"demos/{env_name}/demo_{i}_states.npy"))
-            
+            import IPython
+            IPython.embed()
             if env_name == "block_stacking":
                 actions = transform_actions(actions)
             all_actions.append(actions)
