@@ -112,8 +112,8 @@ class PointmassGoalEnv(GymGoalEnvWrapper):
             #if 'train_states_preferences' in filename:
             #    color = 'black'
             
-            plt.scatter(traj_accumulated_goal_states[j][-2],
-                    traj_accumulated_goal_states[j][-1], marker='o', s=20, color=color, zorder=1)
+            # plt.scatter(traj_accumulated_goal_states[j][-2],
+                    # traj_accumulated_goal_states[j][-1], marker='o', s=20, color=color, zorder=1)
         
         plt.savefig(filename)
 
