@@ -58,7 +58,7 @@ class SubProcVecEnvCustom(SubprocVecEnv):
         plt.scatter([0.25], [0.25])
         #if 'train_states_preferences' in filename:
         #    color = 'black'
-        filename = f"trajectory_ppo_{np.random.randint(10)}.png"
+        filename = f"trajectory_sac_{np.random.randint(10)}.png"
         plt.savefig(filename)
         
         image = Image.open(filename)
@@ -98,7 +98,7 @@ class CustomCallback(BaseCallback):
         print("logger",self.logger.name_to_value)
         return True
 class UnWrapper(gym.Env):
-    def __init__(self, env, goal, max_path_legnth, dense_reward=False, env_name=""):
+    def __init__(self, env, goal, max_path_legnth, env_name=""):
         super(UnWrapper, self).__init__()
         self._env = env
 
@@ -111,8 +111,6 @@ class UnWrapper(gym.Env):
 
         self.max_path_length = max_path_legnth
         self.current_timestep = 0
-
-        self.dense_reward = dense_reward
 
         self.current_states = []
 
@@ -128,7 +126,11 @@ class UnWrapper(gym.Env):
         return self._env.observation_space
 
     def compute_shaped_distance(self, state, goal):
-        return self._env.compute_shaped_distance(np.array([state]), np.array([goal]))
+        if "pointmass" in self.env_name:
+            return self._env.compute_shaped_distance(np.array([state]), np.array([goal]))[0]
+        else:
+            return self._env.compute_shaped_distance(np.array([state]), np.array([goal]))
+
         
     def render(self, mode):
         return self._env.render_image()
@@ -154,7 +156,7 @@ class UnWrapper(gym.Env):
         self.current_timestep +=1
         new_state, reward, done, info = self._env.step(a)
         new_state = self._env.observation(new_state)
-        distance = self._env.compute_shaped_distance(new_state, self.goal)
+        distance = self.compute_shaped_distance(new_state, self.goal)
         # if "ravens" not in self.env_name:
         #     distance = distance[0]
         success = self._env.compute_success(new_state, self.goal)#[0]
@@ -173,10 +175,7 @@ class UnWrapper(gym.Env):
 
         # print()
 
-        if self.dense_reward:
-            reward = - distance
-        else:
-            reward = success
+        reward = - distance
 
         if done:
             self.current_timestep = 0
@@ -264,7 +263,6 @@ def run(wandb_run, continuous_action_space=False, goal=None,n_steps=2048, output
 
     env_kwargs = {
         'env_name':env_name, 
-        'dense_reward':dense_reward, 
         'env_params':env_params,
         'task_config': task_config, 
         'num_blocks':num_blocks,
@@ -341,7 +339,6 @@ if __name__ == "__main__":
     parser.add_argument("--num_tasks",type=int, default=2)
     parser.add_argument("--n_steps",type=int, default=2048)
     parser.add_argument("--num_blocks",type=int, default=4)
-    parser.add_argument("--dense_reward",  action='store_true', default=False)
     parser.add_argument("--goal",type=int, default=None)
 
 
@@ -349,10 +346,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    wandb_suffix = "ppo"
+    wandb_suffix = "sac"
 
     wandb_run = wandb.init(
-        project=args.env_name+"gcsl_preferences", 
+        project=args.env_name+"_huge", 
         name=f"{args.env_name}_{wandb_suffix}_{args.seed}", 
         config={
         'seed': args.seed, 
@@ -364,7 +361,6 @@ if __name__ == "__main__":
         'num_tasks':args.num_tasks,
         'num_envs':1,
         'num_blocks':args.num_blocks,
-        'dense_reward':args.dense_reward,
         'continuous_action_space':True,
         'ent_coef':1e-2,
         'n_steps':args.n_steps,
@@ -388,7 +384,6 @@ if __name__ == "__main__":
         'wandb_run':wandb_run,
         'num_envs':1,
         'num_blocks':args.num_blocks,
-        'dense_reward':args.dense_reward,
         'continuous_action_space':True,
         'goal':args.goal,
         'n_steps':args.n_steps,
