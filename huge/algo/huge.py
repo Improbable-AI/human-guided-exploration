@@ -1182,7 +1182,7 @@ class HUGE:
         avg_loss = 0
         self.policy_optimizer.zero_grad()
         total_norm = 0
-        for _ in range(self.n_accumulations):
+        for acc in range(self.n_accumulations):
             observations, actions, goals, lengths, horizons, weights, img_states, img_goals = buffer.sample_batch(self.batch_size)
 
             if self.use_images_in_policy:
@@ -1192,17 +1192,26 @@ class HUGE:
 
             loss.backward()
             avg_loss += loss.item()
-            import IPython
-            IPython.embed()
-            all_norms = []
-            for p in self.policy.parameters():
-                param_norm = p.grad.detach().data.flatten()
-                all_norms.append(param_norm)
-            
-            all_norms = torch.hstack(all_norms)
-            self.all_gradients.append(all_norms)
-
-        wandb.log({"Norm of gradients":total_norm/self.n_accumulations, "total_timesteps":self.total_timesteps})
+            if acc == 0:
+                all_norms = []
+                for p in self.policy.parameters():
+                    param_norm = p.grad.detach().data.flatten()
+                    all_norms.append(param_norm)
+                
+                all_norms = torch.hstack(all_norms)
+                self.all_gradients.append(all_norms)
+                if len(self.all_gradients) > 1:
+                    val = torch.norm(torch.cov(torch.vstack([all_norms[-1], all_norms[-2]]).T)) 
+                    wandb.log({"Variance of gradients (1 prev)":val, "total_timesteps":self.total_timesteps})
+                if len(self.all_gradients) > 5:
+                    val = torch.norm(torch.cov(torch.vstack([all_norms[-1], all_norms[-5]]).T)) 
+                    wandb.log({"Variance of gradients (5 prev)":val, "total_timesteps":self.total_timesteps})
+                if len(self.all_gradients) > 10:
+                    val = torch.norm(torch.cov(torch.vstack([all_norms[-1], all_norms[-10]]).T)) 
+                    wandb.log({"Variance of gradients (1 prev)":val, "total_timesteps":self.total_timesteps})
+                if len(self.all_gradients) > 100:
+                    val = torch.norm(torch.cov(torch.vstack([all_norms[-1], all_norms[-100]]).T)) 
+                    wandb.log({"Variance of gradients (1 prev)":val, "total_timesteps":self.total_timesteps})
         
         torch.nn.utils.clip_grad_norm_(self.policy.parameters(), self.clip)
         self.policy_optimizer.step()
