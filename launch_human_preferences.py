@@ -285,7 +285,8 @@ def pretrain_agent(
 
     def train(model, device, train_loader, optimizer):
         model.train()
-
+        import IPython
+        IPython.embed()
         for batch_idx, (data, target) in enumerate(train_loader):
             data, target = data.to(device), target.to(device)
             optimizer.zero_grad()
@@ -400,7 +401,7 @@ fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_nam
             all_actions.append(actions)
             all_states.append(states)
         train_expert_dataset = ExpertDataSet(all_states, all_actions) 
-        pretrain_agent(model, env, train_expert_dataset, epochs=10000)
+        pretrain_agent(model, env, train_expert_dataset, epochs=1000)
         mean_reward, std_reward = evaluate_policy(model, env, n_eval_episodes=10)
 
         print(f"** Evaluation ** Mean reward = {mean_reward} +/- {std_reward}")
