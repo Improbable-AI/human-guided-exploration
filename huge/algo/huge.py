@@ -1180,6 +1180,7 @@ class HUGE:
 
         avg_loss = 0
         self.policy_optimizer.zero_grad()
+        total_norm = 0
         for _ in range(self.n_accumulations):
             observations, actions, goals, lengths, horizons, weights, img_states, img_goals = buffer.sample_batch(self.batch_size)
 
@@ -1190,6 +1191,13 @@ class HUGE:
 
             loss.backward()
             avg_loss += loss.item()
+
+            for p in self.policy.parameters():
+                param_norm = p.grad.detach().data.norm(2)
+                total_norm += param_norm.item() ** 2
+            
+            total_norm += total_norm ** 0.5
+        wandb.log({"Norm of gradients":total_norm/self.n_accumulations, "total_timesteps":self.total_timesteps})
         
         torch.nn.utils.clip_grad_norm_(self.policy.parameters(), self.clip)
         self.policy_optimizer.step()

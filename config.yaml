@@ -215,6 +215,7 @@ human:
   goal_selector_num_samples: 20
   train_goal_selector_freq: 10
 
+
 human_preferences:
   human_input: true
   use_oracle: False

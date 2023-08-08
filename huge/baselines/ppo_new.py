@@ -10,7 +10,7 @@ from huge.baselines.on_policy_algorithm_new import OnPolicyAlgorithm
 from stable_baselines3.common.policies import ActorCriticPolicy
 from stable_baselines3.common.type_aliases import GymEnv, MaybeCallback, Schedule
 from stable_baselines3.common.utils import explained_variance, get_schedule_fn
-
+import wandb
 
 class PPO(OnPolicyAlgorithm):
     """
@@ -257,6 +257,14 @@ class PPO(OnPolicyAlgorithm):
                 # Optimization step
                 self.policy.optimizer.zero_grad()
                 loss.backward()
+                total_norm = 0
+                for p in self.policy.parameters():
+                    param_norm = p.grad.detach().data.norm(2)
+                    total_norm += param_norm.item() ** 2
+                
+                total_norm += total_norm ** 0.5
+                wandb.log({"Norm of gradients":total_norm})
+
                 # Clip grad norm
                 th.nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
                 self.policy.optimizer.step()
