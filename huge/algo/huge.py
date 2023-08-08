@@ -324,6 +324,7 @@ class HUGE:
         self.max_timesteps = max_timesteps
         self.max_path_length = max_path_length
 
+        self.last_timestep_cos = -1
         self.explore_episodes = explore_episodes
         self.expl_noise = expl_noise
         self.render = render
@@ -1192,6 +1193,11 @@ class HUGE:
 
             loss.backward()
             avg_loss += loss.item()
+
+
+            
+        if self.total_timesteps % self.display_trajectories_freq*self.max_path_length == 0 and self.total_timesteps != self.last_timestep_cos:
+            self.last_timestep_cos = self.total_timesteps
             all_norms = []
             for p in self.policy.parameters():
                 param_norm = p.grad.detach().data.flatten().to("cpu")
@@ -1212,7 +1218,7 @@ class HUGE:
                 val = torch.norm(torch.cov(torch.vstack([all_norms[-1], all_norms[-100]]).T)) 
                 wandb.log({"Variance of gradients (100 prev)":val, "total_timesteps":self.total_timesteps})
                 self.all_gradients = self.all_gradients[-100:]
-        if self.total_timesteps % self.display_trajectories_freq*self.max_path_length == 0:
+
             if len(self.all_gradients) >= 10:
                 cos = torch.nn.CosineSimilarity(dim=1, eps=1e-6)
 
