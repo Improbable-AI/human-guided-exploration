@@ -257,7 +257,9 @@ data_folder_name = env_name + "human_preferences"
 
 params["data_folder"] = data_folder_name
 
-wandb.init(project=env_name+"huge_human_interface", name=f"{env_name}_human_preferences", config=params)
+wandb_run = wandb.init(project=env_name+"huge_human_interface", name=f"{env_name}_human_preferences", config=params)
+
+params["wandb_run"] = wandb_run
 
 print("params before run", params)
 
