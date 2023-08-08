@@ -121,6 +121,7 @@ class HumanPreferences:
         entropy_coefficient=0.01,
         fake_env = None,
         wandb_run=0,
+        human_data_file=None,
         label_from_last_k_trajectories=-1,
         label_from_last_k_steps=-1,
         start_from_scratch_every_epoch=False,
@@ -130,6 +131,16 @@ class HumanPreferences:
         human_input=False,
         device="cuda",
     ):
+        
+        self.stop_training_goal_selector_after = max_timesteps
+        
+        if human_data_file is not None and len(human_data_file)!=0:
+            print("human data file")
+            self.human_data_info = pickle.load(open(human_data_file, "rb"))
+            self.human_data_index = 0
+        else:
+            self.human_data_info = None
+    
         # DDL specific
         # No frontier expansio
         self.no_training = no_training
@@ -419,7 +430,7 @@ class HumanPreferences:
             self.plot_trajectories(states,arr_goal , filename=f"train_trajectories_{self.total_timesteps}.png")
 
             # Collect and train reward model
-            if not self.use_oracle and not self.human_input:
+            if not self.use_oracle and (not self.human_input or self.human_data_info is not None):
                 self.collect_and_train_reward_model()
 
     def eval_policy(self):
@@ -515,9 +526,24 @@ class HumanPreferences:
         for state_1, state_2 in zip(observations_1, observations_2):
             goal_idx = np.random.randint(0, len(goal_states)) 
             goal = goal_states[goal_idx]
-            labels.append(self.oracle(state_1, state_2, goal)) 
+            label = self.oracle(state_1, state_2, goal)
 
             self.num_labels_queried += 1 
+
+            if self.human_data_info is not None:
+                if self.human_data_index < len(self.human_data_info['state_1']):
+                    state_1 = self.human_data_info['state_1'][self.human_data_index]
+                    state_2 = self.human_data_info['state_2'][self.human_data_index]
+                    label = self.human_data_info['label'][self.human_data_index]
+                    goal = self.human_data_info['goal'][self.human_data_index]
+
+                else:
+                    self.stop_training_goal_selector_after = 0
+                    break
+
+                self.human_data_index += 1
+
+            labels.append(label)
 
             achieved_state_1.append(state_1) 
             achieved_state_2.append(state_2) 
@@ -586,7 +612,8 @@ class HumanPreferences:
         self.generating_plot = False
         
     def collect_and_train_reward_model(self):
-
+        if self.total_timesteps > self.stop_training_goal_selector_after:
+            return 0, 0
         print("Collecting and training reward_model")
 
         achieved_state_1, achieved_state_2, goals, labels = self.generate_pref_labels(np.array([self.goal]))
