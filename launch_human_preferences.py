@@ -244,7 +244,7 @@ class ExpertDataSet(Dataset):
         self.observations = []
         self.actions = []
         for i in range(len(expert_actions_traj)):
-            for obs,act in zip(expert_observations_traj, expert_actions_traj):
+            for obs,act in zip(expert_observations_traj[i], expert_actions_traj[i]):
                 self.observations.append(obs)
                 self.actions.append(act)
 
