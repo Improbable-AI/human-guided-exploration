@@ -289,7 +289,7 @@ def run(wandb_run, continuous_action_space=False, goal=None,n_steps=2048, output
 
     policy_kwargs = dict()
     policy_kwargs['net_arch'] = [int(l) for l in network_layers.split(",")]
-    model = SAC("MlpPolicy", env, verbose=2, ent_coef = 1e-2, n_steps=n_steps, tensorboard_log=f'runs/{wandb_run.id}', policy_kwargs=policy_kwargs)
+    model = SAC("MlpPolicy", env, verbose=2, tensorboard_log=f'runs/{wandb_run.id}', policy_kwargs=policy_kwargs)
 
     timesteps = 0
     while timesteps < max_timesteps:
