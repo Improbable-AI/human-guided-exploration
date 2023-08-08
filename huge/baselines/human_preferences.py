@@ -432,11 +432,12 @@ class HumanPreferences:
             this_traj = []
             while t < self.max_path_length:
                 this_traj.append(obs)
+                if self.fake_env.compute_success(obs, self.goal):
+                    break
                 action, _states = self.model.predict(obs)
                 obs, rewards, dones, info = self.env.step(action)
                 t += 1
-                if self.fake_env.compute_success(obs, self.goal):
-                    break
+
                 # plot some results
                     
                 
