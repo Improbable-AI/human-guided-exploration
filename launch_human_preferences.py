@@ -235,6 +235,7 @@ def make_env(env_name, env_params, goal, reward_model=None, dense_reward=False, 
     final_env = Monitor(unwrapped_env, filename='info.txt', info_keywords=info_keywords)
 
     return final_env
+
 import torch.nn as nn
 import torch.optim as optim
 from torch.optim.lr_scheduler import StepLR
@@ -395,8 +396,8 @@ fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_nam
         all_states = []
         for i in range(num_demos):
             actions = np.load(f"demos/{env_name}/demo_{i}_actions.npy")
-            states = np.load(f"demos/{env_name}/demo_{i}_states.npy")
-
+            states = fake_env.observation(np.load(f"demos/{env_name}/demo_{i}_states.npy"))
+            
             all_actions.append(actions)
             all_states.append(states)
         train_expert_dataset = ExpertDataSet(all_states, all_actions) 
