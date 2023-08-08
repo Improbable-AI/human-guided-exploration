@@ -503,6 +503,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     wandb_suffix = "human_preferences"
+    if args.pretrain:
+        wandb_suffix += "demos"
     if args.use_oracle:
         wandb_suffix += "oracle"
     wandb_run = wandb.init(project=args.env_name+"_huge", name=f"{args.env_name}_{wandb_suffix}_{args.seed}", config={
