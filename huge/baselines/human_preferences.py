@@ -348,6 +348,7 @@ class HumanPreferences:
         current_state_1_img = img_obs1[0]
         current_state_2_img = img_obs2[0]
 
+        print("Current QID", self.current_qid)
         self.current_qid += 1
         self.info_per_qid[str(self.current_qid)] = {
             'state1':current_state_1,

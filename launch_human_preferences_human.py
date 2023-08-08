@@ -74,6 +74,7 @@ async def answer_question(answer=None, questionId=None):
     print("label", label)
     new_q_id = -1
     if not algo is None:
+        print("Answering question in frontend")
         new_q_id = algo.answer_question(label, questionId)
         
     print("The answer is ", new_q_id)
