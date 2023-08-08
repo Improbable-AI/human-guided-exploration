@@ -1,5 +1,4 @@
 from telnetlib import IP
-from dependencies.ravens.ravens.tasks.align_box_corner import AlignBoxCorner
 from dependencies.ravens.ravens.tasks.stack_blocks import StackBlocks
 
 from lexa_benchmark.envs.kitchen import KitchenEnv
