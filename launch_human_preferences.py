@@ -138,7 +138,7 @@ class UnWrapper(gym.Env):
         return self._env.observation_space
 
     def compute_shaped_distance(self, state, goal):
-        if self.env_name == "pointmass_rooms" or self.env_name=="kitchenSeq":
+        if "pointmass" in self.env_name or self.env_name=="kitchenSeq":
             return self._env.compute_shaped_distance(np.array(state), np.array(goal))[0]
 
         return self._env.compute_shaped_distance(np.array(state), np.array(goal))
