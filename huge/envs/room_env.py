@@ -102,7 +102,6 @@ class PointmassGoalEnv(GymGoalEnvWrapper):
         if traj_accumulated_states is None or len(traj_accumulated_goal_states)==0 or len(traj_accumulated_goal_states[0])==0:
             return
         # plot added trajectories to fake replay buffer
-        plt.clf()
         self.display_wall()
         
         colors = sns.color_palette('hls', (len(traj_accumulated_states)))
@@ -115,15 +114,14 @@ class PointmassGoalEnv(GymGoalEnvWrapper):
             # plt.scatter(traj_accumulated_goal_states[j][-2],
                     # traj_accumulated_goal_states[j][-1], marker='o', s=20, color=color, zorder=1)
         
-        plt.savefig(filename)
-
-        from PIL import Image
-        plt.savefig(filename)
         
         if 'eval' in filename:
             wandb.log({"trajectory_eval": wandb.Image(plt)})
         else:
             wandb.log({"trajectory": wandb.Image(plt)})
+        
+        plt.clf()
+
 
     def render_image(self):
         return self.base_env.render(mode="rgb_array", width=640, height=480, camera_id=0)
