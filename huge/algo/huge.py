@@ -1211,8 +1211,8 @@ class HUGE:
 
             x1 = all_gradients[i].reshape(1,-1)
 
-            for j in range(i+j+1):
-                x2 = all_gradients[-10 +i +1].reshape(1,-1)
+            for j in range(10-i-1):
+                x2 = all_gradients[j+i+1].reshape(1,-1)
                 sim += cos(x1,x2)
                 count += 1
         wandb.log({"Cosine similarity between last 10":sim/count, "total_timesteps":self.total_timesteps})
