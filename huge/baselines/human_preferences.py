@@ -140,6 +140,8 @@ class HumanPreferences:
         self.max_path_length = max_path_length
         self.human_input = human_input
 
+        self.generating_plot = False
+
         self.use_wrong_oracle = use_wrong_oracle
 
         if self.use_wrong_oracle:
@@ -346,8 +348,14 @@ class HumanPreferences:
         obs_1, _ = self.replay_buffer.sample_obs_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
         obs_2, _ = self.replay_buffer.sample_obs_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
 
-        img_obs1 = self.fake_env.generate_image(obs_1[0])
-        img_obs2 = self.fake_env.generate_image(obs_2[0])
+        if not self.generating_plot:
+            self.generating_plot = True
+            img_obs1 = self.fake_env.generate_image(obs_1[0])
+            img_obs2 = self.fake_env.generate_image(obs_2[0])
+            self.generating_plot = False
+        else:
+            img_obs1 = np.zeros((64,64,3))
+            img_obs2 =  np.zeros((64,64,3))
 
         current_state_1 = obs_1[0]
         current_state_2 = obs_2[0]
@@ -778,10 +786,13 @@ class HumanPreferences:
         return distance_to_slide, distance_to_hinge, distance_to_microwave, distance_joint_slide, distance_joint_hinge, distance_microwave
 
     def plot_trajectories(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):
-        if not self.display_plots:
+        if not self.display_plots or self.generating_plot:
             return
         else:
-            return self.fake_env.plot_trajectories(np.array(traj_accumulated_states.copy()), np.array(traj_accumulated_goal_states.copy()), extract, f"{self.env_name}/{filename}")
+            self.generating_plot = True
+            self.fake_env.plot_trajectories(np.array(traj_accumulated_states.copy()), np.array(traj_accumulated_goal_states.copy()), extract, f"{self.env_name}/{filename}")
+            self.generating_plot = False
+            return 
         if "pointmass" in self.env_name:
             return self.plot_trajectories_rooms(traj_accumulated_states.copy(), traj_accumulated_goal_states.copy(), extract, "pointmass/" + filename)
         if self.env_name == "pusher":
