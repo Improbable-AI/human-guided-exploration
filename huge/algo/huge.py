@@ -1191,7 +1191,8 @@ class HUGE:
 
             loss.backward()
             avg_loss += loss.item()
-
+            import IPython
+            IPython.embed()
             for p in self.policy.parameters():
                 param_norm = p.grad.detach().data.norm(2)
                 total_norm += param_norm.item() ** 2
