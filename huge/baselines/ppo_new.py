@@ -163,29 +163,106 @@ class PPO(OnPolicyAlgorithm):
             self.clip_range_vf = get_schedule_fn(self.clip_range_vf)
 
 
-    def compute_variance_gradients(self):
+    def compute_variance_gradients(self, total_timesteps):
+        """
+        Update policy using the currently gathered rollout buffer.
+        """
+        # Switch to train mode (this affects batch norm / dropout)
+        self.policy.set_training_mode(True)
+        # Compute current clip range
+        clip_range = self.clip_range(self._current_progress_remaining)
+        # Optional: clip range for the value function
+        if self.clip_range_vf is not None:
+            clip_range_vf = self.clip_range_vf(self._current_progress_remaining)
 
-        all_norms = []
-        for p in self.policy.parameters():
-            param_norm = p.grad.detach().data.flatten().to("cpu")
-            all_norms.append(param_norm)
-        
-        all_norms = torch.hstack(all_norms)
-        all_gradients.append(all_norms)
-        
-        if len(all_gradients) > 1:
-            val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-2]]).T)) 
-            wandb.log({"Variance of gradients (1 prev)":val})
-        if len(all_gradients) > 5:
-            val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-5]]).T)) 
-            wandb.log({"Variance of gradients (5 prev)":val})
-        if len(all_gradients) > 10:
-            val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-10]]).T)) 
-            wandb.log({"Variance of gradients (10 prev)":val})
-        if len(all_gradients) > 100:
-            val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-100]]).T)) 
-            wandb.log({"Variance of gradients (100 prev)":val})
+        entropy_losses = []
+        pg_losses, value_losses = [], []
+        clip_fractions = []
+        all_gradients = []
+        count = 0
+        # Do a complete pass on the rollout buffer
+        for rollout_data in self.rollout_buffer.get(self.batch_size):
+            count += 1
+            if count > 10:
+                break
+            actions = rollout_data.actions
+            if isinstance(self.action_space, spaces.Discrete):
+                # Convert discrete action from float to long
+                actions = rollout_data.actions.long().flatten()
+
+            # Re-sample the noise matrix because the log_std has changed
+            if self.use_sde:
+                self.policy.reset_noise(self.batch_size)
+
+            values, log_prob, entropy = self.policy.evaluate_actions(rollout_data.observations, actions)
+            values = values.flatten()
+            # Normalize advantage
+            advantages = rollout_data.advantages
+            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+
+            # ratio between old and new policy, should be one at the first iteration
+            ratio = th.exp(log_prob - rollout_data.old_log_prob)
+
+            # clipped surrogate loss
+            policy_loss_1 = advantages * ratio
+            policy_loss_2 = advantages * th.clamp(ratio, 1 - clip_range, 1 + clip_range)
+            policy_loss = -th.min(policy_loss_1, policy_loss_2).mean()
+
+            # Logging
+            pg_losses.append(policy_loss.item())
+            clip_fraction = th.mean((th.abs(ratio - 1) > clip_range).float()).item()
+            clip_fractions.append(clip_fraction)
+
+            if self.clip_range_vf is None:
+                # No clipping
+                values_pred = values
+            else:
+                # Clip the different between old and new value
+                # NOTE: this depends on the reward scaling
+                values_pred = rollout_data.old_values + th.clamp(
+                    values - rollout_data.old_values, -clip_range_vf, clip_range_vf
+                )
+            # Value loss using the TD(gae_lambda) target
+            value_loss = F.mse_loss(rollout_data.returns, values_pred)
+            value_losses.append(value_loss.item())
+
+            # Entropy loss favor exploration
+            if entropy is None:
+                # Approximate entropy when no analytical form
+                entropy_loss = -th.mean(-log_prob)
+            else:
+                entropy_loss = -th.mean(entropy)
+
+            entropy_losses.append(entropy_loss.item())
+
+            loss = policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss
+
+            self.policy.optimizer.zero_grad()
+            loss.backward()
+
+            all_norms = []
+            for p in self.policy.parameters():
+                param_norm = p.grad.detach().data.flatten().to("cpu")
+                all_norms.append(param_norm)
             
+            all_norms = th.hstack(all_norms)
+            all_gradients.append(all_norms)
+
+        cos = th.nn.CosineSimilarity(dim=1, eps=1e-6)
+
+        sim = 0
+        count = 0
+        for i in range(10):
+
+            x1 = all_gradients[i].reshape(1,-1)
+
+            for j in range(10-i-1):
+                x2 = all_gradients[j+i +1].reshape(1,-1)
+                sim += cos(x1,x2)
+                count += 1
+        wandb.log({"Cosine similarity between last 10":sim/count, "total_timesteps":total_timesteps})
+        
+
     def train(self) -> None:
         """
         Update policy using the currently gathered rollout buffer.

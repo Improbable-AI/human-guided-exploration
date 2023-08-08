@@ -423,6 +423,7 @@ class HumanPreferences:
                 self.collect_and_train_reward_model()
 
     def eval_policy(self):
+        self.model.compute_variance_gradients(self.total_timesteps)
         success_rate = 0 
         distance = 0
         eval_trajs = []
