@@ -233,8 +233,6 @@ fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_nam
         **algo_kwargs
     )
 
-    algo.train()
-
 
     return algo
 
