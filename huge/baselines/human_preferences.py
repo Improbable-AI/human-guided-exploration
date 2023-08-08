@@ -216,6 +216,12 @@ class HumanPreferences:
         self.display_trajectories_freq = display_trajectories_freq
 
         self.human_exp_idx = 0
+        if self.human_input:
+            self.train_reward_model_freq = 20
+        self.current_qid = 0
+        self.info_per_qid = {}
+        self.answered_questions = 0
+        self.current_goal = self.env.extract_goal(self.env.sample_goal())
         
         #print("action space low and high", self.env.action_space.low, self.env.action_space.high)
 
@@ -264,6 +270,93 @@ class HumanPreferences:
         self.eval_loss_arr = []
         self.distance_to_goal_eval_relabelled = []
 
+
+
+    def get_image_for_question(self, qid):
+        print("Qid", qid)
+        qid = str(qid)
+        if qid in self.info_per_qid:
+            info = self.info_per_qid[qid]
+            return self.generate_labelling_image(info['img1'], info['img2'])
+        return None
+    
+    def generate_labelling_image(self, img1, img2):
+        return np.concatenate([img1, img2], axis=1)
+    
+    def collect_and_train_goal_selector_human(self):
+        print("Just training goal_selector")
+
+        losses_goal_selector, eval_loss_goal_selector = self.train_goal_selector()
+
+        print("Computing reward model loss ", np.mean(losses_goal_selector), "eval loss is: ", eval_loss_goal_selector)
+        if self.summary_writer:
+            self.summary_writer.add_scalar('Lossesgoal_selector/Train', np.mean(losses_goal_selector), self.total_timesteps)
+        wandb.log({'Lossesgoal_selector/Train':np.mean(losses_goal_selector), 'timesteps':self.total_timesteps, 'num_labels_queried':self.num_labels_queried})
+        wandb.log({'Lossesgoal_selector/Eval':eval_loss_goal_selector, 'timesteps':self.total_timesteps, 'num_labels_queried':self.num_labels_queried})
+
+        # self.reward_model_los.append((np.mean(losses_goal_selector), self.total_timesteps))
+
+        torch.save(self.reward_model.state_dict(), f"checkpoint/goal_selector_model_intermediate_{self.total_timesteps}.h5")
+        
+        return losses_goal_selector, eval_loss_goal_selector
+    
+    def answer_question(self, answer, qid):
+        qid = str(qid)
+        if answer is not None:
+            if qid in self.info_per_qid:
+                info = self.info_per_qid[qid]
+
+                current_state_1 = info['state1']
+                current_state_2 = info['state2']
+
+                if self.reward_model_buffer.current_buffer_size != 0 and np.random.random() < 0.2:
+                    self.reward_model_buffer_validation.add_data_point(current_state_1, current_state_2, self.current_goal, answer)
+                else:
+                    self.reward_model_buffer.add_data_point(current_state_1, current_state_2, self.current_goal, answer)
+
+                self.dict_labels['state_1'].append(current_state_1)
+                self.dict_labels['state_2'].append(current_state_2)
+                self.dict_labels['label'].append(answer)
+                self.dict_labels['goal'].append(self.current_goal)
+                with open(f'human_dataset_{self.dt_string}.pickle', 'wb') as handle:
+                    pickle.dump(self.dict_labels, handle)
+
+                self.num_labels_queried += 1
+                label_oracle = self.oracle(current_state_1, current_state_2,self.current_goal)
+
+                print("Correct:", answer==label_oracle, "label", answer, "label_oracle", label_oracle)
+                wandb.log({"Correct": int(answer==label_oracle)})
+                self.answered_questions += 1
+            else:
+                print("Qid not recognized", qid)
+        else:
+            print("Answer is none")
+
+        if self.replay_buffer.current_buffer_size  == 0:
+            return None
+
+        if self.human_input and not self.training_goal_selector_now and self.answered_questions % self.train_reward_model_freq == 0:
+            self.training_goal_selector_now = True
+            self.collect_and_train_goal_selector_human()
+            self.training_goal_selector_now = False
+
+        obs_1, img_obs1, _ = self.replay_buffer.sample_obs_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
+        obs_2, img_obs2, _ = self.replay_buffer.sample_obs_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
+
+        current_state_1 = obs_1[0]
+        current_state_2 = obs_2[0]
+        current_state_1_img = img_obs1[0]
+        current_state_2_img = img_obs2[0]
+
+        self.current_qid += 1
+        self.info_per_qid[str(self.current_qid)] = {
+            'state1':current_state_1,
+            'state2':current_state_2,
+            'img1':current_state_1_img,
+            'img2':current_state_2_img,
+        }
+
+        return self.current_qid
     
     def train(self):
         self.test_rewardmodel() # TODO: plot rewardmodel
