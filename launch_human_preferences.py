@@ -271,10 +271,9 @@ def pretrain_agent(
     seed=1,
     test_batch_size=64,
 ):
-    use_cuda = not no_cuda and torch.cuda.is_available()
     torch.manual_seed(seed)
-    device = torch.device("cuda" if use_cuda else "cpu")
-    kwargs = {"num_workers": 1, "pin_memory": True} if use_cuda else {}
+    device = torch.device("cuda:0")
+    kwargs = {"num_workers": 1, "pin_memory": True}
 
     if isinstance(env.action_space, gym.spaces.Box):
         criterion = nn.MSELoss()
@@ -401,7 +400,7 @@ fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_nam
             all_actions.append(actions)
             all_states.append(states)
         train_expert_dataset = ExpertDataSet(all_states, all_actions) 
-        pretrain_agent(model, env, train_expert_dataset)
+        pretrain_agent(model, env, train_expert_dataset, epochs=10000)
         mean_reward, std_reward = evaluate_policy(model, env, n_eval_episodes=10)
 
         print(f"** Evaluation ** Mean reward = {mean_reward} +/- {std_reward}")
