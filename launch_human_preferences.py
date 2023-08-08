@@ -285,9 +285,10 @@ def pretrain_agent(
 
     def train(model, device, train_loader, optimizer):
         model.train()
-        import IPython
-        IPython.embed()
+
         for batch_idx, (data, target) in enumerate(train_loader):
+            import IPython
+            IPython.embed()
             data, target = data.to(device), target.to(device)
             optimizer.zero_grad()
 
