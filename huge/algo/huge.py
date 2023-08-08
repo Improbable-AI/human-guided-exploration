@@ -1843,6 +1843,7 @@ class HUGE:
         self.test_goal_selector(0)
 
     def evaluate_policy(self, eval_episodes=200, greedy=True, prefix='Eval'):
+        self.compute_variance_gradients()
         print("Evaluate policy")
         env = self.env
         
