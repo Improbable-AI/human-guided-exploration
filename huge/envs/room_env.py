@@ -18,7 +18,11 @@ import torch
 from collections import OrderedDict
 from multiworld.envs.env_util import create_stats_ordered_dict
 import matplotlib.cm as cm
+from matplotlib.patches import Circle
 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot
 
 class PointmassGoalEnv(GymGoalEnvWrapper):
     def __init__(self, room_type='empty', fixed_start=True, fixed_goal=False, images=False, image_kwargs=None, env_kwargs=None):
@@ -68,6 +72,30 @@ class PointmassGoalEnv(GymGoalEnvWrapper):
         super(PointmassGoalEnv, self).__init__(
             env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal'
         )
+
+    def generate_image(self,obs):
+        # plot added trajectories to fake replay buffer
+        plt.cla()
+        plt.clf()
+        self.display_wall()
+
+        obs = self.observation(obs)
+        # plot robot pose
+        robot_pos = obs[:2]
+        plt.scatter(robot_pos[0], robot_pos[1], marker="o", s=180, color="black", zorder=6)
+
+        # plot goal 
+        goal_pos = self.sample_goal()
+        plt.scatter(goal_pos[0], goal_pos[1], marker="x", s=180, color="purple", zorder=2)
+        
+        plt.axis('off')   
+        plt.gcf().canvas.draw()
+
+        image = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep='')
+        image = image.reshape(plt.gcf().canvas.get_width_height()[::-1] + (3,))
+
+        return image
+    
 
     def plot_trajectories(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):
         # plot added trajectories to fake replay buffer

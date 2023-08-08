@@ -301,6 +301,7 @@ class HumanPreferences:
         
         return losses_goal_selector, eval_loss_goal_selector
     
+        
     def answer_question(self, answer, qid):
         qid = str(qid)
         if answer is not None:
@@ -344,8 +345,8 @@ class HumanPreferences:
         obs_1, _ = self.replay_buffer.sample_obs_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
         obs_2, _ = self.replay_buffer.sample_obs_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
 
-        img_obs1 = self.generate_image(obs_1[0])
-        img_obs2 = self.generate_image(obs_2[0])
+        img_obs1 = self.fake_env.generate_image(obs_1[0])
+        img_obs2 = self.fake_env.generate_image(obs_2[0])
 
         current_state_1 = obs_1[0]
         current_state_2 = obs_2[0]
