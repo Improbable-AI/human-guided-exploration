@@ -127,6 +127,7 @@ class HumanPreferences:
         normalize_rewards=False,
         no_training=False,
         use_wrong_oracle=False,
+        human_input=False,
         device="cuda",
     ):
         # DDL specific
@@ -137,6 +138,7 @@ class HumanPreferences:
         self.entropy_coefficient = entropy_coefficient
         self.fake_env = fake_env
         self.max_path_length = max_path_length
+        self.human_input = human_input
 
         self.use_wrong_oracle = use_wrong_oracle
 
@@ -278,7 +280,7 @@ class HumanPreferences:
         self.plot_trajectories(np.array(explore_trajs), goal_arr, filename=f"train_trajectories_{self.total_timesteps}.png")
 
         # Collect and train reward model
-        if not self.use_oracle:
+        if not self.use_oracle and not self.human_input:
             self.collect_and_train_reward_model()
 
 
@@ -309,7 +311,7 @@ class HumanPreferences:
             self.plot_trajectories(states,arr_goal , filename=f"train_trajectories_{self.total_timesteps}.png")
 
             # Collect and train reward model
-            if not self.use_oracle:
+            if not self.use_oracle and not self.human_input:
                 self.collect_and_train_reward_model()
 
     def eval_policy(self):
