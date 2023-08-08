@@ -99,14 +99,14 @@ complex_maze:
 ant_maze:
   explore_length: 20
   max_timesteps: 20000000
-  max_path_length: 250
-  stopped_thresh: 0.5
-  start_frontier: 40
+  max_path_length: 2000
+  stopped_thresh: 0.05
+  start_frontier: 2000
   epsilon_greedy_rollout: 0.25
   frontier_expansion_rate: 5
   frontier_expansion_freq: 100
   select_goal_from_last_k_trajectories: 10
-  label_from_last_k_steps: 50
+  label_from_last_k_steps: 2000
   label_from_last_k_trajectories: 20
   repeat_previous_action_prob: 0
   continuous_action_space: True
