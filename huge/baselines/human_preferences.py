@@ -287,7 +287,7 @@ class HumanPreferences:
     def collect_and_train_goal_selector_human(self):
         print("Just training goal_selector")
 
-        losses_goal_selector, eval_loss_goal_selector = self.train_goal_selector()
+        losses_goal_selector, eval_loss_goal_selector = self.train_reward_model()
 
         print("Computing reward model loss ", np.mean(losses_goal_selector), "eval loss is: ", eval_loss_goal_selector)
         if self.summary_writer:
