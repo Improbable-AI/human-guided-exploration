@@ -1213,6 +1213,11 @@ class HUGE:
                     val = torch.norm(torch.cov(torch.vstack([all_norms[-1], all_norms[-100]]).T)) 
                     wandb.log({"Variance of gradients (100 prev)":val, "total_timesteps":self.total_timesteps})
         
+        import IPython
+        IPython.embed()
+        cos = torch.nn.CosineSimilarity(dim=1, eps=1e-6)
+        
+
         torch.nn.utils.clip_grad_norm_(self.policy.parameters(), self.clip)
         self.policy_optimizer.step()
 

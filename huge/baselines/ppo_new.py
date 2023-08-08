@@ -181,10 +181,11 @@ class PPO(OnPolicyAlgorithm):
         clip_fractions = []
 
         continue_training = True
-        all_gradients = []
         # train for n_epochs epochs
         for epoch in range(self.n_epochs):
             approx_kl_divs = []
+            all_gradients = []
+
             # Do a complete pass on the rollout buffer
             for rollout_data in self.rollout_buffer.get(self.batch_size):
                 actions = rollout_data.actions
@@ -263,24 +264,30 @@ class PPO(OnPolicyAlgorithm):
                     all_norms.append(param_norm)
                 
                 all_norms = th.hstack(all_norms)
-                all_gradients.append(all_norms)
-                if len(all_gradients) > 1:
-                    val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-2]]).T)) 
-                    wandb.log({"Variance of gradients (1 prev)":val})
-                if len(all_gradients) > 5:
-                    val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-5]]).T)) 
-                    wandb.log({"Variance of gradients (5 prev)":val})
-                if len(all_gradients) > 10:
-                    val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-10]]).T)) 
-                    wandb.log({"Variance of gradients (10 prev)":val})
-                if len(all_gradients) > 100:
-                    val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-100]]).T)) 
-                    wandb.log({"Variance of gradients (100 prev)":val})
-        
-
+                if len(all_gradients) < 10:
+                    all_gradients.append(all_norms)
+                
                 # Clip grad norm
                 th.nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
                 self.policy.optimizer.step()
+
+            import IPython
+            IPython.embed()
+            cos = th.nn.CosineSimilarity(dim=1, eps=1e-6)
+            
+            if len(all_gradients) > 1:
+                    val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-2]]).T)) 
+                    wandb.log({"Variance of gradients (1 prev)":val})
+            if len(all_gradients) > 5:
+                val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-5]]).T)) 
+                wandb.log({"Variance of gradients (5 prev)":val})
+            if len(all_gradients) > 10:
+                val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-10]]).T)) 
+                wandb.log({"Variance of gradients (10 prev)":val})
+            if len(all_gradients) > 100:
+                val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-100]]).T)) 
+                wandb.log({"Variance of gradients (100 prev)":val})
+        
 
             if not continue_training:
                 break
