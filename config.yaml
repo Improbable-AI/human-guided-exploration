@@ -214,6 +214,7 @@ human:
   human_input: True
   goal_selector_num_samples: 20
   train_goal_selector_freq: 10
+  human_data_file: "human_dataset_08_08_2023_15:02:06.pickle"
 
 
 human_preferences:
@@ -221,6 +222,7 @@ human_preferences:
   use_oracle: False
   goal_selector_num_samples: 20
   train_goal_selector_freq: 10
+  human_data_file: "human_dataset_08_08_2023_13:09:49.pickle"
 
 
 
