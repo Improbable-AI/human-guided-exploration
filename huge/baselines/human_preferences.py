@@ -341,13 +341,16 @@ class HumanPreferences:
             self.collect_and_train_goal_selector_human()
             self.training_goal_selector_now = False
 
-        obs_1, img_obs1, _ = self.replay_buffer.sample_obs_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
-        obs_2, img_obs2, _ = self.replay_buffer.sample_obs_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
+        obs_1, _ = self.replay_buffer.sample_obs_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
+        obs_2, _ = self.replay_buffer.sample_obs_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
+
+        img_obs1 = self.generate_image(obs_1[0])
+        img_obs2 = self.generate_image(obs_2[0])
 
         current_state_1 = obs_1[0]
         current_state_2 = obs_2[0]
-        current_state_1_img = img_obs1[0]
-        current_state_2_img = img_obs2[0]
+        current_state_1_img = img_obs1
+        current_state_2_img = img_obs2
 
         print("Current QID", self.current_qid)
         self.current_qid += 1

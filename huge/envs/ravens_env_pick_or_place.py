@@ -463,6 +463,34 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
 
       return image
     
+    def generate_image(self, obs):
+        # plot robot pose
+        robot_pos = obs[:3]
+        plt.scatter(robot_pos[0], robot_pos[1], marker="o", s=60, color="black")
+
+        # plot goal 
+        goal_pos = self.sample_goal()
+        plt.scatter(goal_pos[0], goal_pos[1], marker="x", s=60, color="purple")
+
+
+        # plot each block in a different color green blue yellow
+        green_box = obs[-6:-4]
+        plt.scatter(green_box[0], green_box[1], marker="D", s=60, color="green")
+
+        blue_box = obs[-4:-2]
+        plt.scatter(blue_box[0], blue_box[1], marker="D", s=60, color="blue")
+
+        red_box = obs[-2:]
+        plt.scatter(red_box[0], red_box[1], marker="D", s=60, color="red")
+
+        plt.xlim([0.25, 0.75])
+        plt.ylim([-0.5, 0.5])
+        
+
+        image = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep='')
+
+        return image
+    
     def get_diagnostics(self, trajectories, desired_goal_states):
         """
         Logs things
