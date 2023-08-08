@@ -1220,7 +1220,7 @@ class HUGE:
             count = 0
             for i in range(10):
 
-                x1 = self.all_gradients[-i].reshape(-1,1)
+                x1 = self.all_gradients[-i].reshape(1,-1)
 
                 for j in range(10-i-1):
                     x2 = self.all_gradients[-10 +i +1].reshape(1,-1)
