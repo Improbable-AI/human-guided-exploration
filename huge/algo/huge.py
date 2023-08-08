@@ -1208,10 +1208,10 @@ class HUGE:
                     wandb.log({"Variance of gradients (5 prev)":val, "total_timesteps":self.total_timesteps})
                 if len(self.all_gradients) > 10:
                     val = torch.norm(torch.cov(torch.vstack([all_norms[-1], all_norms[-10]]).T)) 
-                    wandb.log({"Variance of gradients (1 prev)":val, "total_timesteps":self.total_timesteps})
+                    wandb.log({"Variance of gradients (10 prev)":val, "total_timesteps":self.total_timesteps})
                 if len(self.all_gradients) > 100:
                     val = torch.norm(torch.cov(torch.vstack([all_norms[-1], all_norms[-100]]).T)) 
-                    wandb.log({"Variance of gradients (1 prev)":val, "total_timesteps":self.total_timesteps})
+                    wandb.log({"Variance of gradients (100 prev)":val, "total_timesteps":self.total_timesteps})
         
         torch.nn.utils.clip_grad_norm_(self.policy.parameters(), self.clip)
         self.policy_optimizer.step()
