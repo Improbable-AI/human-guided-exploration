@@ -335,11 +335,16 @@ def pretrain_agent(
     # Implant the trained policy network back into the RL student agent
     student.policy = model
 
-def transform_actions(actions):
-    import IPython
-    IPython.embed
-    bounds = 0
-    grid_size = 10
+def transform_actions(actions, fake_env):
+    trans_actions = []
+    for action in actions:
+        base_actions = fake_env.base_env.base_actions
+        dist = np.linalg.norm(base_actions - action,axis=1)  
+        trans_actions.append(dist.argmin())
+
+    return np.array(trans_actions)
+
+
 
 
 def experiment(wandb_run, env_name, task_config, label_from_last_k_steps=-1,normalize_rewards=False,reward_layers="400,600,600,300", 
@@ -402,10 +407,9 @@ fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_nam
         for i in range(num_demos):
             actions = np.load(f"demos/{env_name}/demo_{i}_actions.npy")
             states = fake_env.observation(np.load(f"demos/{env_name}/demo_{i}_states.npy"))
-            import IPython
-            IPython.embed()
+
             if env_name == "block_stacking":
-                actions = transform_actions(actions)
+                actions = transform_actions(actions, fake_env)
             all_actions.append(actions)
             all_states.append(states)
         train_expert_dataset = ExpertDataSet(all_states, all_actions) 
