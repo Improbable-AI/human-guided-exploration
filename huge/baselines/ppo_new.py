@@ -179,12 +179,12 @@ class PPO(OnPolicyAlgorithm):
         entropy_losses = []
         pg_losses, value_losses = [], []
         clip_fractions = []
+        all_gradients = []
 
         continue_training = True
         # train for n_epochs epochs
         for epoch in range(self.n_epochs):
             approx_kl_divs = []
-            all_gradients = []
 
             # Do a complete pass on the rollout buffer
             for rollout_data in self.rollout_buffer.get(self.batch_size):
@@ -264,31 +264,38 @@ class PPO(OnPolicyAlgorithm):
                     all_norms.append(param_norm)
                 
                 all_norms = th.hstack(all_norms)
-                if len(all_gradients) < 10:
-                    all_gradients.append(all_norms)
+                all_gradients.append(all_norms)
                 
+                if len(all_gradients) > 1:
+                    val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-2]]).T)) 
+                    wandb.log({"Variance of gradients (1 prev)":val})
+                if len(all_gradients) > 5:
+                    val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-5]]).T)) 
+                    wandb.log({"Variance of gradients (5 prev)":val})
+                if len(all_gradients) > 10:
+                    val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-10]]).T)) 
+                    wandb.log({"Variance of gradients (10 prev)":val})
+                if len(all_gradients) > 100:
+                    val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-100]]).T)) 
+                    wandb.log({"Variance of gradients (100 prev)":val})
+                    
                 # Clip grad norm
                 th.nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
                 self.policy.optimizer.step()
 
-            import IPython
-            IPython.embed()
-            cos = th.nn.CosineSimilarity(dim=1, eps=1e-6)
-            
-            if len(all_gradients) > 1:
-                    val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-2]]).T)) 
-                    wandb.log({"Variance of gradients (1 prev)":val})
-            if len(all_gradients) > 5:
-                val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-5]]).T)) 
-                wandb.log({"Variance of gradients (5 prev)":val})
-            if len(all_gradients) > 10:
-                val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-10]]).T)) 
-                wandb.log({"Variance of gradients (10 prev)":val})
-            if len(all_gradients) > 100:
-                val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-100]]).T)) 
-                wandb.log({"Variance of gradients (100 prev)":val})
-        
+            if len(all_gradients) >= 10:
+                cos = th.nn.CosineSimilarity(dim=1, eps=1e-6)
 
+                x1 = all_gradients[-i].reshape(-1,1)
+                sim = 0
+                count = 0
+                for i in range(10):
+                    for j in range(10-i-1):
+                        x2 = all_gradients[-10 +i +1].reshape(1,-1)
+                        sim += cos(x1,x2)
+                        count += 1
+                wandb.log({"Cosine similarity between last 10":sim, "total_timesteps":self.total_timesteps})
+                
             if not continue_training:
                 break
 
