@@ -220,8 +220,8 @@ human:
 human_preferences:
   human_input: true
   use_oracle: False
-  goal_selector_num_samples: 20
-  train_goal_selector_freq: 10
+  reward_model_num_samples: 20
+  train_reward_model_freq: 10
   human_data_file: "human_dataset_08_08_2023_13:09:49.pickle"
 
 
