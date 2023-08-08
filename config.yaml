@@ -80,6 +80,20 @@ pointmass_rooms:
   repeat_previous_action_prob: 0.25
   continuous_action_space: False
 
+pointmass_empty:
+  explore_length: 20
+  max_timesteps: 400000
+  max_path_length: 70
+  stopped_thresh: 0.05
+  start_frontier: 20
+  frontier_expansion_rate: 10
+  frontier_expansion_freq: 100
+  select_goal_from_last_k_trajectories: 20
+  label_from_last_k_steps: 20
+  label_from_last_k_trajectories: 20
+  repeat_previous_action_prob: 0.25
+  continuous_action_space: False
+
 complex_maze:
   explore_length: 20
   max_timesteps: 20000000
@@ -202,7 +216,7 @@ human:
 
 human_preferences:
   human_input: true
-  
+
 
 huge:
   train_with_preferences: True
