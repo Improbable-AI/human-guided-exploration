@@ -221,7 +221,7 @@ class HumanPreferences:
         self.current_qid = 0
         self.info_per_qid = {}
         self.answered_questions = 0
-        self.current_goal = self.fake_env.extract_goal(self.env.sample_goal())
+        self.current_goal = self.fake_env.extract_goal(self.fake_env.sample_goal())
         
         #print("action space low and high", self.env.action_space.low, self.env.action_space.high)
 
