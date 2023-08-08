@@ -261,6 +261,15 @@ wandb_run = wandb.init(project=env_name+"huge_human_interface", name=f"{env_name
 
 params["wandb_run"] = wandb_run
 
+max_path_length = None
+if env_name == "pointmass_rooms":
+    max_path_length= 150
+if env_name == "block_stacking":
+    max_path_length= 15
+
+if max_path_length is not None:
+    params['max_path_length'] = max_path_length
+
 print("params before run", params)
 
 global params_algo

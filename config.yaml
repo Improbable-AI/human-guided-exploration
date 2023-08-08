@@ -69,7 +69,7 @@ common:
 pointmass_rooms:
   explore_length: 20
   max_timesteps: 400000
-  max_path_length: 70
+  max_path_length: 100
   stopped_thresh: 0.05
   start_frontier: 20
   frontier_expansion_rate: 10
