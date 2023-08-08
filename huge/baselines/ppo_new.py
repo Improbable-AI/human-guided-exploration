@@ -295,7 +295,7 @@ class PPO(OnPolicyAlgorithm):
                         x2 = all_gradients[-10 +i +1].reshape(1,-1)
                         sim += cos(x1,x2)
                         count += 1
-                wandb.log({"Cosine similarity between last 10":sim/count, "total_timesteps":self.total_timesteps})
+                wandb.log({"Cosine similarity between last 10":sim/count})
                 
             if not continue_training:
                 break
