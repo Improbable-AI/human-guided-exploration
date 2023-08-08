@@ -263,6 +263,7 @@ class HUGE:
 
         self.k_goal = k_goal
 
+        self.all_gradients = []
      
         #with open(f'human_dataset_06_10_2022_20:15:53.pickle', 'rb') as handle:
         #    self.human_data = pickle.load(handle)
@@ -1193,11 +1194,14 @@ class HUGE:
             avg_loss += loss.item()
             import IPython
             IPython.embed()
+            all_norms = []
             for p in self.policy.parameters():
-                param_norm = p.grad.detach().data.norm(2)
-                total_norm += param_norm.item() ** 2
+                param_norm = p.grad.detach().data.flatten()
+                all_norms.append(param_norm)
             
-            total_norm += total_norm ** 0.5
+            all_norms = torch.hstack(all_norms)
+            self.all_gradients.append(all_norms)
+
         wandb.log({"Norm of gradients":total_norm/self.n_accumulations, "total_timesteps":self.total_timesteps})
         
         torch.nn.utils.clip_grad_norm_(self.policy.parameters(), self.clip)
