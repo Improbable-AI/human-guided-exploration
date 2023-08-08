@@ -1176,6 +1176,8 @@ class HUGE:
         return np.stack(states), np.array(actions), commanded_goal_state, desired_goal_state, reached, img_states
     
     def compute_variance_gradients(self,):
+        if self.replay_buffer.current_buffer_size == 0:
+            return
         avg_loss = 0
         all_gradients = []
 
