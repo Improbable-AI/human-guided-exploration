@@ -289,7 +289,7 @@ class PPO(OnPolicyAlgorithm):
                 sim = 0
                 count = 0
                 for i in range(10):
-                    x1 = all_gradients[-i].reshape(-1,1)
+                    x1 = all_gradients[-i].reshape(1,-1)
 
                     for j in range(10-i-1):
                         x2 = all_gradients[-10 +i +1].reshape(1,-1)
