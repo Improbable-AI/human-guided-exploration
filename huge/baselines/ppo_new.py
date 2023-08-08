@@ -181,7 +181,7 @@ class PPO(OnPolicyAlgorithm):
         clip_fractions = []
 
         continue_training = True
-
+        all_gradients = []
         # train for n_epochs epochs
         for epoch in range(self.n_epochs):
             approx_kl_divs = []
@@ -257,13 +257,26 @@ class PPO(OnPolicyAlgorithm):
                 # Optimization step
                 self.policy.optimizer.zero_grad()
                 loss.backward()
-                total_norm = 0
+                all_norms = []
                 for p in self.policy.parameters():
-                    param_norm = p.grad.detach().data.norm(2)
-                    total_norm += param_norm.item() ** 2
+                    param_norm = p.grad.detach().data.flatten()
+                    all_norms.append(param_norm)
                 
-                total_norm += total_norm ** 0.5
-                wandb.log({"Norm of gradients":total_norm})
+                all_norms = th.hstack(all_norms)
+                all_gradients.append(all_norms)
+                if len(all_gradients) > 1:
+                    val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-2]]).T)) 
+                    wandb.log({"Variance of gradients (1 prev)":val})
+                if len(all_gradients) > 5:
+                    val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-5]]).T)) 
+                    wandb.log({"Variance of gradients (5 prev)":val})
+                if len(all_gradients) > 10:
+                    val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-10]]).T)) 
+                    wandb.log({"Variance of gradients (10 prev)":val})
+                if len(all_gradients) > 100:
+                    val = th.norm(th.cov(th.vstack([all_norms[-1], all_norms[-100]]).T)) 
+                    wandb.log({"Variance of gradients (100 prev)":val})
+        
 
                 # Clip grad norm
                 th.nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
