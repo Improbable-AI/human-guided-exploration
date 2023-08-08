@@ -212,19 +212,19 @@ class UnWrapper(gym.Env):
     def sample_goal(self):
         return self.goal #self.goal_space.sample()
 
-def make_env(env_name, env_params, goal, dense_reward=False, continuous_action_space=False, task_config="slide_cabinet,microwave,hinge_cabinet", num_blocks=1, max_path_length=50):
+def make_env(env_name, env_params, goal, continuous_action_space=False, task_config="slide_cabinet,microwave,hinge_cabinet", num_blocks=1, max_path_length=50):
     print(task_config)
     env = envs.create_env(env_name, task_config=task_config, num_blocks=num_blocks, continuous_action_space=continuous_action_space)
 
     wrapped_env, policy, goal_selector, classifier_model, replay_buffer, goal_selector_buffer, gcsl_kwargs = variants.get_params(env, env_params)
     print("env action space", wrapped_env.action_space)
     info_keywords = ('info/distance', 'info/success', 'info/final_distance', 'info/final_success')
-    unwrapped_env = UnWrapper(wrapped_env, goal, max_path_length, dense_reward, env_name=env_name)
+    unwrapped_env = UnWrapper(wrapped_env, goal, max_path_length, env_name=env_name)
     final_env = Monitor(unwrapped_env, filename='info.txt', info_keywords=info_keywords)
     return final_env
 
 
-def run(wandb_run, continuous_action_space=False, goal=None,n_steps=2048, output_dir='/tmp', dense_reward=False, env_name='pointmass_empty', num_blocks=1, num_envs=1,network_layers='128,128',  display_plots=False, save_videos=True, num_tasks=2, task_config='slide_cabinet,microwave', eval_episodes=200, render=False, explore_timesteps=1e4, gpu=0, sample_softmax=False, seed=0, load_rewardmodel=False, batch_size=100, train_regression=False,load_buffer=False, save_buffer=-1, policy_updates_per_step=1,select_best_sample_size=1000, max_path_length=50, hallucinate_policy_freq=5, lr=5e-4, train_with_hallucination=True, start_policy_timesteps=500, log_tensorboard=False, use_oracle=False, comment="", max_timesteps=2e-4, reward_model_name='', **kwargs):
+def run(wandb_run, continuous_action_space=False, goal=None,n_steps=2048, output_dir='/tmp',  env_name='pointmass_empty', num_blocks=1, num_envs=1,network_layers='128,128',  display_plots=False, save_videos=True, num_tasks=2, task_config='slide_cabinet,microwave', eval_episodes=200, render=False, explore_timesteps=1e4, gpu=0, sample_softmax=False, seed=0, load_rewardmodel=False, batch_size=100, train_regression=False,load_buffer=False, save_buffer=-1, policy_updates_per_step=1,select_best_sample_size=1000, max_path_length=50, hallucinate_policy_freq=5, lr=5e-4, train_with_hallucination=True, start_policy_timesteps=500, log_tensorboard=False, use_oracle=False, comment="", max_timesteps=2e-4, reward_model_name='', **kwargs):
     ptu.set_gpu(gpu)
     if not gpu:
         print('Not using GPU. Will be slow.')
