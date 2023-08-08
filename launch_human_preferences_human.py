@@ -106,7 +106,7 @@ label_from_last_k_trajectories=-1, gpu=0, entropy_coefficient= 0.01, num_envs=4,
 reward_model_epochs=400, reward_model_num_samples=1000, goal_threshold = 0.05, num_blocks=1, buffer_size=20000, use_oracle=False, 
 display_plots=False, max_path_length=50, network_layers='128,128', train_rewardmodel_freq=2, fourier=False, 
 use_wrong_oracle=False,n_steps=2048,num_demos=5,pretrain=False,
-fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_name="", no_training=False, continuous_action_space=True, maze_type=3):
+fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_name="", no_training=False, continuous_action_space=True, maze_type=3, **kwargs):
 
     import gym
     import numpy as np
