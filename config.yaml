@@ -67,6 +67,7 @@ common:
 
 
 pointmass_rooms:
+  epsilon_greedy_rollout: 0.9
   explore_length: 20
   max_timesteps: 400000
   max_path_length: 150
