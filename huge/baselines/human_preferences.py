@@ -269,6 +269,7 @@ class HumanPreferences:
         self.train_loss_reward_model_arr = []
         self.eval_loss_arr = []
         self.distance_to_goal_eval_relabelled = []
+        self.training_goal_selector_now = False
 
 
 
