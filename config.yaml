@@ -67,10 +67,9 @@ common:
 
 
 pointmass_rooms:
-  epsilon_greedy_rollout: 0.9
   explore_length: 20
   max_timesteps: 400000
-  max_path_length: 150
+  max_path_length: 70
   stopped_thresh: 0.05
   start_frontier: 20
   frontier_expansion_rate: 10
@@ -208,6 +207,7 @@ gcsl:
   human_input: False
 
 human:
+  epsilon_greedy_rollout: 0.8
   train_with_preferences: True
   use_oracle: False
   sample_softmax: True
