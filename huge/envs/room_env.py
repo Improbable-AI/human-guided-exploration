@@ -33,11 +33,14 @@ class PointmassGoalEnv(GymGoalEnvWrapper):
             use_goal_images=False,
         )
 
-        if fixed_start:
-            config['start_config'] = np.array([-0.55, -0.55])#(np.array([-0.33,-0.33]), np.array([-0.27,-0.27])) # Start at / around (-0.3, -0.3)
+        # if fixed_start:
+        config['start_config'] = np.array([-0.55, -0.55])#(np.array([-0.33,-0.33]), np.array([-0.27,-0.27])) # Start at / around (-0.3, -0.3)
 
         if room_type == 'rooms':
             config['goal_config'] = 'top_right_corner' #(np.array([0.27,0.27]), np.array([0.33,0.33])) # End at / around (0.3, 0.3)
+        
+        if room_type == "empty":
+            config['goal_config'] = 'top_left'
         if fixed_goal:
             config['goal_config'] = (np.array([0.27,0.27]), np.array([0.33,0.33])) # End at / around (0.3, 0.3)
         

@@ -154,6 +154,9 @@ class RoomEnv(MujocoEnv, MultitaskEnv, Serializable):
             i = int(x * room_border_length + y)
 
             return np.array([0.25,0.25])#self.possible_positions[i]
+        if config == 'top_left':
+
+            return np.array([0.25,-0.25])#self.possible_positions[i]
         if config == 'maze_goal':
             room_border_length = np.sqrt(self.possible_positions.shape[0])
 
