@@ -263,7 +263,6 @@ class HUGE:
 
         self.k_goal = k_goal
 
-        self.all_gradients = []
      
         #with open(f'human_dataset_06_10_2022_20:15:53.pickle', 'rb') as handle:
         #    self.human_data = pickle.load(handle)
@@ -1175,7 +1174,49 @@ class HUGE:
 
         print("Sampling trajectory took: ", time.time() - start_time)
         return np.stack(states), np.array(actions), commanded_goal_state, desired_goal_state, reached, img_states
-   
+    
+    def compute_variance_gradients(self,):
+        avg_loss = 0
+        all_gradients = []
+
+        for acc in range(10):
+            observations, actions, goals, lengths, horizons, weights, img_states, img_goals = self.replay_buffer.sample_batch(self.batch_size)
+
+            if self.use_images_in_policy:
+                loss = self.loss_fn(img_states, img_goals, actions, horizons, weights)
+            else:
+                loss = self.loss_fn(observations, goals, actions, horizons, weights)
+
+            self.policy_optimizer.zero_grad()
+
+            loss.backward()
+            avg_loss += loss.item()
+
+            all_norms = []
+            for p in self.policy.parameters():
+                param_norm = p.grad.detach().data.flatten().to("cpu")
+                all_norms.append(param_norm)
+            
+            all_norms = torch.hstack(all_norms)
+            all_gradients.append(all_norms)
+       
+
+        cos = torch.nn.CosineSimilarity(dim=1, eps=1e-6)
+
+        sim = 0
+        count = 0
+        for i in range(10):
+
+            x1 = all_gradients[i].reshape(1,-1)
+
+            for j in range(i+j+1):
+                x2 = all_gradients[-10 +i +1].reshape(1,-1)
+                sim += cos(x1,x2)
+                count += 1
+        wandb.log({"Cosine similarity between last 10":sim/count, "total_timesteps":self.total_timesteps})
+        self.policy_optimizer.zero_grad()
+        
+
     def take_policy_step(self, buffer=None):
         if buffer is None:
             buffer = self.replay_buffer
@@ -1193,48 +1234,6 @@ class HUGE:
 
             loss.backward()
             avg_loss += loss.item()
-
-
-            
-        if self.total_timesteps % self.display_trajectories_freq*self.max_path_length == 0 and self.total_timesteps != self.last_timestep_cos:
-            self.last_timestep_cos = self.total_timesteps
-            all_norms = []
-            for p in self.policy.parameters():
-                param_norm = p.grad.detach().data.flatten().to("cpu")
-                all_norms.append(param_norm)
-            
-            all_norms = torch.hstack(all_norms)
-            self.all_gradients.append(all_norms)
-            if len(self.all_gradients) > 1:
-                val = torch.norm(torch.cov(torch.vstack([all_norms[-1], all_norms[-2]]).T)) 
-                wandb.log({"Variance of gradients (1 prev)":val, "total_timesteps":self.total_timesteps})
-            if len(self.all_gradients) > 5:
-                val = torch.norm(torch.cov(torch.vstack([all_norms[-1], all_norms[-5]]).T)) 
-                wandb.log({"Variance of gradients (5 prev)":val, "total_timesteps":self.total_timesteps})
-            if len(self.all_gradients) > 10:
-                val = torch.norm(torch.cov(torch.vstack([all_norms[-1], all_norms[-10]]).T)) 
-                wandb.log({"Variance of gradients (10 prev)":val, "total_timesteps":self.total_timesteps})
-            if len(self.all_gradients) > 100:
-                val = torch.norm(torch.cov(torch.vstack([all_norms[-1], all_norms[-100]]).T)) 
-                wandb.log({"Variance of gradients (100 prev)":val, "total_timesteps":self.total_timesteps})
-                self.all_gradients = self.all_gradients[-100:]
-
-            if len(self.all_gradients) >= 10:
-                cos = torch.nn.CosineSimilarity(dim=1, eps=1e-6)
-
-                sim = 0
-                count = 0
-                for i in range(10):
-
-                    x1 = self.all_gradients[-i].reshape(1,-1)
-
-                    for j in range(10-i-1):
-                        x2 = self.all_gradients[-10 +i +1].reshape(1,-1)
-                        sim += cos(x1,x2)
-                        count += 1
-                wandb.log({"Cosine similarity between last 10":sim/count, "total_timesteps":self.total_timesteps})
-            
-
 
         torch.nn.utils.clip_grad_norm_(self.policy.parameters(), self.clip)
         self.policy_optimizer.step()
