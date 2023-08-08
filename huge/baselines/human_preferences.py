@@ -339,6 +339,7 @@ class HumanPreferences:
 
         if self.human_input and not self.training_goal_selector_now and self.answered_questions % self.train_reward_model_freq == 0:
             self.training_goal_selector_now = True
+            print("Collect and train goal selector human")
             self.collect_and_train_goal_selector_human()
             self.training_goal_selector_now = False
 
@@ -610,7 +611,10 @@ class HumanPreferences:
 
     def train_reward_model(self,device='cuda'):
         if self.no_training or self.reward_model_buffer.current_buffer_size == 0:
-            return
+            print("NO training reward model")
+            return 0,0
+        
+        print("training reward model")
         # Train standard goal conditioned policy
 
         loss_fn = torch.nn.CrossEntropyLoss() 
