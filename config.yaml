@@ -232,6 +232,12 @@ huge:
   sample_softmax: True
   human_input: False
 
+huge_no_softmax:
+  train_with_preferences: True
+  use_oracle: False
+  sample_softmax: False
+  human_input: False
+
 oracle:
   train_with_preferences: True
   use_oracle: True
