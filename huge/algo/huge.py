@@ -1194,7 +1194,7 @@ class HUGE:
             avg_loss += loss.item()
             all_norms = []
             for p in self.policy.parameters():
-                param_norm = p.grad.detach().data.flatten()
+                param_norm = p.grad.detach().data.flatten().to("cpu")
                 all_norms.append(param_norm)
             
             all_norms = torch.hstack(all_norms)
