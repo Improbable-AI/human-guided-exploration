@@ -66,7 +66,6 @@ def run(start_frontier = -1,
         demo_goal_selector_epochs=1000,
         goal_selector_buffer_size=50000,
         fill_buffer_first_episodes=0,
-        store_gradients=False,
         run_path='',
         policy_name='',
         img_width=64,
@@ -203,7 +202,6 @@ def run(start_frontier = -1,
         select_best_sample_size=select_best_sample_size,
         pretrain_goal_selector=pretrain_goal_selector,
         pretrain_policy=pretrain_policy,
-        store_gradients=store_gradients,
         env_name=env_name,
         **huge_kwargs
     )
@@ -243,7 +241,6 @@ if __name__ == "__main__":
     parser.add_argument("--fill_buffer_first_episodes", type=int, default=None)
     parser.add_argument("--goal_selector_name", type=str, default=None)
     parser.add_argument("--use_images", action="store_true", default=False)
-    parser.add_argument("--store_gradients", action="store_true", default=False)
 
     args = parser.parse_args()
 
