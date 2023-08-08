@@ -609,7 +609,7 @@ class HumanPreferences:
         return losses_reward_model, eval_loss_reward_model
 
     def train_reward_model(self,device='cuda'):
-        if self.no_training:
+        if self.no_training or self.reward_model_buffer.current_buffer_size == 0:
             return
         # Train standard goal conditioned policy
 
