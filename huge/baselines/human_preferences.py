@@ -137,6 +137,11 @@ class HumanPreferences:
         if human_data_file is not None and len(human_data_file)!=0:
             print("human data file")
             self.human_data_info = pickle.load(open(human_data_file, "rb"))
+
+            if env_name == "pointmass_rooms":
+                human_data_info2 = pickle.load(open("human_dataset_08_08_2023_19:39:44.pickle", "rb"))
+                for entry in human_data_info2:
+                    self.human_data_info.append(entry)
             self.human_data_index = 0
         else:
             self.human_data_info = None
