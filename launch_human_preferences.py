@@ -587,5 +587,5 @@ if __name__ == "__main__":
         explore_episodes=args.explore_episodes,
         pretrain=args.pretrain,
         num_demos=args.num_demos,
-        distance_noise_std=distance_noise_std,
+        distance_noise_std=args.distance_noise_std,
         )
