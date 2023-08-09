@@ -140,8 +140,12 @@ class HumanPreferences:
 
             if env_name == "pointmass_rooms":
                 human_data_info2 = pickle.load(open("human_dataset_08_08_2023_19:39:44.pickle", "rb"))
-                for entry in human_data_info2:
-                    self.human_data_info.append(entry)
+                for i in range(len(human_data_info2['state_1'])):
+                    self.human_data_info['state_1'].append(human_data_info2['state_1'][i])
+                    self.human_data_info['state_2'].append(human_data_info2['state_2'][i])
+                    self.human_data_info['label'].append(human_data_info2['label'][i])
+                    self.human_data_info['goal'].append(human_data_info2['goal'][i])
+                
             self.human_data_index = 0
         else:
             self.human_data_info = None
