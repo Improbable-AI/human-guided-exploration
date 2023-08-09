@@ -45,28 +45,49 @@ def interpolate_xy(old_x, old_y, new_x):
     y_new = f(new_x)
     return y_new
 
+# TODO: for pebble we need to divide timesteps by constant
 all_experiments = {
     'drawing':{
         'Ours':['drawing_eval.csv']
     },
     'pointmass_rooms':{ 
+        'PEBBLE':['locobot-learn/pointmass_rooms_huge/36fkkfkg' , 'locobot-learn/pointmass_rooms_huge/21i8okfl' , 'locobot-learn/pointmass_rooms_huge/3fi5z3q7' , 'locobot-learn/pointmass_rooms_huge/1z0p18b0'],
         'BC':['locobot-learn/pointmass_roomsgcsl_preferences/y3pcrcfc','locobot-learn/pointmass_roomsgcsl_preferences/3m4my8sp','locobot-learn/pointmass_roomsgcsl_preferences/2yz5vu1l','locobot-learn/pointmass_roomsgcsl_preferences/2m83rfwp'],
         'BC + Ours':['locobot-learn/pointmass_roomsgcsl_preferences/y3pcrcfc','locobot-learn/pointmass_roomsgcsl_preferences/3m4my8sp','locobot-learn/pointmass_roomsgcsl_preferences/2yz5vu1l','locobot-learn/pointmass_roomsgcsl_preferences/2m83rfwp'],
-        # 'Inverse models': ['locobot-learn/pointmass_roomsgcsl_preferences/qppe50f8', 'locobot-learn/pointmass_roomsgcsl_preferences/grp4fz5x','locobot-learn/pointmass_roomsgcsl_preferences/1bzq2ql5', 'locobot-learn/pointmass_roomsgcsl_preferences/21te32ys'],
-        # 'Oracle': ['locobot-learn/pointmass_roomsgcsl_preferences/13i06x5j', 'locobot-learn/pointmass_roomsgcsl_preferences/1gtguy3h', 'locobot-learn/pointmass_roomsgcsl_preferences/1votp9j9', 'locobot-learn/pointmass_roomsgcsl_preferences/2noe2p8j'],
+        'Inverse models': ['locobot-learn/pointmass_roomsgcsl_preferences/qppe50f8', 'locobot-learn/pointmass_roomsgcsl_preferences/grp4fz5x','locobot-learn/pointmass_roomsgcsl_preferences/1bzq2ql5', 'locobot-learn/pointmass_roomsgcsl_preferences/21te32ys'],
+        'Oracle': ['locobot-learn/pointmass_roomsgcsl_preferences/13i06x5j', 'locobot-learn/pointmass_roomsgcsl_preferences/1gtguy3h', 'locobot-learn/pointmass_roomsgcsl_preferences/1votp9j9', 'locobot-learn/pointmass_roomsgcsl_preferences/2noe2p8j'],
         'Ours': ['locobot-learn/pointmass_roomsgcsl_preferences/345hvc49', 'locobot-learn/pointmass_roomsgcsl_preferences/2y72w21i', 'locobot-learn/pointmass_roomsgcsl_preferences/129t3bny', 'locobot-learn/pointmass_roomsgcsl_preferences/33i8coln'],
-        # 'DDL': ['locobot-learn/pointmass_roomsgcsl_preferences/2ilprc3u', 'locobot-learn/pointmass_roomsgcsl_preferences/2ilprc3u'],
-        'Human Preferences':['locobot-learn/pointmass_roomsgcsl_preferences/hn5zvi9a', 'locobot-learn/pointmass_roomsgcsl_preferences/3p9qgl7z', 'locobot-learn/pointmass_roomsgcsl_preferences/3gf5fykq'],
-        'PPO (dense)': ['locobot-learn/pointmass_roomsgcsl_preferences/2v6od2nu', 'locobot-learn/pointmass_roomsgcsl_preferences/2vjygxhw', 'locobot-learn/pointmass_roomsgcsl_preferences/11yl3qwp'],
+        'DDL': ['locobot-learn/pointmass_roomsgcsl_preferences/2ilprc3u', 'locobot-learn/pointmass_roomsgcsl_preferences/2ilprc3u'],
+        # 'Human Preferences':['locobot-learn/pointmass_roomsgcsl_preferences/hn5zvi9a', 'locobot-learn/pointmass_roomsgcsl_preferences/3p9qgl7z', 'locobot-learn/pointmass_roomsgcsl_preferences/3gf5fykq'],
+        'Human Preferences':['locobot-learn/pointmass_roomshuge_preferences/17gw9ky6', 'locobot-learn/pointmass_roomshuge_preferences/2ghhhqt5'],
+        # 'PPO (dense)': ['locobot-learn/pointmass_roomsgcsl_preferences/2v6od2nu', 'locobot-learn/pointmass_roomsgcsl_preferences/2vjygxhw', 'locobot-learn/pointmass_roomsgcsl_preferences/11yl3qwp'],
+        'PPO (dense)': ['locobot-learn/pointmass_rooms_huge/c5tv8hyz', 'locobot-learn/pointmass_rooms_huge/uozud3pq'],
         # 'PPO (sparse)': ['locobot-learn/pointmass_roomsgcsl_preferences/azvlfosm', 'locobot-learn/pointmass_roomsgcsl_preferences/33uelilf'],
         # 'LEXA-like':['locobot-learn/pointmass_roomsgcsl_preferences/nexy6rfs', 'locobot-learn/pointmass_roomsgcsl_preferences/3omlhojk', 'locobot-learn/pointmass_roomsgcsl_preferences/tm5qy6ow', 'locobot-learn/pointmass_roomsgcsl_preferences/2419021b'],
-        'Go-Explore+GCSL':[],
-        'BC+PPO':[],
-        'BC+HP':[],
-        'SAC':[],
+        'Go-Explore+GCSL':['locobot-learn/pointmass_rooms_huge/vuyrslkw','locobot-learn/pointmass_rooms_huge/2ys5t583','locobot-learn/pointmass_rooms_huge/20ljltqu','locobot-learn/pointmass_rooms_huge/3iiu9gx0'],
+        'BC+PPO':['locobot-learn/pointmass_rooms_huge/8s8zkcxv'], #TODO
+        'BC+HP':['locobot-learn/pointmass_rooms_huge/9g93eiom'],#TODO
+        'SAC':['locobot-learn/pointmass_rooms_huge/37sgkqrk'],#TODO
+        },
+    'test':{ 
+        'BC+HP':['locobot-learn/pointmass_rooms_huge/9g93eiom'],#TODO
+        'SAC':['locobot-learn/pointmass_rooms_huge/37sgkqrk'],#TODO
+        'PEBBLE':['locobot-learn/pointmass_rooms_huge/21i8okfl'], #TODO
+        'BC+PPO':['locobot-learn/pointmass_rooms_huge/8s8zkcxv'], #TODO
+        'BC':['locobot-learn/pointmass_roomsgcsl_preferences/y3pcrcfc'],
+        'BC + Ours':['locobot-learn/pointmass_roomsgcsl_preferences/y3pcrcfc'],
+        'Inverse models': ['locobot-learn/pointmass_roomsgcsl_preferences/qppe50f8'],
+        'Oracle': ['locobot-learn/pointmass_roomsgcsl_preferences/13i06x5j'],
+        'Ours': ['locobot-learn/pointmass_roomsgcsl_preferences/345hvc49'],
+        'DDL': ['locobot-learn/pointmass_roomsgcsl_preferences/2ilprc3u'],
+        'Human Preferences':['locobot-learn/pointmass_roomshuge_preferences/17gw9ky6'],
+        'PPO (dense)': ['locobot-learn/pointmass_roomsgcsl_preferences/2v6od2nu'],
+        'Go-Explore+GCSL':['locobot-learn/pointmass_rooms_huge/vuyrslkw'],
         },
 
-    'complex_maze': { 
+    'complex_maze': {
+        'PEBBLE':['locobot-learn/complex_maze_huge/2vyki6lk','locobot-learn/complex_maze_huge/3djrqoqq'],
+
         # 'Inverse models': ['locobot-learn/complex_mazegcsl_preferences/3m9swmhw', 'locobot-learn/complex_mazegcsl_preferences/2b3rot23', 'locobot-learn/complex_mazegcsl_preferences/2aszmug5', 'locobot-learn/complex_mazegcsl_preferences/1rygv6yl'],
         'Ours': ['locobot-learn/complex_mazegcsl_preferences/t3ain3iy', 'locobot-learn/complex_mazegcsl_preferences/ql7y35aj', 'locobot-learn/complex_mazegcsl_preferences/19l0ukfl', 'locobot-learn/complex_mazegcsl_preferences/152gn9st'],
         # 'Oracle': [ 'locobot-learn/complex_mazegcsl_preferences/3ge5tc9z', 'locobot-learn/complex_mazegcsl_preferences/uten8xh0', 'locobot-learn/complex_mazegcsl_preferences/2ol84l4l', 'locobot-learn/complex_mazegcsl_preferences/1md3bl57'],
@@ -76,33 +97,153 @@ all_experiments = {
         # 'PPO (dense)':['locobot-learn/complex_mazegcsl_preferences/20mcgqeh', 'locobot-learn/complex_mazegcsl_preferences/1pdzlzlm'],
         # 'BC':['locobot-learn/complex_mazegcsl_preferences/2pihz22h','locobot-learn/complex_mazegcsl_preferences/1ecqsetu', 'locobot-learn/complex_mazegcsl_preferences/8qctneul', 'locobot-learn/complex_mazegcsl_preferences/3eso4mth'],
         # 'BC + Ours':['locobot-learn/complex_mazegcsl_preferences/2pihz22h','locobot-learn/complex_mazegcsl_preferences/1ecqsetu','locobot-learn/complex_mazegcsl_preferences/8qctneul', 'locobot-learn/complex_mazegcsl_preferences/3eso4mth'],
-        'PEBBLE':[],
-        # 'SAC':[],
-        'Go-Explore+GCSL':[],
+        'Go-Explore+GCSL':['locobot-learn/complex_maze_huge/1vpy28xo', 'locobot-learn/complex_maze_huge/lkmpjkc6', 'locobot-learn/complex_maze_huge/w4qsbnuw'],
         # 'BC+PPO':[],
         # 'BC+HP':[],
     },
-    # TODO update
-    'human_experiment_pointmass':{ 
-        'Ours (human, TODO labels)': [],
-        'Human Preferences (human, TODO labels)': [],
+    'pick_and_place':{ 
+        'Inverse models': ['locobot-learn/ravens_pick_or_placegcsl_preferences/2z5wg1eb', 'locobot-learn/ravens_pick_or_placegcsl_preferences/2cz1h478', 'locobot-learn/ravens_pick_or_placegcsl_preferences/1f6hv3ln', 'locobot-learn/ravens_pick_or_placegcsl_preferences/1403j7mf'],
+        'Oracle': ['locobot-learn/ravens_pick_or_placegcsl_preferences/wmf38v8c', 'locobot-learn/ravens_pick_or_placegcsl_preferences/pdtav62g', 'locobot-learn/ravens_pick_or_placegcsl_preferences/3ml7miyz', 'locobot-learn/ravens_pick_or_placegcsl_preferences/16h3wzvl'],
+        'Ours': ['locobot-learn/ravens_pick_or_placegcsl_preferences/kjd9y43s', 'locobot-learn/ravens_pick_or_placegcsl_preferences/2xmt487i', 'locobot-learn/ravens_pick_or_placegcsl_preferences/2cm01vqg', 'locobot-learn/ravens_pick_or_placegcsl_preferences/1pyyabip'],
+        # 'Human Preferences': ['locobot-learn/ravens_pick_or_placegcsl_preferences/2iy1ekvl'] ,
+        'Human Preferences': ['locobot-learn/block_stackinghuge_preferences/17xuks7t', 'locobot-learn/block_stackinghuge_preferences/6n84vwlx', 'locobot-learn/block_stackinghuge_preferences/2h1di11r', 'locobot-learn/block_stackinghuge_preferences/3dkkj620'] ,
+        'DDL':['locobot-learn/ravens_env_pick_or_placegcsl_preferences/2irda94n','locobot-learn/ravens_env_pick_or_placegcsl_preferences/2mq77lqy'],
+        # 'PPO (dense)':['locobot-learn/ravens_env_pick_or_placegcsl_preferences/1b5igcs6', 'locobot-learn/ravens_env_pick_or_placegcsl_preferences/d1hrd74w'],
+        'PPO (dense)':['locobot-learn/block_stackinghuge_preferences/1rephjyi', 'locobot-learn/block_stackinghuge_preferences/2y39wjfv', 'locobot-learn/block_stackinghuge_preferences/filkul9u', 'locobot-learn/block_stackinghuge_preferences/2a45116j'],
+        # 'PPO (sparse)':['locobot-learn/ravens_env_pick_or_placegcsl_preferences/12vwmco5', 'locobot-learn/ravens_env_pick_or_placegcsl_preferences/28m2jkne'],
+        'BC':['locobot-learn/ravens_pick_placegcsl_preferences/2vrbpakd', 'locobot-learn/ravens_pick_placegcsl_preferences/qt3eu26u', 'locobot-learn/ravens_pick_placegcsl_preferences/3hh3z3z3', 'locobot-learn/ravens_pick_placegcsl_preferences/107mcr5c'],
+        'BC + Ours':['locobot-learn/ravens_pick_placegcsl_preferences/2vrbpakd', 'locobot-learn/ravens_pick_placegcsl_preferences/qt3eu26u', 'locobot-learn/ravens_pick_placegcsl_preferences/3hh3z3z3', 'locobot-learn/ravens_pick_placegcsl_preferences/107mcr5c'],
+        'Go-Explore+GCSL':['locobot-learn/block_stacking_huge/3b88prv8','locobot-learn/block_stacking_huge/2sqe0hhm','locobot-learn/block_stacking_huge/3t1wq65h'],
+        'BC+PPO':['locobot-learn/block_stacking_huge/sfrya0u1'],
+        # 'BC+HP':[], # TODO
+        'SAC':['locobot-learn/block_stacking_huge/3ptp7jff'],
+        'PEBBLE':['locobot-learn/block_stacking_huge/18hk8dwp', 'locobot-learn/block_stacking_huge/5oxi0zve']
+    },
+        'legend':{ 
+        'Inverse models': ['locobot-learn/ravens_pick_or_placegcsl_preferences/2z5wg1eb', ],
+        'Oracle': ['locobot-learn/ravens_pick_or_placegcsl_preferences/wmf38v8c', ],
+        'Ours': ['locobot-learn/ravens_pick_or_placegcsl_preferences/kjd9y43s', ],
+        # 'Human Preferences': ['locobot-learn/ravens_pick_or_placegcsl_preferences/2iy1ekvl'] ,
+        'Human Preferences': ['locobot-learn/block_stackinghuge_preferences/17xuks7t', ] ,
+        'DDL':['locobot-learn/ravens_env_pick_or_placegcsl_preferences/2irda94n',],
+        # 'PPO (dense)':['locobot-learn/ravens_env_pick_or_placegcsl_preferences/1b5igcs6', 'locobot-learn/ravens_env_pick_or_placegcsl_preferences/d1hrd74w'],
+        'PPO (dense)':['locobot-learn/block_stackinghuge_preferences/1rephjyi', ],
+        # 'PPO (sparse)':['locobot-learn/ravens_env_pick_or_placegcsl_preferences/12vwmco5', 'locobot-learn/ravens_env_pick_or_placegcsl_preferences/28m2jkne'],
+        'BC':['locobot-learn/ravens_pick_placegcsl_preferences/2vrbpakd',],
+        'BC + Ours':['locobot-learn/ravens_pick_placegcsl_preferences/2vrbpakd',],
+        'Go-Explore+GCSL':['locobot-learn/block_stacking_huge/3b88prv8',],
+        'BC+PPO':['locobot-learn/block_stacking_huge/sfrya0u1'],
+        'BC+HP':['locobot-learn/block_stacking_huge/3ptp7jff'], # TODO
+        'SAC':['locobot-learn/block_stacking_huge/3ptp7jff'],
+        'PEBBLE':['locobot-learn/block_stacking_huge/18hk8dwp']
+    },
+    'bandu_part2': ['locobot-learn/ravens_pick_or_placegcsl_preferences/398w0jmr', 'locobot-learn/ravens_pick_or_placegcsl_preferences/wqnuuub3', 'locobot-learn/ravens_pick_or_placegcsl_preferences/573xow6w','locobot-learn/ravens_pick_or_placegcsl_preferences/2npcwyso'],
+    'bandu':{ 
+        'Ours': ['locobot-learn/ravens_pick_or_placegcsl_preferences/d1cf2aed', 'locobot-learn/ravens_pick_or_placegcsl_preferences/0a82it2x', 'locobot-learn/ravens_pick_or_placegcsl_preferences/75pc4v93','locobot-learn/ravens_pick_or_placegcsl_preferences/ew8m0wtk'],
+        # 'Inverse models': ['locobot-learn/ravens_pick_or_placegcsl_preferences/yr5ai33l', 'locobot-learn/ravens_pick_or_placegcsl_preferences/wz6ayccf','locobot-learn/ravens_pick_or_placegcsl_preferences/xw88kyy4','locobot-learn/ravens_pick_or_placegcsl_preferences/xy6aquff'],
+        # 'Oracle': ['locobot-learn/ravens_pick_or_placegcsl_preferences/axoaknme','locobot-learn/ravens_pick_or_placegcsl_preferences/8fe5r3vw','locobot-learn/ravens_pick_or_placegcsl_preferences/bbaq48iv','locobot-learn/ravens_pick_or_placegcsl_preferences/o5fjkj7m'],
+        # 'Human Preferences': ['locobot-learn/ravens_pick_or_placegcsl_preferences/2uy65yi9','locobot-learn/ravens_pick_or_placegcsl_preferences/2kdp7g3j','locobot-learn/ravens_pick_or_placegcsl_preferences/66c7gzlh','locobot-learn/ravens_pick_or_placegcsl_preferences/1wc9bmsu'] ,
+        # 'DDL':['locobot-learn/ravens_pick_or_placegcsl_preferences/y1slrbzw', "locobot-learn/ravens_pick_or_placegcsl_preferences/3r3qd2bp", ],
+        # 'PPO (dense)':['locobot-learn/ravens_pick_or_placegcsl_preferences/1u57zp7f','locobot-learn/ravens_pick_or_placegcsl_preferences/1powout8','locobot-learn/ravens_pick_or_placegcsl_preferences/2aaym3uv','locobot-learn/ravens_pick_or_placegcsl_preferences/1hfrdrak'],
+        # 'PPO (sparse)':['locobot-learn/ravens_pick_or_placegcsl_preferences/12mi9vnr','locobot-learn/ravens_pick_or_placegcsl_preferences/36iqrknv','locobot-learn/ravens_pick_or_placegcsl_preferences/guq4rxf0','locobot-learn/ravens_pick_or_placegcsl_preferences/2g3cdm4c'],
+        # TODO: look at BC and see if we got something better
+        # 'BC':['locobot-learn/ravens_pick_or_placegcsl_preferences/773nhysm','locobot-learn/ravens_pick_or_placegcsl_preferences/2karmvcg','locobot-learn/ravens_pick_or_placegcsl_preferences/bj63wbex','locobot-learn/ravens_pick_or_placegcsl_preferences/mg2rj75c'],
+        # 'BC + Ours':['locobot-learn/ravens_pick_or_placegcsl_preferences/773nhysm','locobot-learn/ravens_pick_or_placegcsl_preferences/2karmvcg','locobot-learn/ravens_pick_or_placegcsl_preferences/bj63wbex','locobot-learn/ravens_pick_or_placegcsl_preferences/mg2rj75c'],
+        # 'BC':['locobot-learn/bandu_huge/36t9zrf3',],
+        # 'BC + Ours':['locobot-learn/ravens_pick_or_placegcsl_preferences/773nhysm','locobot-learn/ravens_pick_or_placegcsl_preferences/2karmvcg','locobot-learn/ravens_pick_or_placegcsl_preferences/bj63wbex','locobot-learn/ravens_pick_or_placegcsl_preferences/mg2rj75c'],
+        'PEBBLE': ['locobot-learn/bandu_huge/283cutmf', 'locobot-learn/bandu_huge/9ahyx1e1'],
+        'Go-Explore+GCSL': ['locobot-learn/bandu_huge/269f9r6g', 'locobot-learn/bandu_huge/2wy8pgoy','locobot-learn/bandu_huge/6f4qit46' ],
+ 
+    },
+    'kitchen':{ 
+        # 'Inverse models': ['locobot-learn/kitchenSeqgcsl_preferences/0oja1kgk','locobot-learn/kitchenSeqgcsl_preferences/hrqgvp9k','locobot-learn/kitchenSeqgcsl_preferences/wvix2h1o','locobot-learn/kitchenSeqgcsl_preferences/j5b9kjmn'],
+        # 'Oracle': ['locobot-learn/kitchenSeqgcsl_preferences/9g4xanhf','locobot-learn/kitchenSeqgcsl_preferences/f7lc22yj','locobot-learn/kitchenSeqgcsl_preferences/wysnrw02','locobot-learn/kitchenSeqgcsl_preferences/01l23j5u'],
+        'Ours': ['locobot-learn/kitchenSeqgcsl_preferences/cbmrcbxd','locobot-learn/kitchenSeqgcsl_preferences/54i2szv8','locobot-learn/kitchenSeqgcsl_preferences/qkmp1j34','locobot-learn/kitchenSeqgcsl_preferences/s64v24xb'],
+        # 'DDL': ['locobot-learn/kitchenSeqgcsl_preferences/1kr62web', 'locobot-learn/kitchenSeqgcsl_preferences/28uem0sc'],
+        # 'PPO (dense)':['locobot-learn/kitchenSeqgcsl_preferences/lo7yjrio','locobot-learn/kitchenSeqgcsl_preferences/ta22u7ts','locobot-learn/kitchenSeqgcsl_preferences/y7dgf7kc','locobot-learn/kitchenSeqgcsl_preferences/10fp2825'],
+        # 'PPO (sparse)':['locobot-learn/kitchenSeqgcsl_preferences/3n71xlqv','locobot-learn/kitchenSeqgcsl_preferences/18j65tu4','locobot-learn/kitchenSeqgcsl_preferences/3onew6ai','locobot-learn/kitchenSeqgcsl_preferences/kh7g5hxf'],
+        # 'Human Preferences': ['locobot-learn/kitchenSeqgcsl_preferences/1hm0k2qg','locobot-learn/kitchenSeqgcsl_preferences/1hvxmexj','locobot-learn/kitchenSeqgcsl_preferences/3flif3st','locobot-learn/kitchenSeqgcsl_preferences/2dlq4umx'], 
+        # 'BC':['locobot-learn/kitchenSeqgcsl_preferences/ileqzisy','locobot-learn/kitchenSeqgcsl_preferences/jhhsktk8','locobot-learn/kitchenSeqgcsl_preferences/udx02pbq','locobot-learn/kitchenSeqgcsl_preferences/gmt39mhk'],
+        # 'BC + Ours':['locobot-learn/kitchenSeqgcsl_preferences/ileqzisy','locobot-learn/kitchenSeqgcsl_preferences/jhhsktk8','locobot-learn/kitchenSeqgcsl_preferences/udx02pbq','locobot-learn/kitchenSeqgcsl_preferences/gmt39mhk'],
+        'BC':['locobot-learn/kitchenSeq_huge/20ynaxja','locobot-learn/kitchenSeq_huge/k0j1m2o3'],
+        'BC + Ours':['locobot-learn/kitchenSeq_huge/20ynaxja','locobot-learn/kitchenSeq_huge/k0j1m2o3'],
+        'PEBBLE':['locobot-learn/kitchenSeq_huge/2zb2ayix', 'locobot-learn/kitchenSeq_huge/t10mtdm4'],
+        'Go-Explore+GCSL':['locobot-learn/kitchenSeq_huge/3qgwacoy', 'locobot-learn/kitchenSeq_huge/jes7v05e', 'locobot-learn/kitchenSeq_huge/pz8z5asi'],
+   
+    },
+    'pusher_walls':{ 
+
+        'Ours': ['locobot-learn/pusher_hard_huge/hjpai39i', 'locobot-learn/pusher_hard_huge/380c10e5'],
+
+        'Oracle': ['locobot-learn/pusher_hardgcsl_preferences/33xdekj4','locobot-learn/pusher_hardgcsl_preferences/1rzmvwx7', 'locobot-learn/pusher_hardgcsl_preferences/33xdekj4', 'locobot-learn/pusher_hardgcsl_preferences/55qgljkv'],
+        'Inverse models': ['locobot-learn/pusher_hardgcsl_preferences/23ojli2z', 'locobot-learn/pusher_hardgcsl_preferences/1pydiqsr', 'locobot-learn/pusher_hardgcsl_preferences/2w47tg7c', 'locobot-learn/pusher_hardgcsl_preferences/32ksqe2q'],
+        # 'Ours': ['locobot-learn/pusher_hardgcsl_preferences/rfgqkvnb', 'locobot-learn/pusher_hardgcsl_preferences/1tqpneoc', 'locobot-learn/pusher_hardgcsl_preferences/3j8otoxl', 'locobot-learn/pusher_hardgcsl_preferences/3cfk6e69'],
+        
+        'DDL':['locobot-learn/pusher_hardgcsl_preferences/2hvf8n26', 'locobot-learn/pusher_hardgcsl_preferences/2vgo48q0', 'locobot-learn/pusher_hardgcsl_preferences/5sm4dxbk', 'locobot-learn/pusher_hardgcsl_preferences/3qljdbvw'],
+        # 'PPO (dense)': ['locobot-learn/pusher_hardgcsl_preferences/1rudeyr3','locobot-learn/pusher_hardgcsl_preferences/3s2csd9t'],
+        'PPO (dense)': ['locobot-learn/pusher_hardhuge_preferences/2xngkoxh', 'locobot-learn/pusher_hardhuge_preferences/1bixljwy', 'locobot-learn/pusher_hardhuge_preferences/3w3xnuva'],
+        # 'PPO (sparse)':['locobot-learn/pusher_hardgcsl_preferences/1j7kfuze', 'locobot-learn/pusher_hardgcsl_preferences/jyqg84p6'],
+        'Human Preferences':['locobot-learn/pusher_hardhuge_preferences/243q8xp5', 'locobot-learn/pusher_hardhuge_preferences/2j3ux020'],
+        # 'Human Preferences':['locobot-learn/pusher_hardgcsl_preferences/wzoym8xu', 'locobot-learn/pusher_hardgcsl_preferences/wv1kft7m',],
+        'BC':['locobot-learn/pusher_hardgcsl_preferences/p5vejh7p','locobot-learn/pusher_hardgcsl_preferences/28kg1171','locobot-learn/pusher_hardgcsl_preferences/7pho1myk','locobot-learn/pusher_hardgcsl_preferences/opj12gx1'],
+        #'BC':['locobot-learn/pusher_hardgcsl_preferences/314mfcgf','locobot-learn/pusher_hardgcsl_preferences/1ayweq4j','locobot-learn/pusher_hardgcsl_preferences/340z7bi5','locobot-learn/pusher_hardgcsl_preferences/2dz0kkx6'],
+        'BC + Ours':['locobot-learn/pusher_hardgcsl_preferences/p5vejh7p','locobot-learn/pusher_hardgcsl_preferences/28kg1171','locobot-learn/pusher_hardgcsl_preferences/7pho1myk','locobot-learn/pusher_hardgcsl_preferences/opj12gx1'],
+        #'BC + Ours':['locobot-learn/pusher_hardgcsl_preferences/314mfcgf','locobot-learn/pusher_hardgcsl_preferences/1ayweq4j','locobot-learn/pusher_hardgcsl_preferences/340z7bi5','locobot-learn/pusher_hardgcsl_preferences/2dz0kkx6'],
+        'PEBBLE':['locobot-learn/pusher_hard_huge/3866ft4m', 'locobot-learn/pusher_hard_huge/7opqv08y'],
+        'Go-Explore+GCSL':['locobot-learn/pusher_hard_huge/2tfda7xr', 'locobot-learn/pusher_hard_huge/15d4gbhd', 'locobot-learn/pusher_hard_huge/hdofnxjj'],
+   
+    },
+    'finetuning_comparison_block_stacking':{ #TODO
+        'PPO (finetuned)': ['locobot-learn/block_stackinghuge_preferences/1rephjyi', 'locobot-learn/block_stackinghuge_preferences/2y39wjfv', 'locobot-learn/block_stackinghuge_preferences/filkul9u', 'locobot-learn/block_stackinghuge_preferences/2a45116j'],
+        'PPO (not-finetuned)': [ 'locobot-learn/block_stackinghuge_preferences/2qquf8fr'],#'locobot-learn/ravens_env_pick_or_placegcsl_preferences/1b5igcs6', 'locobot-learn/ravens_env_pick_or_placegcsl_preferences/d1hrd74w'], #'locobot-learn/block_stackinghuge_preferences/2qquf8fr',
+        'Ours (finetuned)': ['locobot-learn/block_stacking_huge/2pmj8al8', 'locobot-learn/block_stacking_huge/1e3v8682'],
+        'Ours (not-finetuned)': ['locobot-learn/ravens_pick_or_placegcsl_preferences/kjd9y43s', 'locobot-learn/ravens_pick_or_placegcsl_preferences/2xmt487i', 'locobot-learn/ravens_pick_or_placegcsl_preferences/2cm01vqg', 'locobot-learn/ravens_pick_or_placegcsl_preferences/1pyyabip'],
+        'Human Preferences (finetuned)': ['locobot-learn/block_stackinghuge_preferences/17xuks7t', 'locobot-learn/block_stackinghuge_preferences/6n84vwlx', 'locobot-learn/block_stackinghuge_preferences/2h1di11r', 'locobot-learn/block_stackinghuge_preferences/3dkkj620'],
+        'Human Preferences (not-finetuned)': ['locobot-learn/ravens_pick_or_placegcsl_preferences/2iy1ekvl', ]#'locobot-learn/ravens_env_pick_or_placegcsl_preferences/1b5igcs6', 'locobot-learn/ravens_env_pick_or_placegcsl_preferences/d1hrd74w'],
+
+    },
+    'finetuning_comparison_pusher':{ 
+        'Ours (finetuned)': ['locobot-learn/pusher_hard_huge/hjpai39i', 'locobot-learn/pusher_hard_huge/380c10e5'],
+        'Ours (not-finetuned)': ['locobot-learn/pusher_hardgcsl_preferences/rfgqkvnb', 'locobot-learn/pusher_hardgcsl_preferences/1tqpneoc', 'locobot-learn/pusher_hardgcsl_preferences/3j8otoxl', 'locobot-learn/pusher_hardgcsl_preferences/3cfk6e69'],
+        'Human Preferences (finetuned)': ['locobot-learn/pusher_hardhuge_preferences/243q8xp5', 'locobot-learn/pusher_hardhuge_preferences/2j3ux020' ],
+        'Human Preferences (not-finetuned)': ['locobot-learn/pusher_hardgcsl_preferences/wzoym8xu', 'locobot-learn/pusher_hardgcsl_preferences/wv1kft7m'],
+        'PPO (finetuned)': ['locobot-learn/pusher_hardhuge_preferences/2xngkoxh', 'locobot-learn/pusher_hardhuge_preferences/1bixljwy', 'locobot-learn/pusher_hardhuge_preferences/3w3xnuva'],
+        'PPO (not-finetuned)': ['locobot-learn/pusher_hardgcsl_preferences/1rudeyr3','locobot-learn/pusher_hardgcsl_preferences/3s2csd9t'],
+    },
+    'human_experiment_rooms':{ 
+        'Ours (human, 251 labels)': ['locobot-learn/pointmass_roomshuge_human_interface/48y3v3wo'],
+        'Human Preferences (human, 798 labels)': ['locobot-learn/pointmass_roomshuge_human_interface/0zb58lsu'],
+        'Human Preferences':['locobot-learn/pointmass_roomshuge_preferences/17gw9ky6', 'locobot-learn/pointmass_roomshuge_preferences/2ghhhqt5'],
         'Ours (synthetic)': ['locobot-learn/pointmass_roomsgcsl_preferences/345hvc49', 'locobot-learn/pointmass_roomsgcsl_preferences/2y72w21i', 'locobot-learn/pointmass_roomsgcsl_preferences/129t3bny', 'locobot-learn/pointmass_roomsgcsl_preferences/33i8coln'],
     },
     'human_experiment_complex_maze':{ 
-        'Ours (human, TODO labels)': [],
-        'Ours (synthetic)': ['locobot-learn/pointmass_roomsgcsl_preferences/345hvc49', 'locobot-learn/pointmass_roomsgcsl_preferences/2y72w21i', 'locobot-learn/pointmass_roomsgcsl_preferences/129t3bny', 'locobot-learn/pointmass_roomsgcsl_preferences/33i8coln'],
+        'Ours (human, 1380 labels)': ['locobot-learn/complex_mazehuge_human_interface/38gquee5'],
+        'Ours (synthetic)': ['locobot-learn/complex_mazegcsl_preferences/t3ain3iy', 'locobot-learn/complex_mazegcsl_preferences/ql7y35aj', 'locobot-learn/complex_mazegcsl_preferences/19l0ukfl', 'locobot-learn/complex_mazegcsl_preferences/152gn9st'],
     },
-    # TODO update
     'human_experiment_pointmass_empty':{ 
-        'Ours (human, TODO labels)': [],
-        'Human Preferences (human, TODO labels)': [],
-        'Ours (synthetic)': [],
+        # 'Ours (human, TODO labels)': [], #TODO
+        'Human Preferences (human, 67 labels)': ['locobot-learn/pointmass_emptyhuge_human_interface/v1wl8mws'],
+        'Human Preferences (synthetic)': ['locobot-learn/pointmass_emptyhuge_preferences/3o0wxzx7'], #TODO
+        # 'Ours (synthetic)': [], #TODO
+    },
+    'robustness_to_noise':{ 
+        'Human Preferences': [], #TODO
+        'Ours': [], #TODO
+        'PEBBLE': [], #TODO
+        'Human Preferences (noisy)': [], #TODO
+        'Ours (noisy)': [], #TODO
+        'PEBBLE (noisy)': [], #TODO
     },
     'human_experiment_block_stacking':{ 
-        'Ours (human, TODO labels)': [],
-        'Human Preferences (human, TODO labels)': [],
-        'Ours (synthetic)': [],
+        'Ours (human, 733 labels)': ['locobot-learn/block_stackinghuge_human_interface/6oqmay9z'],
+        # 'Human Preferences (human, TODO labels)': [], # TODO
+        # 'Human Preferences (synthetic)': ['locobot-learn/block_stackinghuge_preferences/17xuks7t', 'locobot-learn/block_stackinghuge_preferences/6n84vwlx', 'locobot-learn/block_stackinghuge_preferences/2h1di11r', 'locobot-learn/block_stackinghuge_preferences/3dkkj620'], 
+        'Ours (synthetic)': ['locobot-learn/ravens_pick_or_placegcsl_preferences/kjd9y43s', 'locobot-learn/ravens_pick_or_placegcsl_preferences/2xmt487i', 'locobot-learn/ravens_pick_or_placegcsl_preferences/2cm01vqg', 'locobot-learn/ravens_pick_or_placegcsl_preferences/1pyyabip'],
     },
+    'ppovshuge_analysis':{ 
+        'PPO': ['locobot-learn/pointmass_rooms_huge/c5tv8hyz', 'locobot-learn/pointmass_rooms_huge/zr1vr84p'], #locobot-learn/pointmass_rooms_huge/ozn3i9ao
+        'Ours': ['locobot-learn/pointmass_rooms_huge/9oykrnw0', 'locobot-learn/pointmass_rooms_huge/vdi35djo'], # locobot-learn/pointmass_rooms_huge/s45l89aw
+    }, 
     'human_experiment_pusher':{ 
         'Ours (human)': ['locobot-learn/pusher_hardgcsl_preferences/2c5uvl0h'], # rerun
         #'Oracle': ['locobot-learn/pusher_hardgcsl_preferences/33xdekj4','locobot-learn/pusher_hardgcsl_preferences/1rzmvwx7', 'locobot-learn/pusher_hardgcsl_preferences/33xdekj4', 'locobot-learn/pusher_hardgcsl_preferences/55qgljkv'],
@@ -126,53 +267,8 @@ all_experiments = {
         'Ours': ['locobot-learn/pointmass_roomsgcsl_preferences/345hvc49', 'locobot-learn/pointmass_roomsgcsl_preferences/2y72w21i', 'locobot-learn/pointmass_roomsgcsl_preferences/129t3bny', 'locobot-learn/pointmass_roomsgcsl_preferences/33i8coln'],
         'Ours (Incomplete)':['locobot-learn/pointmass_roomsgcsl_preferences/22wok28k', 'locobot-learn/pointmass_roomsgcsl_preferences/24a9yim6', 'locobot-learn/pointmass_roomsgcsl_preferences/3vj8ob4x', 'locobot-learn/pointmass_roomsgcsl_preferences/1gvfvnfx'],
     },
-    'pick_and_place':{ 
-        'Inverse models': ['locobot-learn/ravens_pick_or_placegcsl_preferences/2z5wg1eb', 'locobot-learn/ravens_pick_or_placegcsl_preferences/2cz1h478', 'locobot-learn/ravens_pick_or_placegcsl_preferences/1f6hv3ln', 'locobot-learn/ravens_pick_or_placegcsl_preferences/1403j7mf'],
-        'Oracle': ['locobot-learn/ravens_pick_or_placegcsl_preferences/wmf38v8c', 'locobot-learn/ravens_pick_or_placegcsl_preferences/pdtav62g', 'locobot-learn/ravens_pick_or_placegcsl_preferences/3ml7miyz', 'locobot-learn/ravens_pick_or_placegcsl_preferences/16h3wzvl'],
-        'Ours': ['locobot-learn/ravens_pick_or_placegcsl_preferences/kjd9y43s', 'locobot-learn/ravens_pick_or_placegcsl_preferences/2xmt487i', 'locobot-learn/ravens_pick_or_placegcsl_preferences/2cm01vqg', 'locobot-learn/ravens_pick_or_placegcsl_preferences/1pyyabip'],
-        'Human Preferences': ['locobot-learn/ravens_pick_or_placegcsl_preferences/2iy1ekvl'] ,
-        'DDL':['locobot-learn/ravens_env_pick_or_placegcsl_preferences/2irda94n','locobot-learn/ravens_env_pick_or_placegcsl_preferences/2mq77lqy'],
-        'PPO (dense)':['locobot-learn/ravens_env_pick_or_placegcsl_preferences/1b5igcs6', 'locobot-learn/ravens_env_pick_or_placegcsl_preferences/d1hrd74w'],
-        'PPO (sparse)':['locobot-learn/ravens_env_pick_or_placegcsl_preferences/12vwmco5', 'locobot-learn/ravens_env_pick_or_placegcsl_preferences/28m2jkne'],
-        'BC':['locobot-learn/ravens_pick_placegcsl_preferences/2vrbpakd', 'locobot-learn/ravens_pick_placegcsl_preferences/qt3eu26u', 'locobot-learn/ravens_pick_placegcsl_preferences/3hh3z3z3', 'locobot-learn/ravens_pick_placegcsl_preferences/107mcr5c'],
-        'BC + Ours':['locobot-learn/ravens_pick_placegcsl_preferences/2vrbpakd', 'locobot-learn/ravens_pick_placegcsl_preferences/qt3eu26u', 'locobot-learn/ravens_pick_placegcsl_preferences/3hh3z3z3', 'locobot-learn/ravens_pick_placegcsl_preferences/107mcr5c'],
-    },
-    'bandu_part2': ['locobot-learn/ravens_pick_or_placegcsl_preferences/398w0jmr', 'locobot-learn/ravens_pick_or_placegcsl_preferences/wqnuuub3', 'locobot-learn/ravens_pick_or_placegcsl_preferences/573xow6w','locobot-learn/ravens_pick_or_placegcsl_preferences/2npcwyso'],
-    'bandu':{ 
-        'Ours': ['locobot-learn/ravens_pick_or_placegcsl_preferences/d1cf2aed', 'locobot-learn/ravens_pick_or_placegcsl_preferences/0a82it2x', 'locobot-learn/ravens_pick_or_placegcsl_preferences/75pc4v93','locobot-learn/ravens_pick_or_placegcsl_preferences/ew8m0wtk'],
-        'Inverse models': ['locobot-learn/ravens_pick_or_placegcsl_preferences/yr5ai33l', 'locobot-learn/ravens_pick_or_placegcsl_preferences/wz6ayccf','locobot-learn/ravens_pick_or_placegcsl_preferences/xw88kyy4','locobot-learn/ravens_pick_or_placegcsl_preferences/xy6aquff'],
-        'Oracle': ['locobot-learn/ravens_pick_or_placegcsl_preferences/axoaknme','locobot-learn/ravens_pick_or_placegcsl_preferences/8fe5r3vw','locobot-learn/ravens_pick_or_placegcsl_preferences/bbaq48iv','locobot-learn/ravens_pick_or_placegcsl_preferences/o5fjkj7m'],
-        'Human Preferences': ['locobot-learn/ravens_pick_or_placegcsl_preferences/2uy65yi9','locobot-learn/ravens_pick_or_placegcsl_preferences/2kdp7g3j','locobot-learn/ravens_pick_or_placegcsl_preferences/66c7gzlh','locobot-learn/ravens_pick_or_placegcsl_preferences/1wc9bmsu'] ,
-        'DDL':['locobot-learn/ravens_pick_or_placegcsl_preferences/y1slrbzw', "locobot-learn/ravens_pick_or_placegcsl_preferences/3r3qd2bp", ],
-        'PPO (dense)':['locobot-learn/ravens_pick_or_placegcsl_preferences/1u57zp7f','locobot-learn/ravens_pick_or_placegcsl_preferences/1powout8','locobot-learn/ravens_pick_or_placegcsl_preferences/2aaym3uv','locobot-learn/ravens_pick_or_placegcsl_preferences/1hfrdrak'],
-        'PPO (sparse)':['locobot-learn/ravens_pick_or_placegcsl_preferences/12mi9vnr','locobot-learn/ravens_pick_or_placegcsl_preferences/36iqrknv','locobot-learn/ravens_pick_or_placegcsl_preferences/guq4rxf0','locobot-learn/ravens_pick_or_placegcsl_preferences/2g3cdm4c'],
-        'BC':['locobot-learn/ravens_pick_or_placegcsl_preferences/773nhysm','locobot-learn/ravens_pick_or_placegcsl_preferences/2karmvcg','locobot-learn/ravens_pick_or_placegcsl_preferences/bj63wbex','locobot-learn/ravens_pick_or_placegcsl_preferences/mg2rj75c'],
-        'BC + Ours':['locobot-learn/ravens_pick_or_placegcsl_preferences/773nhysm','locobot-learn/ravens_pick_or_placegcsl_preferences/2karmvcg','locobot-learn/ravens_pick_or_placegcsl_preferences/bj63wbex','locobot-learn/ravens_pick_or_placegcsl_preferences/mg2rj75c'],
-    },
-    'kitchen':{ 
-        'Inverse models': ['locobot-learn/kitchenSeqgcsl_preferences/0oja1kgk','locobot-learn/kitchenSeqgcsl_preferences/hrqgvp9k','locobot-learn/kitchenSeqgcsl_preferences/wvix2h1o','locobot-learn/kitchenSeqgcsl_preferences/j5b9kjmn'],
-        'Oracle': ['locobot-learn/kitchenSeqgcsl_preferences/9g4xanhf','locobot-learn/kitchenSeqgcsl_preferences/f7lc22yj','locobot-learn/kitchenSeqgcsl_preferences/wysnrw02','locobot-learn/kitchenSeqgcsl_preferences/01l23j5u'],
-        'Ours': ['locobot-learn/kitchenSeqgcsl_preferences/cbmrcbxd','locobot-learn/kitchenSeqgcsl_preferences/54i2szv8','locobot-learn/kitchenSeqgcsl_preferences/qkmp1j34','locobot-learn/kitchenSeqgcsl_preferences/s64v24xb'],
-        'DDL': ['locobot-learn/kitchenSeqgcsl_preferences/1kr62web', 'locobot-learn/kitchenSeqgcsl_preferences/28uem0sc'],
-        'PPO (dense)':['locobot-learn/kitchenSeqgcsl_preferences/lo7yjrio','locobot-learn/kitchenSeqgcsl_preferences/ta22u7ts','locobot-learn/kitchenSeqgcsl_preferences/y7dgf7kc','locobot-learn/kitchenSeqgcsl_preferences/10fp2825'],
-        'PPO (sparse)':['locobot-learn/kitchenSeqgcsl_preferences/3n71xlqv','locobot-learn/kitchenSeqgcsl_preferences/18j65tu4','locobot-learn/kitchenSeqgcsl_preferences/3onew6ai','locobot-learn/kitchenSeqgcsl_preferences/kh7g5hxf'],
-        'Human Preferences': ['locobot-learn/kitchenSeqgcsl_preferences/1hm0k2qg','locobot-learn/kitchenSeqgcsl_preferences/1hvxmexj','locobot-learn/kitchenSeqgcsl_preferences/3flif3st','locobot-learn/kitchenSeqgcsl_preferences/2dlq4umx'], 
-        'BC':['locobot-learn/kitchenSeqgcsl_preferences/ileqzisy','locobot-learn/kitchenSeqgcsl_preferences/jhhsktk8','locobot-learn/kitchenSeqgcsl_preferences/udx02pbq','locobot-learn/kitchenSeqgcsl_preferences/gmt39mhk'],
-        'BC + Ours':['locobot-learn/kitchenSeqgcsl_preferences/ileqzisy','locobot-learn/kitchenSeqgcsl_preferences/jhhsktk8','locobot-learn/kitchenSeqgcsl_preferences/udx02pbq','locobot-learn/kitchenSeqgcsl_preferences/gmt39mhk'],
-    },
-    'pusher_walls':{ 
-        'Oracle': ['locobot-learn/pusher_hardgcsl_preferences/33xdekj4','locobot-learn/pusher_hardgcsl_preferences/1rzmvwx7', 'locobot-learn/pusher_hardgcsl_preferences/33xdekj4', 'locobot-learn/pusher_hardgcsl_preferences/55qgljkv'],
-        'Inverse models': ['locobot-learn/pusher_hardgcsl_preferences/23ojli2z', 'locobot-learn/pusher_hardgcsl_preferences/1pydiqsr', 'locobot-learn/pusher_hardgcsl_preferences/2w47tg7c', 'locobot-learn/pusher_hardgcsl_preferences/32ksqe2q'],
-        'Ours': ['locobot-learn/pusher_hardgcsl_preferences/rfgqkvnb', 'locobot-learn/pusher_hardgcsl_preferences/1tqpneoc', 'locobot-learn/pusher_hardgcsl_preferences/3j8otoxl', 'locobot-learn/pusher_hardgcsl_preferences/3cfk6e69'],
-        'DDL':['locobot-learn/pusher_hardgcsl_preferences/2hvf8n26', 'locobot-learn/pusher_hardgcsl_preferences/2vgo48q0', 'locobot-learn/pusher_hardgcsl_preferences/5sm4dxbk', 'locobot-learn/pusher_hardgcsl_preferences/3qljdbvw'],
-        'PPO (dense)': ['locobot-learn/pusher_hardgcsl_preferences/1rudeyr3','locobot-learn/pusher_hardgcsl_preferences/3s2csd9t'],
-        'PPO (sparse)':['locobot-learn/pusher_hardgcsl_preferences/1j7kfuze', 'locobot-learn/pusher_hardgcsl_preferences/jyqg84p6'],
-        'Human Preferences':['locobot-learn/pusher_hardgcsl_preferences/wzoym8xu', 'locobot-learn/pusher_hardgcsl_preferences/wv1kft7m',],
-        'BC':['locobot-learn/pusher_hardgcsl_preferences/p5vejh7p','locobot-learn/pusher_hardgcsl_preferences/28kg1171','locobot-learn/pusher_hardgcsl_preferences/7pho1myk','locobot-learn/pusher_hardgcsl_preferences/opj12gx1'],
-        #'BC':['locobot-learn/pusher_hardgcsl_preferences/314mfcgf','locobot-learn/pusher_hardgcsl_preferences/1ayweq4j','locobot-learn/pusher_hardgcsl_preferences/340z7bi5','locobot-learn/pusher_hardgcsl_preferences/2dz0kkx6'],
-        'BC + Ours':['locobot-learn/pusher_hardgcsl_preferences/p5vejh7p','locobot-learn/pusher_hardgcsl_preferences/28kg1171','locobot-learn/pusher_hardgcsl_preferences/7pho1myk','locobot-learn/pusher_hardgcsl_preferences/opj12gx1'],
-        #'BC + Ours':['locobot-learn/pusher_hardgcsl_preferences/314mfcgf','locobot-learn/pusher_hardgcsl_preferences/1ayweq4j','locobot-learn/pusher_hardgcsl_preferences/340z7bi5','locobot-learn/pusher_hardgcsl_preferences/2dz0kkx6'],
-    },
+
+
 
     # 'pointmass_rooms':{ 
     #     'BC':['locobot-learn/pointmass_roomsgcsl_preferences/y3pcrcfc'],#'locobot-learn/pointmass_roomsgcsl_preferences/3m4my8sp','locobot-learn/pointmass_roomsgcsl_preferences/2yz5vu1l','locobot-learn/pointmass_roomsgcsl_preferences/2m83rfwp'],
@@ -249,8 +345,23 @@ titles = {
     'freq_labels': "Ablations on frequency of annotations",
     'num_labels': "Ablations on the number of queries per batch",
     'noise': "Ablations on the injected noise on labels",
-    'drawing': "Drawing in the real world"
-}
+    'drawing': "Drawing in the real world",
+    'test': "Test",
+    'finetuning_comparison_block_stacking': "Block Stacking",
+    'finetuning_comparison_pusher': 'Pusher',
+    'human_experiment_rooms':'Four Rooms',
+    'human_experiment_complex_maze':'Complex Maze',
+    'human_experiment_pointmass_empty':'Empty Room',
+    'human_experiment_block_stacking':'Block Stacking',
+    'ppovshuge_analysis':'PPO vs HuGE Analysis',
+    'human_experiment_pusher':'Pusher',
+    'human_experiment_kitchen':"Kitchen",
+    'legend':"legend",
+
+  }
+
+
+
 # TODO: fix pusher BC
 if __name__ == '__main__':
     np.set_printoptions(precision=3, suppress=True)
@@ -276,21 +387,21 @@ if __name__ == '__main__':
     xlim = args.xlim
     ylim = args.ylim
 
-    if args.experiment == "pick_and_place":
+    if args.experiment == "pick_and_place" or args.experiment == "finetuning_comparison_block_stacking" or args.experiment == "human_experiment_block_stacking":
         ylim = 3.0
         yaxis= "Blocks Stacked"
-        xlim=89000
+        # xlim=89000
 
     if args.experiment == "bandu":
         ylim = 4.0
         yaxis= "Structure progress"
 
-    if args.experiment == "complex_maze":
-        xlim = 2000000
+    # if args.experiment == "complex_maze":
+    #     xlim = 2000000
 
     keys = [args.xaxis]
-    if args.experiment == "pointmass_rooms":
-        xlim = 500000
+    # if args.experiment == "pointmass_rooms" and args.xlim == -1:
+        # xlim = 500000
 
     if "kitchen" in args.experiment:
         data_key = "TrainingSuccess"
@@ -299,14 +410,15 @@ if __name__ == '__main__':
     else:
         data_key = 'Eval/success ratio'
 
-    if "human_experiment_pointmass" == args.experiment:
-        xlim = 150000
-    if "kitchen" in args.experiment:
-        xlim = 6000000
-    if "kitchen" in args.experiment and "human" in args.experiment:
-        xlim = 2500000
-    if "pusher_walls" == args.experiment:
-        xlim = 1000000 
+
+    # if "human_experiment_pointmass" == args.experiment:
+    #     xlim = 150000
+    # if "kitchen" in args.experiment:
+    #     xlim = 6000000
+    # if "kitchen" in args.experiment and "human" in args.experiment:
+    #     xlim = 2500000
+    # if "pusher_walls" == args.experiment:
+    #     xlim = 1000000 
 
     keys.append(data_key)
     api = wandb.Api()
@@ -337,6 +449,7 @@ if __name__ == '__main__':
         'DDL':'#B4FEE7',
 
         'PPO (dense)':'#0000FF',
+        'PPO':'#0000FF',
 
         'Ours (Incomplete)':'#990000',
         
@@ -345,6 +458,7 @@ if __name__ == '__main__':
         'PPO (sparse)':'#000C66',
 
         'LEXA-like':'#C197D2',
+        'Go-Explore+GCSL':'#C197D2',
         'BC':'#234F1E',
         'BC + Ours':'#90EE90',
         
@@ -380,6 +494,27 @@ if __name__ == '__main__':
         'second room':'#0D98BA',
         'first room':'#8487C3',
         'no stopping':'#EE3377',
+
+        'PEBBLE': '#000C66',
+        'SAC': '#964B00',
+        'BC+HP': "#808080" ,
+        'BC+PPO': "#0000FF", 
+
+
+        'Ours (finetuned)': '#EE3377',
+        'Ours (not-finetuned)': '#EE3377',
+        'Human Preferences (finetuned)': '#808080',
+        'Human Preferences (not-finetuned)': '#808080',
+        'PPO (finetuned)': '#0000FF', 
+        'PPO (not-finetuned)': '#0000FF', 
+        # '#C55FFC'
+
+        'Ours (human, 251 labels)': '#C55FFC',
+        'Human Preferences (human, 798 labels)': '#00563B',
+        'Ours (human, 1380 labels)': '#C55FFC',
+        'Human Preferences (human, 67 labels)':  '#00563B',
+        'Human Preferences (synthetic)': '#808080', 
+        'Ours (human, 733 labels)': '#C55FFC',
     }
 
     print(args.xaxis)
@@ -399,11 +534,12 @@ if __name__ == '__main__':
             if "crowdsource" in label:
                 N_to_pass = 100
 
-            if "pusher_walls" == args.experiment and (label == "Ours" or label == "Oracle"):
+            if "pusher_walls" == args.experiment and (label == "Oracle"):
                 N_to_pass = 400
 
-            if label == "DDL" or label == "Human Preferences":
+            if label == "DDL": 
                 keys_to_pass = [args.xaxis, 'Train/Success']
+
             if args.experiment == "bandu" and (label == "Oracle" or label == "BC + Ours"):
                 keys_to_pass = [args.xaxis, "TrainingSuccess"]
             elif "PPO" in label:
@@ -417,6 +553,27 @@ if __name__ == '__main__':
                 if "pusher" in args.experiment or "pick" in args.experiment:
                     keys_to_pass = [args.xaxis, "Train/Success"]
 
+
+            if "PPO (finetuned)" == label or "PPO (not-finetuned)" == label:
+                keys_to_pass = [args.xaxis, "Train/Success"]
+
+
+            if "PPO (dense)" == label and args.experiment == "pointmass_rooms":
+                keys_to_pass = [args.xaxis, "Train/Success"]
+
+            if "BC+PPO" == label or "BC+HP" == label or "Human Preference" in label:
+                keys_to_pass = [args.xaxis, "Train/Success"]
+
+            if args.experiment == "finetuning_comparison_block_stacking":
+                if label == "Human Preferences":
+                    keys_to_pass = [args.xaxis, 'Eval/success ratio']
+
+            if "SAC" in label:
+                keys_to_pass = [args.xaxis, "success"]
+
+            if "PEBBLE" in label:
+                keys_to_pass = [args.xaxis, "Train/Success rate"]
+
             elif label == "BC":
                 if args.experiment == "kitchen":
                     keys_to_pass = [args.xaxis, "TrainingSuccess"]
@@ -426,6 +583,10 @@ if __name__ == '__main__':
             if "crowdsource" in label:
                     keys_to_pass = [args.xaxis, "JointHinge", "JointSlider", "JointMicrowave"]
                  
+            if "ppovshuge_analysis" == args.experiment:
+                    keys_to_pass = ["_step", "Cosine similarity between last 10"]
+
+
 
 
             if "human_experiment_pusher" == args.experiment and label == "Ours (human)":
@@ -483,12 +644,16 @@ if __name__ == '__main__':
                     print(x,y)
 
             else:
+
                 print(keys_to_pass)
                 history = run.scan_history(keys=keys_to_pass)
                 y_val = []
                 x_val = []
+
                 for x in history:
                     x_val.append(x[keys_to_pass[0]])
+
+
                     if "crowdsource" in label:
                         joint_hinge = int(x['JointHinge'] > 0.2 )
                         joint_microwave = int(x['JointMicrowave'] < -0.1)
@@ -500,6 +665,15 @@ if __name__ == '__main__':
                     if label == "BC" and args.experiment == "kitchen":
                         break
                 
+                # if len(x_val) == 0:
+                #     print("Warning 0 values found", args.experiment, label)
+                if len(x_val) > 0:
+                    if  "PEBBLE" in label and x_val[0] == 800000 :
+                        if "complex_maze" in args.experiment:
+                            x_val = np.array(x_val) / 20
+                        if "kitchen" in args.experiment:
+                            x_val = np.array(x_val) / 10
+
                 if args.experiment == "bandu" and label == "Ours":
                     run_id = all_experiments['bandu_part2'][run_id_idx]
                     run = api.run(run_id)
@@ -529,13 +703,25 @@ if __name__ == '__main__':
                     idx_filter = x_val < 6000000
                 if label == "Oracle":
                     idx_filter = x_val < 5640000
-                if label == "BC + Ours":
-                    idx_filter = x_val < 3770000
+                # if label == "BC + Ours":
+                #     idx_filter = x_val < 3770000
 
                 if idx_filter is not None:
                     y_val = y_val[idx_filter]
                     x_val = x_val[idx_filter]
                     
+            if "finetuning_comparison_block_stacking" == args.experiment:
+                idx_filter = None
+
+                if label == "Ours (finetuned)":
+                    idx_filter = x_val < 143000
+                
+                if label == "PPO (not-finetuned)":
+                    x_val+=2500
+                if idx_filter is not None:
+                    y_val = y_val[idx_filter]
+                    x_val = x_val[idx_filter]
+
             if label == '15' and args.experiment == "freq_labels":
                 if args.xaxis == "num_labels_queried":
                     idx_filter = x_val < 2403
@@ -563,9 +749,9 @@ if __name__ == '__main__':
 
             if 'PPO' in label:
                 idx_filter = None
-                if 'pointmass' in args.experiment:
-                    idx_filter = x_val < 200000
-                elif "maze" in args.experiment:
+                # if 'pointmass' in args.experiment:
+                #     idx_filter = x_val < 200000
+                if "maze" in args.experiment:
                     idx_filter = x_val < 2000000
 
                 if idx_filter is not None:
@@ -604,6 +790,12 @@ if __name__ == '__main__':
         label_color = label
         if args.experiment == "num_labels":
             label_color = label + " num_labels"
+
+        dashed =  'BC' == label
+
+        if "BC+" in label or "(not-finetuned)" in label:
+            dashed = True
+
         color = colors[label_color]
         showlegend = args.show_legend
         name = label
@@ -612,7 +804,7 @@ if __name__ == '__main__':
                 x=newx,
                 y=dmean,
                 line=dict(color=color,
-                          dash= "dash" if 'BC' == label else 'solid'),
+                          dash= "dash" if dashed else 'solid'),
                 # line=dict(color=f'rgb({color[0]}, {color[1]}, {color[2]})',
                 #           dash='solid' if 'split' not in label else 'dot'),
                 mode='lines',

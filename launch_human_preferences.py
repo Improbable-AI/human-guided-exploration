@@ -352,6 +352,7 @@ label_from_last_k_trajectories=-1, gpu=0, entropy_coefficient= 0.01, num_envs=4,
 reward_model_epochs=400, reward_model_num_samples=1000, goal_threshold = 0.05, num_blocks=1, buffer_size=20000, use_oracle=False, 
 display_plots=False, max_path_length=50, network_layers='128,128', train_rewardmodel_freq=2, fourier=False, 
 use_wrong_oracle=False,n_steps=2048,num_demos=5,pretrain=False,
+distance_noise_std=0,
 fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_name="", no_training=False, continuous_action_space=True, maze_type=3):
     ptu.set_gpu(gpu)
     
@@ -456,6 +457,7 @@ fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_nam
         normalize_rewards=normalize_rewards,
         no_training=no_training,
         use_wrong_oracle=use_wrong_oracle,
+        distance_noise_std=distance_noise_std,
         device=ptu.CUDA_DEVICE,
         **algo_kwargs
     )
@@ -502,6 +504,7 @@ if __name__ == "__main__":
     parser.add_argument("--explore_episodes",type=int, default=10)
     parser.add_argument("--num_demos",type=int, default=5)
     parser.add_argument("--pretrain",action="store_true", default=False)
+    parser.add_argument("--distance_noise_std",type=float, default=0)
 
 
     args = parser.parse_args()
@@ -546,6 +549,7 @@ if __name__ == "__main__":
     'explore_episodes':args.explore_episodes,
     'pretrain':args.pretrain,
     'num_demos':args.num_demos,
+    'distance_noise_std':args.distance_noise_std,
     })
 
 
@@ -583,4 +587,5 @@ if __name__ == "__main__":
         explore_episodes=args.explore_episodes,
         pretrain=args.pretrain,
         num_demos=args.num_demos,
+        distance_noise_std=distance_noise_std,
         )

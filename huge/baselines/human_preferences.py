@@ -129,6 +129,7 @@ class HumanPreferences:
         no_training=False,
         use_wrong_oracle=False,
         human_input=False,
+        distance_noise_std=0,
         device="cuda",
     ):
         
@@ -159,6 +160,8 @@ class HumanPreferences:
         self.fake_env = fake_env
         self.max_path_length = max_path_length
         self.human_input = human_input
+
+        self.distance_noise_std = distance_noise_std
 
         self.generating_plot = False
 
@@ -764,8 +767,8 @@ class HumanPreferences:
         
     # TODO: generalise this
     def oracle(self, state1, state2, goal):
-        d1_dist = self.env_distance(state1, goal) #+ np.random.normal(scale=self.distance_noise_std) #self.env.shaped_distance(state1, goal) # np.linalg.norm(state1 - goal, axis=-1)
-        d2_dist = self.env_distance(state2, goal) #+ np.random.normal(scale=self.distance_noise_std) #self.env.shaped_distance(state2, goal) # np.linalg.norm(state2 - goal, axis=-1)
+        d1_dist = self.env_distance(state1, goal) + np.random.normal(scale=self.distance_noise_std) #+ np.random.normal(scale=self.distance_noise_std) #self.env.shaped_distance(state1, goal) # np.linalg.norm(state1 - goal, axis=-1)
+        d2_dist = self.env_distance(state2, goal) + np.random.normal(scale=self.distance_noise_std) #+ np.random.normal(scale=self.distance_noise_std) #self.env.shaped_distance(state2, goal) # np.linalg.norm(state2 - goal, axis=-1)
 
         if d1_dist < d2_dist:
             return 0
