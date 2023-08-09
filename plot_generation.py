@@ -211,8 +211,8 @@ all_experiments = {
         'PPO (not-finetuned)': ['locobot-learn/pusher_hardgcsl_preferences/1rudeyr3','locobot-learn/pusher_hardgcsl_preferences/3s2csd9t'],
     },
     'human_experiment_rooms':{ 
-        'Ours (human, 251 labels)': ['locobot-learn/pointmass_roomshuge_human_interface/48y3v3wo'],
         'Human Preferences (human, 798 labels)': ['locobot-learn/pointmass_roomshuge_human_interface/0zb58lsu'],
+        'Ours (human, 251 labels)': ['locobot-learn/pointmass_roomshuge_human_interface/48y3v3wo'],
         'Human Preferences':['locobot-learn/pointmass_roomshuge_preferences/17gw9ky6', 'locobot-learn/pointmass_roomshuge_preferences/2ghhhqt5'],
         'Ours (synthetic)': ['locobot-learn/pointmass_roomsgcsl_preferences/345hvc49', 'locobot-learn/pointmass_roomsgcsl_preferences/2y72w21i', 'locobot-learn/pointmass_roomsgcsl_preferences/129t3bny', 'locobot-learn/pointmass_roomsgcsl_preferences/33i8coln'],
     },
@@ -226,13 +226,13 @@ all_experiments = {
         'Human Preferences (synthetic)': ['locobot-learn/pointmass_emptyhuge_preferences/3o0wxzx7'], #TODO
         # 'Ours (synthetic)': [], #TODO
     },
-    'robustness_to_noise':{ 
-        'Human Preferences': [], #TODO
-        'Ours': [], #TODO
-        'PEBBLE': [], #TODO
-        'Human Preferences (noisy)': [], #TODO
-        'Ours (noisy)': [], #TODO
-        'PEBBLE (noisy)': [], #TODO
+    'robustness_to_noise':{ # TODO: think about plotting distances
+        'Human Preferences': ['locobot-learn/pointmass_roomshuge_preferences/17gw9ky6', 'locobot-learn/pointmass_roomshuge_preferences/2ghhhqt5'], #TODO
+        'Ours': ['locobot-learn/pointmass_roomsgcsl_preferences/345hvc49', 'locobot-learn/pointmass_roomsgcsl_preferences/2y72w21i', 'locobot-learn/pointmass_roomsgcsl_preferences/129t3bny', 'locobot-learn/pointmass_roomsgcsl_preferences/33i8coln'], #TODO
+        # 'PEBBLE': [], #TODO
+        'Human Preferences (noisy)': ['locobot-learn/pointmass_rooms_huge/z2mjxiq5'], #TODO
+        'Ours (noisy)': ['locobot-learn/pointmass_roomsgcsl_preferences/2pabnt30', 'locobot-learn/pointmass_roomsgcsl_preferences/3978utuq', 'locobot-learn/pointmass_roomsgcsl_preferences/37n3n4j0', 'locobot-learn/pointmass_roomsgcsl_preferences/1qjhjzo3'], #TODO
+        # 'PEBBLE (noisy)': [], #TODO
     },
     'human_experiment_block_stacking':{ 
         'Ours (human, 733 labels)': ['locobot-learn/block_stackinghuge_human_interface/6oqmay9z'],
@@ -357,6 +357,7 @@ titles = {
     'human_experiment_pusher':'Pusher',
     'human_experiment_kitchen':"Kitchen",
     'legend':"legend",
+    "robustness_to_noise":"Comparison with noisy feedback"
 
   }
 
@@ -501,6 +502,8 @@ if __name__ == '__main__':
         'BC+PPO': "#0000FF", 
 
 
+        'Ours (noisy)': '#EE3377',
+        'Human Preferences (noisy)': '#808080',
         'Ours (finetuned)': '#EE3377',
         'Ours (not-finetuned)': '#EE3377',
         'Human Preferences (finetuned)': '#808080',
@@ -587,6 +590,8 @@ if __name__ == '__main__':
                     keys_to_pass = ["_step", "Cosine similarity between last 10"]
 
 
+            if "human_experiment_rooms" == args.experiment and "Human Preferences (human, 798 labels)" ==label:
+                    keys_to_pass = [args.xaxis, "Eval/success ratio"]
 
 
             if "human_experiment_pusher" == args.experiment and label == "Ours (human)":
@@ -625,7 +630,6 @@ if __name__ == '__main__':
                 y_val = np.convolve(y_val, window, mode='same') / np.convolve(z, window, 'same')
 
 
-
             elif "human_experiment_pointmass" == args.experiment and label == "Human":
                 print("here 2")
                 x_val = []
@@ -644,7 +648,6 @@ if __name__ == '__main__':
                     print(x,y)
 
             else:
-
                 print(keys_to_pass)
                 history = run.scan_history(keys=keys_to_pass)
                 y_val = []
@@ -674,6 +677,9 @@ if __name__ == '__main__':
                         if "kitchen" in args.experiment:
                             x_val = np.array(x_val) / 10
 
+                if "human_experiment_rooms" == args.experiment and "Human Preferences (human, 798 labels)" ==label:
+                    x_val = np.array(x_val)*20
+                    
                 if args.experiment == "bandu" and label == "Ours":
                     run_id = all_experiments['bandu_part2'][run_id_idx]
                     run = api.run(run_id)
@@ -793,7 +799,7 @@ if __name__ == '__main__':
 
         dashed =  'BC' == label
 
-        if "BC+" in label or "(not-finetuned)" in label:
+        if "BC+" in label or "(not-finetuned)" in label or "noisy" in label:
             dashed = True
 
         color = colors[label_color]
