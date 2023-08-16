@@ -253,6 +253,10 @@ def experiment(variant, env_name, task_config, seed=0, num_blocks=1, random_goal
 
     print("network layers", variants.get_network_layers(env_params))
 
+    import IPython
+    IPython.embed()
+
+
     qf1 = ConcatMlp(
         input_size=obs_dim + action_dim,
         output_size=1,

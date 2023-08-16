@@ -18,35 +18,38 @@ from huge.envs.sawyer_push import SawyerPushGoalEnv
 from huge.envs.sawyer_push_hard import SawyerHardPushGoalEnv
 from huge.envs.kitchen_env_sequential import KitchenSequentialGoalEnv
 from huge.envs.simple_example import SimpleExample
+from huge.envs.ant_maze import AntMazeGoalEnv
 
-def create_env(env_name, task_config="slide_cabinet,microwave", num_blocks=1, random_goal=False, maze_type=0,continuous_action_space=False, goal_threshold=-1, deterministic_rollout=False):
+def create_env(env_name, task_config="slide_cabinet,microwave", num_blocks=1, random_goal=False, maze_type=0,continuous_action_space=False, goal_threshold=-1, deterministic_rollout=False, max_path_length=50):
     """Helper function."""
     if env_name == 'pusher':
-        return SawyerPushGoalEnv()
+        return SawyerPushGoalEnv(max_path_length=max_path_length)
     elif env_name == "block_stacking" or env_name == "bandu":
-        return RavensGoalEnvPickOrPlace(num_blocks=num_blocks, random_goal=random_goal, continuous_action_space=continuous_action_space, goal_threshold=goal_threshold)
+        return RavensGoalEnvPickOrPlace(max_path_length=max_path_length,num_blocks=num_blocks, random_goal=random_goal, continuous_action_space=continuous_action_space, goal_threshold=goal_threshold)
     elif env_name == "complex_maze":
-        return ComplexMazeGoalEnv(maze_type=maze_type)    
+        return ComplexMazeGoalEnv(max_path_length=max_path_length,maze_type=maze_type)    
     elif env_name == "kitchenSeq":
-        return KitchenSequentialGoalEnv(task_config=task_config)
+        return KitchenSequentialGoalEnv(max_path_length=max_path_length,task_config=task_config, continuous_action_space=continuous_action_space)
     elif env_name == 'pointmass_empty':
-        return PointmassGoalEnv(room_type='empty')
+        return PointmassGoalEnv(max_path_length=max_path_length,room_type='empty')
     elif env_name == 'pointmass_rooms':
         print("Point mass rooms")
-        return PointmassGoalEnv(room_type='rooms')
+        return PointmassGoalEnv(max_path_length=max_path_length,room_type='rooms')
     elif env_name == 'pointmass_maze':
         print("Point mass maze")
-        return PointmassGoalEnv(room_type='maze')
+        return PointmassGoalEnv(max_path_length=max_path_length,room_type='maze')
     elif env_name == 'pointmass_rooms_large':
         print("Point mass rooms large")
-        return PointmassGoalEnv(room_type='rooms')
+        return PointmassGoalEnv(max_path_length=max_path_length,room_type='rooms')
     elif env_name == "env_example":
-        return SimpleExample()
+        return SimpleExample(max_path_length=max_path_length,)
+    elif env_name == "ant_maze":
+        return AntMazeGoalEnv()
     elif env_name == 'pusher_hard':
         if deterministic_rollout:
-            return SawyerHardPushGoalEnv(fixed_start=True, fixed_goal=True)
+            return SawyerHardPushGoalEnv(max_path_length=max_path_length,fixed_start=True, fixed_goal=True)
         else:
-            return SawyerHardPushGoalEnv(fixed_start=True , fixed_goal=not random_goal)
+            return SawyerHardPushGoalEnv(max_path_length=max_path_length,fixed_start=True , fixed_goal=not random_goal)
     else:
         raise AssertionError("Environment not defined")
 
@@ -54,35 +57,46 @@ def get_env_params(env_name, images=False):
     base_params = dict(
         eval_freq=10000,
         eval_episodes=50,
-        max_trajectory_length=50,
         max_timesteps=1e6,
     )
 
     if env_name == 'pusher':
         env_specific_params = dict(
             goal_threshold=0.05,
+            max_trajectory_length=120,
+
         )
     elif env_name == 'pusher_hard':
         env_specific_params = dict(
             goal_threshold=0.05,
+            max_trajectory_length=120,
+
         )
     elif env_name == 'complex_maze':
         env_specific_params = dict(
             goal_threshold=0.2,
+            max_trajectory_length=300,
+
         )
     elif 'block_stacking' in env_name or "bandu" in env_name:
         env_specific_params = dict(
             goal_threshold=0.05,
+            max_trajectory_length=12,
+
         )
     elif 'pointmass' in env_name:
         env_specific_params = dict(
             goal_threshold=0.08,
             max_timesteps=2e5,
             eval_freq=2000,
+            max_trajectory_length=100,
+
         )
     elif env_name == 'kitchenSeq':
         env_specific_params = dict(
             goal_threshold=0.05,
+            max_trajectory_length=200,
+
         )
     else:
         env_specific_params = dict(

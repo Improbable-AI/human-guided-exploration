@@ -810,7 +810,7 @@ class SawyerPushAndReachXYEnv(MujocoEnv, Serializable, MultitaskEnv):
         return data
 
 class SawyerHardPushGoalEnv(GymGoalEnvWrapper):
-    def __init__(self, fixed_start=True, fixed_goal=False, images=False, image_kwargs=None):
+    def __init__(self, fixed_start=True, fixed_goal=False, images=False, image_kwargs=None, max_path_length=50):
         config_key = 'all'
         if fixed_start:
             if fixed_goal:
@@ -828,7 +828,7 @@ class SawyerHardPushGoalEnv(GymGoalEnvWrapper):
             env = ImageEnv(env, **config)
 
         super(SawyerHardPushGoalEnv, self).__init__(
-            env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal'
+            env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal',max_path_length=max_path_length
         )
     """
     def step(self, action):

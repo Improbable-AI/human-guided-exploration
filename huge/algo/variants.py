@@ -97,6 +97,14 @@ def visual_policy(env, env_params):
                 freeze_embeddings=False,
                 add_extra_conditioning=False,
             )
+def get_params_pebble(env, env_params, discretize=True):
+    if discretize and not env_params['continuous_action_space']:
+        env = discretize_environment(env, env_params)
+    else:
+        env = continuous_environment(env, env_params)
+
+  
+    return env
 
 def get_params(env, env_params, discretize=True):
     if discretize and not env_params['continuous_action_space']:

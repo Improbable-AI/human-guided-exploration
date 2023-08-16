@@ -533,6 +533,7 @@ class HUGE:
             return None
 
         if self.human_input and not self.training_goal_selector_now and self.answered_questions % self.train_goal_selector_freq == 0:
+            print("about to train goal selector", self.train_goal_selector_freq,self.answered_questions )
             self.training_goal_selector_now = True
             self.collect_and_train_goal_selector_human()
             self.training_goal_selector_now = False
@@ -603,7 +604,8 @@ class HUGE:
     def prob(self, g_this, g_other):
         return torch.exp(g_this)/(torch.exp(g_this)+torch.exp(g_other))
 
-    def train_goal_selector(self,buffer=None, epochs=None):
+    def train_goal_selector(self,buffer=None, epochs=None, depth=0):
+
         if buffer is None:
             buffer = self.goal_selector_buffer
         if epochs is None:
@@ -665,7 +667,9 @@ class HUGE:
             self.goal_selector = copy.deepcopy(self.goal_selector_backup)
             self.reward_optimizer = torch.optim.Adam(list(self.goal_selector.parameters()))
             self.goal_selector.to(self.device)
-            return self.train_goal_selector(buffer)
+            if depth > 0:
+                return 0,0
+            return self.train_goal_selector(buffer, depth=1)
             
         self.goal_selector.eval()
         eval_loss = 0.0
@@ -1318,7 +1322,7 @@ class HUGE:
         return distance_to_slide, distance_to_hinge, distance_to_microwave, distance_joint_slide, distance_joint_hinge, distance_microwave
 
     def plot_trajectories(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):
-        if "pointmass" in self.env_name or "pusher" in self.env_name or self.env_name == "complex_maze" or "bandu" in self.env_name or "block" in self.env_name:
+        if "pointmass" in self.env_name or "pusher" in self.env_name or self.env_name == "complex_maze" or "bandu" in self.env_name or "block" in self.env_name or "ant" in self.env_name:
             return self.env.plot_trajectories(np.array(traj_accumulated_states.copy()), np.array(traj_accumulated_goal_states.copy()), extract, f"{self.env_name}/{filename}")
 
     def display_collected_labels(self, state_1, state_2, goals, is_oracle=False):

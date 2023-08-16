@@ -52,8 +52,8 @@ common:
   pretrain: False
   num_demos: 0
   desired_goal_sampling_freq: 0
-  img_width: 64
-  img_height: 64
+  img_width: 256
+  img_height: 256
   human_input: False
   max_timesteps: 1000000
   explore_length: 20
@@ -64,6 +64,8 @@ common:
   start_frontier: 30
   repeat_previous_action_prob: 0
   select_goal_from_last_k_trajectories: 20
+  pretrain_policy: True
+  pretrain_goal_selector: True
 
 
 pointmass_rooms:
@@ -108,6 +110,21 @@ complex_maze:
   repeat_previous_action_prob: 0.9
   continuous_action_space: False
 
+ant_maze:
+  explore_length: 20
+  max_timesteps: 20000000
+  max_path_length: 2000
+  stopped_thresh: 0.05
+  start_frontier: 2000
+  epsilon_greedy_rollout: 0.25
+  frontier_expansion_rate: 5
+  frontier_expansion_freq: 100
+  select_goal_from_last_k_trajectories: 10
+  label_from_last_k_steps: 2000
+  label_from_last_k_trajectories: 20
+  repeat_previous_action_prob: 0
+  continuous_action_space: True
+
 block_stacking:
   epsilon_greedy_rollout: 1
   num_blocks: 3
@@ -124,12 +141,9 @@ block_stacking:
   start_frontier: 4
   select_goal_from_last_k_trajectories: 20
   desired_goal_sampling_freq: 0.1
-  train_goal_selector_freq: 1
+  train_goal_selector_freq: 20
   continuous_action_space: True
   max_timesteps: 2500000
-  pretrain_policy: True
-  pretrain_goal_selector: True
-  num_demos: 5
   demo_epochs: 20000
   demo_goal_selector_epochs: 10000
 
@@ -152,9 +166,6 @@ bandu:
   train_goal_selector_freq: 1
   continuous_action_space: True
   max_timesteps: 2500000
-  pretrain_policy: True
-  pretrain_goal_selector: True
-  num_demos: 5
   demo_epochs: 20000
   demo_goal_selector_epochs: 10000
 

@@ -72,12 +72,13 @@ BASE_TASK_NAMES = [   'bottom_burner',
 
 
 class KitchenIntermediateEnv(BenchEnv):
-  def __init__(self, task_config=['slide_cabinet','microwave'], action_repeat=1, use_goal_idx=False, log_per_goal=False,  control_mode='end_effector', width=64):
+  def __init__(self, task_config=['slide_cabinet','microwave'], action_repeat=1, use_goal_idx=False, log_per_goal=False,  control_mode='end_effector', width=64, continuous_action_space=False):
 
     super().__init__(action_repeat, width)
     self.use_goal_idx = use_goal_idx
     self.log_per_goal = log_per_goal
     self.task_config = task_config
+    self.continuous_action_space = continuous_action_space
 
     with self.LOCK:
       self._env =  KitchenMicrowaveKettleLightTopLeftBurnerV0(frame_skip=16, control_mode = control_mode, imwidth=64, imheight=64)
@@ -93,6 +94,7 @@ class KitchenIntermediateEnv(BenchEnv):
       self._goal_space = spaces.Box(np.concatenate([obs_lower, obs_lower_pose]),np.concatenate([obs_upper, obs_upper_pose]), dtype=np.float32)
       print("observation space in kitchen", self._observation_space)
              
+         
       self.base_movement_actions = [[1,0,0,0,0,0,0],
                                     [-1,0,0,0,0,0,0],
                                     [0,1,0,0,0,0,0],
@@ -213,14 +215,17 @@ class KitchenIntermediateEnv(BenchEnv):
 
   def step(self, action):
     total_reward = 0.0
-    if action < 6:
-       cont_action = self.base_movement_actions[action]
-    elif action < 12 :
-       cont_action = self.base_rotation_actions[action - 6]
-    elif action < 14:
-       cont_action = self.gripper_actions[action - 12]
+    if self.continuous_action_space:
+       cont_action = action
     else:
-       cont_action = np.zeros(7)
+      if action < 6:
+        cont_action = self.base_movement_actions[action]
+      elif action < 12 :
+        cont_action = self.base_rotation_actions[action - 6]
+      elif action < 14:
+        cont_action = self.gripper_actions[action - 12]
+      else:
+        cont_action = np.zeros(7)
 
     for step in range(self._action_repeat):
       state, reward, done, info = self._env.step(cont_action)
@@ -242,20 +247,25 @@ class KitchenIntermediateEnv(BenchEnv):
     return self._get_obs()
 
 class KitchenSequentialGoalEnv(GymGoalEnvWrapper):
-    def __init__(self, task_config='slide_cabinet,microwave', fixed_start=True, fixed_goal=False, images=False, image_kwargs=None):
+    def __init__(self, task_config='slide_cabinet,microwave', fixed_start=True, max_path_length=50, fixed_goal=False, images=False, image_kwargs=None, continuous_action_space=False):
         self.task_config = task_config.split(",")
 
-        env = KitchenIntermediateEnv(task_config=self.task_config)
+        env = KitchenIntermediateEnv(task_config=self.task_config, continuous_action_space=continuous_action_space)
        
 
         super(KitchenSequentialGoalEnv, self).__init__(
-            env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal'
+            env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal',max_path_length=max_path_length
         )
 
         self.action_low = np.array([0.25, -0.5])
         self.action_high = np.array([0.75, 0.5])
 
-        self.action_space = Discrete(15)
+        self.continuous_action_space = continuous_action_space
+
+        if self.continuous_action_space:
+           self.action_space = Box(low=-np.ones(7), high=np.ones(7),dtype=np.float32 )
+        else:
+          self.action_space = Discrete(15)
 
 
 
@@ -296,6 +306,9 @@ class KitchenSequentialGoalEnv(GymGoalEnvWrapper):
 
         return self.compute_shaped_distance(achieved_state, None)
   
+    def plot_trajectories(self,obs=None, goal=None, filename=""):
+       return
+    
     def distance_to_goal(self, goal_name, achieved_state):
         goal_idxs = OBJECT_GOAL_IDXS[goal_name][0]
         achieved_joint = achieved_state[goal_idxs]

@@ -2,6 +2,7 @@ from telnetlib import IP
 from dependencies.ravens.ravens.environments.environment import EnvironmentNoRotationsWithHeightmap
 from dependencies.ravens.ravens.tasks.align_box_corner import AlignBoxCorner
 from dependencies.ravens.ravens.tasks.stack_blocks import StackBlocks
+from matplotlib.patches import Circle
 
 from lexa_benchmark.envs.kitchen import KitchenEnv
 from collections import OrderedDict
@@ -400,7 +401,6 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
             
             if np.linalg.norm(obj_pos3 - ee_pos) > 0.05:
               return np.linalg.norm(obj_pos3 - ee_pos) + bonus*2
-
             return np.linalg.norm(obj_pos3 - goal_pos) + bonus
             
           if np.linalg.norm(obj_pos2 - ee_pos) > 0.05:
@@ -413,7 +413,6 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
            return np.linalg.norm(obj_pos1 - ee_pos) + bonus*6
 
         return np.linalg.norm(obj_pos1- goal_pos) + bonus*5
-    
 
         # ### Old
         # for i in range(self.num_blocks):
@@ -515,11 +514,6 @@ class RavensGoalEnvPickOrPlace(GymGoalEnvWrapper):
         image = image.reshape(plt.gcf().canvas.get_width_height()[::-1] + (3,))
 
         return image
-    
-
-
-    
-
 
 
     def get_diagnostics(self, trajectories, desired_goal_states):

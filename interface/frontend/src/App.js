@@ -126,7 +126,8 @@ function App() {
     
   }
 
-  const base = "http://localhost:8000" 
+  const base = "http://improbable013.csail.mit.edu:8000" 
+
 
   const composeImageUrl = () => {
     const questionId = sessionStorage.getItem("questionid")

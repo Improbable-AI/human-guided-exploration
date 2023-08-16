@@ -10,7 +10,7 @@ class GymGoalEnvWrapper(goal_env.GoalEnv):
 
     """
     
-    def __init__(self, base_env, observation_key='observation', goal_key='achieved_goal', state_goal_key='achieved_goal', use_internal_rewards=False):
+    def __init__(self, base_env, observation_key='observation', goal_key='achieved_goal', state_goal_key='achieved_goal', use_internal_rewards=False, max_path_length=50):
         super(GymGoalEnvWrapper, self).__init__()
         self.base_env = base_env
 
@@ -43,6 +43,9 @@ class GymGoalEnvWrapper(goal_env.GoalEnv):
         self.goal_dims = goal_low.shape[0]
         self.sgoal_dims = sgoal_low.shape[0]
 
+
+        self.episode_length = 0
+        self.max_path_length = max_path_length
         self.use_internal_rewards = use_internal_rewards
 
     def _base_obs_to_state(self, base_obs):
@@ -82,9 +85,20 @@ class GymGoalEnvWrapper(goal_env.GoalEnv):
                 done
                 infos
         """
+
         ns, reward, done, infos = self.base_env.step(a)
+
         infos['observation'] = ns
         ns = self._base_obs_to_state(ns)
+        self.episode_length+=1
+
+        if self.episode_length >= self.max_path_length:
+            print(self.max_path_length)
+            done = 1.0
+            self.episode_length = 0
+        else:
+            done = 0.0
+
         return ns, reward, done, infos
 
     def observation(self, state):

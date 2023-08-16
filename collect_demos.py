@@ -30,6 +30,7 @@ def run(model_name, run_path,
         goal_selector_buffer_size=50000,
         gpu=0,
         noise=0,
+        save_all=False,
         goal_selector_name='', **extra_params):
 
     import gym
@@ -82,6 +83,8 @@ def run(model_name, run_path,
     env_params['continuous_action_space'] = continuous_action_space
     env, policy, goal_selector, classifier_model, replay_buffer, goal_selector_buffer, huge_kwargs = variants.get_params(env, env_params)
 
+    print("run path", run_path)
+    print("model_name", model_name)
     expert_policy = wandb.restore(f"checkpoint/{model_name}.h5", run_path=run_path)
     policy.load_state_dict(torch.load(expert_policy.name, map_location=f"cuda:{gpu}"))
     policy = policy.to(f"cuda:{gpu}")
@@ -89,15 +92,15 @@ def run(model_name, run_path,
 
     os.makedirs(f"demos/{env_name}", exist_ok=True)
     
-    collect_demos(env, policy, num_demos, env_name, max_path_length, noise)
+    collect_demos(env, policy, num_demos, env_name, max_path_length, noise, save_all)
 
 def env_distance(env, state, goal):
         obs = env.observation(state)
         
         if isinstance(env.wrapped_env, PointmassGoalEnv):
-            return env.base_env.room.get_shaped_distance(obs, goal)
+            return env.base_env.room.compute_shaped_distance(obs, goal)
         else:
-            return env.get_shaped_distance(obs, goal)
+            return env.compute_shaped_distance(obs, goal)
 def create_video(images, video_filename):
         images = np.array(images).astype(np.uint8)
 
@@ -105,7 +108,7 @@ def create_video(images, video_filename):
         
         wandb.log({"demos_video_trajectories":wandb.Video(images, fps=10)})
 
-def collect_demos(env, policy, num_demos, env_name, max_path_length, noise):
+def collect_demos(env, policy, num_demos, env_name, max_path_length, noise, save_all=False):
     policy.eval()
     i = 0
     while i < num_demos:
@@ -123,7 +126,16 @@ def collect_demos(env, policy, num_demos, env_name, max_path_length, noise):
             horizon = np.arange(max_path_length) >= (max_path_length - 1 - t) # Temperature encoding of horizon
             action = policy.act_vectorized(observation[None], goal[None], horizon=horizon[None], greedy=False, noise=noise)[0]
             if "block_stacking" in env_name or "bandu" in env_name:
-                action = action + np.random.normal(0, noise)
+                if np.random.random() < noise:
+                    action_low = np.array([0.25, -0.5])
+                    action_high = np.array([0.75, 0.5])
+
+
+                    action_space_mean = (action_low + action_high)/2
+                    action_space_range = (action_high - action_low)/2
+                    action = np.random.normal(0, 1, 2)
+                    action = action*action_space_range+action_space_mean
+
             elif np.random.random() < noise:
                 action = np.random.randint(env.action_space.n)
                 
@@ -136,14 +148,17 @@ def collect_demos(env, policy, num_demos, env_name, max_path_length, noise):
         if "block_stacking" in env_name or "bandu" in env_name:
             success = env.compute_success(env.observation(states[-1]), goal) 
             print("pre success", success)
-            success = success == 4
+            if "block_stacking" in env_name:
+                success = success == 3
+            else:
+                success = success == 4
         else:
             success = env.compute_success(env.observation(states[-1]), goal)
-
-        if success:
-            final_dist_commanded = env_distance(env, states[-1], goal)
-            create_video(video, f"{env_name}_{final_dist_commanded}")
-            print("Final distance 1", final_dist_commanded)
+        final_dist_commanded = env_distance(env, states[-1], goal)
+        create_video(video, f"{env_name}_{final_dist_commanded}")
+        print("Final distance 1", final_dist_commanded)
+        if success or save_all:
+  
             # put actions states into npy file
             actions = np.array(actions)
             states = np.array(states)
@@ -166,6 +181,7 @@ if __name__ == "__main__":
     parser.add_argument("--model_name", type=str, default='best_model_02_04_2023_09:36:41')
     parser.add_argument("--noise", type=float, default=0)
     parser.add_argument("--num_blocks", type=int, default=None)
+    parser.add_argument("--save_all", action="store_true", default=False)
 
     args = parser.parse_args()
 
