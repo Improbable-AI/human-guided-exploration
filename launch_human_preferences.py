@@ -37,7 +37,8 @@ from huge.baselines.ppo_new import PPO
 from stable_baselines3.common.monitor import Monitor
 from wandb.integration.sb3 import WandbCallback
 from stable_baselines3.common.callbacks import BaseCallback
-
+from stable_baselines3.common.evaluation import evaluate_policy
+from torch.utils.data.dataset import Dataset, random_split
 class SubProcVecEnvCustom(SubprocVecEnv):
     def __init__(self, env_fns, start_method=None):
         super().__init__(env_fns, start_method)
@@ -138,7 +139,7 @@ class UnWrapper(gym.Env):
         return self._env.observation_space
 
     def compute_shaped_distance(self, state, goal):
-        if self.env_name == "pointmass_rooms" or self.env_name=="kitchenSeq":
+        if "pointmass" in self.env_name or self.env_name=="kitchenSeq":
             return self._env.compute_shaped_distance(np.array(state), np.array(goal))[0]
 
         return self._env.compute_shaped_distance(np.array(state), np.array(goal))
@@ -235,12 +236,123 @@ def make_env(env_name, env_params, goal, reward_model=None, dense_reward=False, 
 
     return final_env
 
+import torch.nn as nn
+import torch.optim as optim
+from torch.optim.lr_scheduler import StepLR
+
+class ExpertDataSet(Dataset):
+    def __init__(self, expert_observations_traj, expert_actions_traj):
+        self.observations = []
+        self.actions = []
+        for i in range(len(expert_actions_traj)):
+            for obs,act in zip(expert_observations_traj[i], expert_actions_traj[i]):
+                self.observations.append(obs)
+                self.actions.append(act)
+
+        self.observations = np.array(self.observations)
+        self.actions = np.array(self.actions)
+
+    def __getitem__(self, index):
+        return (self.observations[index], self.actions[index])
+
+    def __len__(self):
+        return len(self.observations)
+    
+def pretrain_agent(
+    student,
+    env,
+    train_expert_dataset,
+    batch_size=64,
+    epochs=1000,
+    scheduler_gamma=0.7,
+    learning_rate=1.0,
+    log_interval=100,
+    no_cuda=True,
+    seed=1,
+    test_batch_size=64,
+):
+    torch.manual_seed(seed)
+    device = torch.device("cuda:0")
+    kwargs = {"num_workers": 1, "pin_memory": True}
+
+    if isinstance(env.action_space, gym.spaces.Box):
+        criterion = nn.MSELoss()
+    else:
+        criterion = nn.CrossEntropyLoss()
+
+    # Extract initial policy
+    model = student.policy.to(device)
+
+    def train(model, device, train_loader, optimizer):
+        model.train()
+
+        for batch_idx, (data, target) in enumerate(train_loader):
+            data, target = data.to(device), target.to(device)
+            optimizer.zero_grad()
+
+            if isinstance(env.action_space, gym.spaces.Box):
+                # A2C/PPO policy outputs actions, values, log_prob
+                # SAC/TD3 policy outputs actions only
+
+                action, _, _ = model(data)
+
+                action_prediction = action.double()
+            else:
+                # Retrieve the logits for A2C/PPO when using discrete actions
+                dist = model.get_distribution(data)
+                action_prediction = dist.distribution.logits
+                target = target.long()
+
+            loss = criterion(action_prediction, target)
+            loss.backward()
+            optimizer.step()
+            if batch_idx % log_interval == 0:
+                print(
+                    "Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}".format(
+                        epoch,
+                        batch_idx * len(data),
+                        len(train_loader.dataset),
+                        100.0 * batch_idx / len(train_loader),
+                        loss.item(),
+                    )
+                )
+
+    # Here, we use PyTorch `DataLoader` to our load previously created `ExpertDataset` for training
+    # and testing
+    train_loader = torch.utils.data.DataLoader(
+        dataset=train_expert_dataset, batch_size=batch_size, shuffle=True, **kwargs
+    )
+
+    # Define an Optimizer and a learning rate schedule.
+    optimizer = optim.Adadelta(model.parameters(), lr=learning_rate)
+    scheduler = StepLR(optimizer, step_size=1, gamma=scheduler_gamma)
+
+    # Now we are finally ready to train the policy model.
+    for epoch in range(1, epochs + 1):
+        train(model, device, train_loader, optimizer)
+        scheduler.step()
+
+    # Implant the trained policy network back into the RL student agent
+    student.policy = model
+
+def transform_actions(actions, fake_env):
+    trans_actions = []
+    for action in actions:
+        base_actions = fake_env.base_env.base_actions
+        dist = np.linalg.norm(base_actions - action,axis=1)  
+        trans_actions.append(dist.argmin())
+
+    return np.array(trans_actions)
+
+
+
 
 def experiment(wandb_run, env_name, task_config, label_from_last_k_steps=-1,normalize_rewards=False,reward_layers="400,600,600,300", 
 label_from_last_k_trajectories=-1, gpu=0, entropy_coefficient= 0.01, num_envs=4, num_steps_per_policy_step=1000, explore_episodes=10, 
 reward_model_epochs=400, reward_model_num_samples=1000, goal_threshold = 0.05, num_blocks=1, buffer_size=20000, use_oracle=False, 
 display_plots=False, max_path_length=50, network_layers='128,128', train_rewardmodel_freq=2, fourier=False, 
-use_wrong_oracle=False,n_steps=2048,
+use_wrong_oracle=False,n_steps=2048,num_demos=5,pretrain=False,
+distance_noise_std=0,
 fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_name="", no_training=False, continuous_action_space=True, maze_type=3):
     ptu.set_gpu(gpu)
     
@@ -290,6 +402,23 @@ fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_nam
 
     model = PPO("MlpPolicy", env, verbose=2, n_steps=n_steps, tensorboard_log=f'runs/{wandb_run.id}', ent_coef=entropy_coefficient, device=ptu.CUDA_DEVICE, policy_kwargs=policy_kwargs)
 
+    if pretrain:
+        all_actions = []
+        all_states = []
+        for i in range(num_demos):
+            actions = np.load(f"demos/{env_name}/demo_{i}_actions.npy")
+            states = fake_env.observation(np.load(f"demos/{env_name}/demo_{i}_states.npy"))
+
+            if env_name == "block_stacking":
+                actions = transform_actions(actions, fake_env)
+            all_actions.append(actions)
+            all_states.append(states)
+        train_expert_dataset = ExpertDataSet(all_states, all_actions) 
+        pretrain_agent(model, env, train_expert_dataset, epochs=100)
+        mean_reward, std_reward = evaluate_policy(model, env, n_eval_episodes=10)
+
+        print(f"** Evaluation ** Mean reward = {mean_reward} +/- {std_reward}")
+
     algo_kwargs = dict()
     algo_kwargs['explore_episodes']= explore_episodes
     algo_kwargs['goal_threshold']=goal_threshold
@@ -328,6 +457,7 @@ fourier_reward_model=False, normalize=False, max_timesteps=1e6, reward_model_nam
         normalize_rewards=normalize_rewards,
         no_training=no_training,
         use_wrong_oracle=use_wrong_oracle,
+        distance_noise_std=distance_noise_std,
         device=ptu.CUDA_DEVICE,
         **algo_kwargs
     )
@@ -372,14 +502,19 @@ if __name__ == "__main__":
     parser.add_argument("--label_from_last_k_trajectories",type=int, default=400)
     parser.add_argument("--reward_model_name", type=str, default='')
     parser.add_argument("--explore_episodes",type=int, default=10)
+    parser.add_argument("--num_demos",type=int, default=5)
+    parser.add_argument("--pretrain",action="store_true", default=False)
+    parser.add_argument("--distance_noise_std",type=float, default=0)
 
 
     args = parser.parse_args()
 
     wandb_suffix = "human_preferences"
+    if args.pretrain:
+        wandb_suffix += "demos"
     if args.use_oracle:
         wandb_suffix += "oracle"
-    wandb_run = wandb.init(project=args.env_name+"huge_preferences", name=f"{args.env_name}_{wandb_suffix}_{args.seed}", config={
+    wandb_run = wandb.init(project=args.env_name+"_huge", name=f"{args.env_name}_{wandb_suffix}_{args.seed}", config={
     'seed': args.seed, 
     'num_envs':args.num_envs,
     'lr':args.lr, 
@@ -412,6 +547,9 @@ if __name__ == "__main__":
     'use_wrong_oracle':args.use_wrong_oracle,
     'n_steps':args.n_steps,
     'explore_episodes':args.explore_episodes,
+    'pretrain':args.pretrain,
+    'num_demos':args.num_demos,
+    'distance_noise_std':args.distance_noise_std,
     })
 
 
@@ -447,4 +585,7 @@ if __name__ == "__main__":
         use_wrong_oracle=args.use_wrong_oracle,
         n_steps=args.n_steps,
         explore_episodes=args.explore_episodes,
+        pretrain=args.pretrain,
+        num_demos=args.num_demos,
+        distance_noise_std=args.distance_noise_std,
         )

@@ -219,6 +219,7 @@ if __name__ == "__main__":
     parser.add_argument("--explore_episodes",type=int, default=None)
     parser.add_argument("--max_path_length",type=int, default=None)
     parser.add_argument("--repeat_previous_action_prob",type=float, default=None)
+    parser.add_argument("--network_layers", type=str, default=None)
     parser.add_argument("--task_config", type=str, default=None)
     parser.add_argument("--train_goal_selector_freq",type=int, default=None)
     parser.add_argument("--goal_selector_num_samples",type=int, default=None)
@@ -241,7 +242,7 @@ if __name__ == "__main__":
     parser.add_argument("--use_images", action="store_true", default=False)
     parser.add_argument("--pretrain_policy", action="store_true", default=False)
     parser.add_argument("--pretrain_goal_selector", action="store_true", default=False)
-
+    parser.add_argument("--distance_noise_std",type=float, default=None)
     args = parser.parse_args()
 
     with open("config.yaml") as file:

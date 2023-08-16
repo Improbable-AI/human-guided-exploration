@@ -323,6 +323,7 @@ class HUGE:
         self.max_timesteps = max_timesteps
         self.max_path_length = max_path_length
 
+        self.last_timestep_cos = -1
         self.explore_episodes = explore_episodes
         self.expl_noise = expl_noise
         self.render = render
@@ -1177,14 +1178,59 @@ class HUGE:
 
         print("Sampling trajectory took: ", time.time() - start_time)
         return np.stack(states), np.array(actions), commanded_goal_state, desired_goal_state, reached, img_states
-   
+    
+    def compute_variance_gradients(self,):
+        if self.replay_buffer.current_buffer_size == 0:
+            return
+        avg_loss = 0
+        all_gradients = []
+
+        for acc in range(10):
+            observations, actions, goals, lengths, horizons, weights, img_states, img_goals = self.replay_buffer.sample_batch(self.batch_size)
+
+            if self.use_images_in_policy:
+                loss = self.loss_fn(img_states, img_goals, actions, horizons, weights)
+            else:
+                loss = self.loss_fn(observations, goals, actions, horizons, weights)
+
+            self.policy_optimizer.zero_grad()
+
+            loss.backward()
+            avg_loss += loss.item()
+
+            all_norms = []
+            for p in self.policy.parameters():
+                param_norm = p.grad.detach().data.flatten().to("cpu")
+                all_norms.append(param_norm)
+            
+            all_norms = torch.hstack(all_norms)
+            all_gradients.append(all_norms)
+       
+
+        cos = torch.nn.CosineSimilarity(dim=1, eps=1e-6)
+
+        sim = 0
+        count = 0
+        for i in range(10):
+
+            x1 = all_gradients[i].reshape(1,-1)
+
+            for j in range(10-i-1):
+                x2 = all_gradients[j+i+1].reshape(1,-1)
+                sim += cos(x1,x2)
+                count += 1
+        wandb.log({"Cosine similarity between last 10":sim/count, "total_timesteps":self.total_timesteps})
+        self.policy_optimizer.zero_grad()
+        
+
     def take_policy_step(self, buffer=None):
         if buffer is None:
             buffer = self.replay_buffer
 
         avg_loss = 0
         self.policy_optimizer.zero_grad()
-        for _ in range(self.n_accumulations):
+        total_norm = 0
+        for acc in range(self.n_accumulations):
             observations, actions, goals, lengths, horizons, weights, img_states, img_goals = buffer.sample_batch(self.batch_size)
 
             if self.use_images_in_policy:
@@ -1194,7 +1240,7 @@ class HUGE:
 
             loss.backward()
             avg_loss += loss.item()
-        
+
         torch.nn.utils.clip_grad_norm_(self.policy.parameters(), self.clip)
         self.policy_optimizer.step()
 
@@ -1803,6 +1849,7 @@ class HUGE:
         self.test_goal_selector(0)
 
     def evaluate_policy(self, eval_episodes=200, greedy=True, prefix='Eval'):
+        self.compute_variance_gradients()
         print("Evaluate policy")
         env = self.env
         

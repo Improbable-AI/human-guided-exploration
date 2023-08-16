@@ -82,6 +82,20 @@ pointmass_rooms:
   repeat_previous_action_prob: 0.25
   continuous_action_space: False
 
+pointmass_empty:
+  explore_length: 20
+  max_timesteps: 400000
+  max_path_length: 70
+  stopped_thresh: 0.05
+  start_frontier: 20
+  frontier_expansion_rate: 10
+  frontier_expansion_freq: 100
+  select_goal_from_last_k_trajectories: 20
+  label_from_last_k_steps: 20
+  label_from_last_k_trajectories: 20
+  repeat_previous_action_prob: 0.25
+  continuous_action_space: False
+
 complex_maze:
   explore_length: 20
   max_timesteps: 20000000
@@ -211,15 +225,15 @@ human:
   human_input: True
   goal_selector_num_samples: 20
   train_goal_selector_freq: 10
-  human_data_file: "human_dataset_08_08_2023_15:02:06.pickle"
+  # human_data_file: "human_dataset_08_08_2023_15:02:06.pickle"
 
 
 human_preferences:
   human_input: true
   use_oracle: False
-  goal_selector_num_samples: 20
-  train_goal_selector_freq: 10
-  human_data_file: "human_dataset_08_08_2023_13:09:49.pickle"
+  reward_model_num_samples: 20
+  train_reward_model_freq: 10
+  # human_data_file: "human_dataset_08_08_2023_13:09:49.pickle"
 
 
 
@@ -227,6 +241,12 @@ huge:
   train_with_preferences: True
   use_oracle: False
   sample_softmax: True
+  human_input: False
+
+huge_no_softmax:
+  train_with_preferences: True
+  use_oracle: False
+  sample_softmax: False
   human_input: False
 
 oracle:

@@ -121,14 +121,36 @@ class HumanPreferences:
         entropy_coefficient=0.01,
         fake_env = None,
         wandb_run=0,
+        human_data_file=None,
         label_from_last_k_trajectories=-1,
         label_from_last_k_steps=-1,
         start_from_scratch_every_epoch=False,
         normalize_rewards=False,
         no_training=False,
         use_wrong_oracle=False,
+        human_input=False,
+        distance_noise_std=0,
         device="cuda",
     ):
+        
+        self.stop_training_goal_selector_after = max_timesteps
+        
+        if human_data_file is not None and len(human_data_file)!=0:
+            print("human data file")
+            self.human_data_info = pickle.load(open(human_data_file, "rb"))
+
+            if env_name == "pointmass_rooms":
+                human_data_info2 = pickle.load(open("human_dataset_08_08_2023_19:39:44.pickle", "rb"))
+                for i in range(len(human_data_info2['state_1'])):
+                    self.human_data_info['state_1'].append(human_data_info2['state_1'][i])
+                    self.human_data_info['state_2'].append(human_data_info2['state_2'][i])
+                    self.human_data_info['label'].append(human_data_info2['label'][i])
+                    self.human_data_info['goal'].append(human_data_info2['goal'][i])
+                
+            self.human_data_index = 0
+        else:
+            self.human_data_info = None
+    
         # DDL specific
         # No frontier expansio
         self.no_training = no_training
@@ -137,6 +159,11 @@ class HumanPreferences:
         self.entropy_coefficient = entropy_coefficient
         self.fake_env = fake_env
         self.max_path_length = max_path_length
+        self.human_input = human_input
+
+        self.distance_noise_std = distance_noise_std
+
+        self.generating_plot = False
 
         self.use_wrong_oracle = use_wrong_oracle
 
@@ -214,6 +241,12 @@ class HumanPreferences:
         self.display_trajectories_freq = display_trajectories_freq
 
         self.human_exp_idx = 0
+        if self.human_input:
+            self.train_reward_model_freq = 20
+        self.current_qid = 0
+        self.info_per_qid = {}
+        self.answered_questions = 0
+        self.current_goal = self.fake_env.extract_goal(self.fake_env.sample_goal())
         
         #print("action space low and high", self.env.action_space.low, self.env.action_space.high)
 
@@ -261,7 +294,107 @@ class HumanPreferences:
         self.train_loss_reward_model_arr = []
         self.eval_loss_arr = []
         self.distance_to_goal_eval_relabelled = []
+        self.training_goal_selector_now = False
 
+
+
+    def get_image_for_question(self, qid):
+        print("Qid", qid)
+        qid = str(qid)
+        if qid in self.info_per_qid:
+            info = self.info_per_qid[qid]
+            return self.generate_labelling_image(info['img1'], info['img2'])
+        return None
+    
+    def generate_labelling_image(self, img1, img2):
+        return np.concatenate([img1, img2], axis=1)
+    
+    def collect_and_train_goal_selector_human(self):
+        print("Just training goal_selector")
+
+        losses_goal_selector, eval_loss_goal_selector = self.train_reward_model()
+        self.test_rewardmodel()
+        print("Computing reward model loss ", np.mean(losses_goal_selector), "eval loss is: ", eval_loss_goal_selector)
+        if self.summary_writer:
+            self.summary_writer.add_scalar('Lossesgoal_selector/Train', np.mean(losses_goal_selector), self.total_timesteps)
+        wandb.log({'Lossesgoal_selector/Train':np.mean(losses_goal_selector), 'timesteps':self.total_timesteps, 'num_labels_queried':self.num_labels_queried})
+        wandb.log({'Lossesgoal_selector/Eval':eval_loss_goal_selector, 'timesteps':self.total_timesteps, 'num_labels_queried':self.num_labels_queried})
+
+        # self.reward_model_los.append((np.mean(losses_goal_selector), self.total_timesteps))
+
+        torch.save(self.reward_model.state_dict(), f"checkpoint/goal_selector_model_intermediate_{self.total_timesteps}.h5")
+        
+        return losses_goal_selector, eval_loss_goal_selector
+    
+        
+    def answer_question(self, answer, qid):
+        qid = str(qid)
+        if answer is not None:
+            if qid in self.info_per_qid:
+                info = self.info_per_qid[qid]
+
+                current_state_1 = info['state1']
+                current_state_2 = info['state2']
+
+                if self.reward_model_buffer.current_buffer_size != 0 and np.random.random() < 0.2:
+                    self.reward_model_buffer_validation.add_data_point(current_state_1, current_state_2, self.current_goal, answer)
+                else:
+                    self.reward_model_buffer.add_data_point(current_state_1, current_state_2, self.current_goal, answer)
+
+                self.dict_labels['state_1'].append(current_state_1)
+                self.dict_labels['state_2'].append(current_state_2)
+                self.dict_labels['label'].append(answer)
+                self.dict_labels['goal'].append(self.current_goal)
+                with open(f'human_dataset_{self.dt_string}.pickle', 'wb') as handle:
+                    pickle.dump(self.dict_labels, handle)
+
+                self.num_labels_queried += 1
+                label_oracle = self.oracle(current_state_1, current_state_2,self.current_goal)
+
+                print("Correct:", answer==label_oracle, "label", answer, "label_oracle", label_oracle)
+                wandb.log({"Correct": int(answer==label_oracle)})
+                self.answered_questions += 1
+            else:
+                print("Qid not recognized", qid)
+        else:
+            print("Answer is none")
+
+        if self.replay_buffer.current_buffer_size  == 0:
+            return None
+
+        if self.human_input and not self.training_goal_selector_now and self.answered_questions % self.train_reward_model_freq == 0:
+            self.training_goal_selector_now = True
+            print("Collect and train goal selector human")
+            self.collect_and_train_goal_selector_human()
+            self.training_goal_selector_now = False
+
+        obs_1, _ = self.replay_buffer.sample_obs_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
+        obs_2, _ = self.replay_buffer.sample_obs_last_steps(1, k=self.label_from_last_k_steps, last_k_trajectories=self.label_from_last_k_trajectories)
+
+        if not self.generating_plot:
+            self.generating_plot = True
+            img_obs1 = self.fake_env.generate_image(obs_1[0])
+            img_obs2 = self.fake_env.generate_image(obs_2[0])
+            self.generating_plot = False
+        else:
+            img_obs1 = np.zeros((64,64,3))
+            img_obs2 =  np.zeros((64,64,3))
+
+        current_state_1 = obs_1[0]
+        current_state_2 = obs_2[0]
+        current_state_1_img = img_obs1
+        current_state_2_img = img_obs2
+
+        print("Current QID", self.current_qid)
+        self.current_qid += 1
+        self.info_per_qid[str(self.current_qid)] = {
+            'state1':current_state_1,
+            'state2':current_state_2,
+            'img1':current_state_1_img,
+            'img2':current_state_2_img,
+        }
+
+        return self.current_qid
     
     def train(self):
         self.test_rewardmodel() # TODO: plot rewardmodel
@@ -278,7 +411,7 @@ class HumanPreferences:
         self.plot_trajectories(np.array(explore_trajs), goal_arr, filename=f"train_trajectories_{self.total_timesteps}.png")
 
         # Collect and train reward model
-        if not self.use_oracle:
+        if not self.use_oracle and not self.human_input:
             self.collect_and_train_reward_model()
 
 
@@ -309,10 +442,11 @@ class HumanPreferences:
             self.plot_trajectories(states,arr_goal , filename=f"train_trajectories_{self.total_timesteps}.png")
 
             # Collect and train reward model
-            if not self.use_oracle:
+            if not self.use_oracle and (not self.human_input or self.human_data_info is not None):
                 self.collect_and_train_reward_model()
 
     def eval_policy(self):
+        self.model.compute_variance_gradients(self.total_timesteps)
         success_rate = 0 
         distance = 0
         eval_trajs = []
@@ -322,9 +456,12 @@ class HumanPreferences:
             this_traj = []
             while t < self.max_path_length:
                 this_traj.append(obs)
+                if self.fake_env.compute_success(obs[0], self.goal):
+                    break
                 action, _states = self.model.predict(obs)
                 obs, rewards, dones, info = self.env.step(action)
                 t += 1
+
                 # plot some results
                     
                 
@@ -401,9 +538,24 @@ class HumanPreferences:
         for state_1, state_2 in zip(observations_1, observations_2):
             goal_idx = np.random.randint(0, len(goal_states)) 
             goal = goal_states[goal_idx]
-            labels.append(self.oracle(state_1, state_2, goal)) 
+            label = self.oracle(state_1, state_2, goal)
 
             self.num_labels_queried += 1 
+
+            if self.human_data_info is not None:
+                if self.human_data_index < len(self.human_data_info['state_1']):
+                    state_1 = self.human_data_info['state_1'][self.human_data_index]
+                    state_2 = self.human_data_info['state_2'][self.human_data_index]
+                    label = self.human_data_info['label'][self.human_data_index]
+                    goal = self.human_data_info['goal'][self.human_data_index]
+
+                else:
+                    self.stop_training_goal_selector_after = 0
+                    break
+
+                self.human_data_index += 1
+
+            labels.append(label)
 
             achieved_state_1.append(state_1) 
             achieved_state_2.append(state_2) 
@@ -417,8 +569,9 @@ class HumanPreferences:
         return achieved_state_1, achieved_state_2, goals, labels # TODO: check ordering
         
     def test_rewardmodel(self, goal=None):
-        if not self.display_plots:
+        if not self.display_plots or self.generating_plot:
             return
+        self.generating_plot = True
         if goal is None:
             goal = self.goal
         size=50
@@ -468,9 +621,11 @@ class HumanPreferences:
             plt.scatter(self.goal[0], self.goal[1], marker='+', s=100, color='black')
 
         wandb.log({"reward model": wandb.Image(plt)})
+        self.generating_plot = False
         
     def collect_and_train_reward_model(self):
-
+        if self.total_timesteps > self.stop_training_goal_selector_after:
+            return 0, 0
         print("Collecting and training reward_model")
 
         achieved_state_1, achieved_state_2, goals, labels = self.generate_pref_labels(np.array([self.goal]))
@@ -508,8 +663,11 @@ class HumanPreferences:
         return losses_reward_model, eval_loss_reward_model
 
     def train_reward_model(self,device='cuda'):
-        if self.no_training:
-            return
+        if self.no_training or self.reward_model_buffer.current_buffer_size == 0:
+            print("NO training reward model")
+            return 0,0
+        
+        print("training reward model")
         # Train standard goal conditioned policy
 
         loss_fn = torch.nn.CrossEntropyLoss() 
@@ -524,7 +682,7 @@ class HumanPreferences:
         for epoch in range(self.reward_model_epochs):  # loop over the dataset multiple times
             start = time.time()
             
-            achieved_states_1, achieved_states_2, goals ,labels = self.reward_model_buffer.sample_batch(self.reward_model_batch_size)
+            achieved_states_1, achieved_states_2, goals ,labels, img1, img2, img_goals= self.reward_model_buffer.sample_batch(self.reward_model_batch_size)
             
             self.reward_optimizer.zero_grad()
 
@@ -566,7 +724,7 @@ class HumanPreferences:
             
         self.reward_model.eval()
         eval_loss = 0.0
-        achieved_states_1, achieved_states_2, goals ,labels = self.reward_model_buffer_validation.sample_batch(1000)
+        achieved_states_1, achieved_states_2, goals ,labels, img1, img2, img_goals = self.reward_model_buffer_validation.sample_batch(1000)
 
         state1 = torch.Tensor(achieved_states_1).to(self.device)
         state2 = torch.Tensor(achieved_states_2).to(self.device)
@@ -609,8 +767,8 @@ class HumanPreferences:
         
     # TODO: generalise this
     def oracle(self, state1, state2, goal):
-        d1_dist = self.env_distance(state1, goal) #+ np.random.normal(scale=self.distance_noise_std) #self.env.shaped_distance(state1, goal) # np.linalg.norm(state1 - goal, axis=-1)
-        d2_dist = self.env_distance(state2, goal) #+ np.random.normal(scale=self.distance_noise_std) #self.env.shaped_distance(state2, goal) # np.linalg.norm(state2 - goal, axis=-1)
+        d1_dist = self.env_distance(state1, goal) + np.random.normal(scale=self.distance_noise_std) #+ np.random.normal(scale=self.distance_noise_std) #self.env.shaped_distance(state1, goal) # np.linalg.norm(state1 - goal, axis=-1)
+        d2_dist = self.env_distance(state2, goal) + np.random.normal(scale=self.distance_noise_std) #+ np.random.normal(scale=self.distance_noise_std) #self.env.shaped_distance(state2, goal) # np.linalg.norm(state2 - goal, axis=-1)
 
         if d1_dist < d2_dist:
             return 0
@@ -673,10 +831,13 @@ class HumanPreferences:
         return distance_to_slide, distance_to_hinge, distance_to_microwave, distance_joint_slide, distance_joint_hinge, distance_microwave
 
     def plot_trajectories(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):
-        if not self.display_plots:
+        if not self.display_plots or self.generating_plot:
             return
         else:
-            return self.fake_env.plot_trajectories(np.array(traj_accumulated_states.copy()), np.array(traj_accumulated_goal_states.copy()), extract, f"{self.env_name}/{filename}")
+            self.generating_plot = True
+            self.fake_env.plot_trajectories(np.array(traj_accumulated_states.copy()), np.array(traj_accumulated_goal_states.copy()), extract, f"{self.env_name}/{filename}")
+            self.generating_plot = False
+            return 
         if "pointmass" in self.env_name:
             return self.plot_trajectories_rooms(traj_accumulated_states.copy(), traj_accumulated_goal_states.copy(), extract, "pointmass/" + filename)
         if self.env_name == "pusher":

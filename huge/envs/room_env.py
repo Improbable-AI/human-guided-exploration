@@ -18,7 +18,11 @@ import torch
 from collections import OrderedDict
 from multiworld.envs.env_util import create_stats_ordered_dict
 import matplotlib.cm as cm
+from matplotlib.patches import Circle
 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot
 
 class PointmassGoalEnv(GymGoalEnvWrapper):
     def __init__(self, room_type='empty', fixed_start=True, fixed_goal=False, images=False, image_kwargs=None, env_kwargs=None,max_path_length=50):
@@ -33,11 +37,14 @@ class PointmassGoalEnv(GymGoalEnvWrapper):
             use_goal_images=False,
         )
 
-        if fixed_start:
-            config['start_config'] = np.array([-0.55, -0.55])#(np.array([-0.33,-0.33]), np.array([-0.27,-0.27])) # Start at / around (-0.3, -0.3)
+        # if fixed_start:
+        config['start_config'] = np.array([-0.55, -0.55])#(np.array([-0.33,-0.33]), np.array([-0.27,-0.27])) # Start at / around (-0.3, -0.3)
 
         if room_type == 'rooms':
             config['goal_config'] = 'top_right_corner' #(np.array([0.27,0.27]), np.array([0.33,0.33])) # End at / around (0.3, 0.3)
+        
+        if room_type == "empty":
+            config['goal_config'] = 'top_left'
         if fixed_goal:
             config['goal_config'] = (np.array([0.27,0.27]), np.array([0.33,0.33])) # End at / around (0.3, 0.3)
         
@@ -66,11 +73,34 @@ class PointmassGoalEnv(GymGoalEnvWrapper):
             env, observation_key='observation', goal_key='achieved_goal', state_goal_key='state_achieved_goal',max_path_length=max_path_length
         )
 
+    def generate_image(self,obs):
+        # plot added trajectories to fake replay buffer
+        plt.cla()
+        plt.clf()
+        self.display_wall()
+
+        obs = self.observation(obs)
+        # plot robot pose
+        robot_pos = obs[:2]
+        plt.scatter(robot_pos[0], robot_pos[1], marker="o", s=180, color="black", zorder=6)
+
+        # plot goal 
+        goal_pos = self.extract_goal(self.sample_goal())
+        plt.scatter(goal_pos[0], goal_pos[1], marker="x", s=180, color="purple", zorder=2)
+        
+        plt.axis('off')   
+        plt.gcf().canvas.draw()
+
+        image = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep='')
+        image = image.reshape(plt.gcf().canvas.get_width_height()[::-1] + (3,))
+
+        return image
+    
+
     def plot_trajectories(self,traj_accumulated_states, traj_accumulated_goal_states, extract=True, filename=""):
-        if len(traj_accumulated_states) == 0:
+        if traj_accumulated_states is None or len(traj_accumulated_goal_states)==0 or len(traj_accumulated_goal_states[0])==0:
             return
         # plot added trajectories to fake replay buffer
-        plt.clf()
         self.display_wall()
         
         colors = sns.color_palette('hls', (len(traj_accumulated_states)))
@@ -80,18 +110,17 @@ class PointmassGoalEnv(GymGoalEnvWrapper):
             #if 'train_states_preferences' in filename:
             #    color = 'black'
             
-            plt.scatter(traj_accumulated_goal_states[j][-2],
-                    traj_accumulated_goal_states[j][-1], marker='o', s=20, color=color, zorder=1)
+            # plt.scatter(traj_accumulated_goal_states[j][-2],
+                    # traj_accumulated_goal_states[j][-1], marker='o', s=20, color=color, zorder=1)
         
-        plt.savefig(filename)
-
-        from PIL import Image
-        plt.savefig(filename)
         
         if 'eval' in filename:
             wandb.log({"trajectory_eval": wandb.Image(plt)})
         else:
             wandb.log({"trajectory": wandb.Image(plt)})
+        
+        plt.clf()
+
 
     def render_image(self):
         return self.base_env.render(mode="rgb_array", width=640, height=480, camera_id=0)
